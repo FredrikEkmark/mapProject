@@ -1,4 +1,4 @@
-package com.fredrik.mapProject.GameRunDomain.Model;
+package com.fredrik.mapProject.gameSetupDomain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -7,8 +7,8 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 
 @Entity
-@Table(name = "game_map_player_view")
-public class GameMapPlayerViewEntity {
+@Table(name = "game_setup")
+public class GameSetupEntity {
     @Id
     private UUID id;
 

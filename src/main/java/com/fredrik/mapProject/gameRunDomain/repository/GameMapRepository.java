@@ -1,6 +1,6 @@
-package com.fredrik.mapProject.GameRunDomain.Repository;
+package com.fredrik.mapProject.gameRunDomain.repository;
 
-import com.fredrik.mapProject.GameRunDomain.Model.GameMapEntity;
+import com.fredrik.mapProject.gameRunDomain.model.GameMapEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

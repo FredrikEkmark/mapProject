@@ -1,4 +1,4 @@
-package com.fredrik.mapProject.UserDomain;
+package com.fredrik.mapProject.userDomain;
 
 import org.springframework.web.bind.annotation.RestController;
 
