@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+<div>
+    <h1>Register User Page</h1>
+    <form method="post" th:action="@{/register}" th:object="${userEntity}">
+        <label for="username">username</label>
+        <input type="text" th:field="*{username}" placeholder="username..." id="username" autofocus>
+
+        <label for="password">password</label>
+        <input type="password" th:field="*{password}" placeholder="password..." id="password">
+
+        <label for="roles">Select Role:</label>
+        <select id="roles" name="roles" th:field="*{role}">
+            <option th:each="role : ${roles}" th:value="${role.name()}" th:text="${role.name()}"></option>
+        </select>
+
+        <button type="submit"> Register </button>
+
+        <!-- IMPORTANT : Must be inside FORM -->
+        <p 	th:if="${#fields.hasErrors('username')}"
+              th:errorclass="error"
+              th:errors="*{username}">
+        </p>
+
+        <!-- Show MULTIPLE errors at once -->
+        <ul>
+            <li th:each="error : ${#fields.errors('password')}" th:text="${error}" class="error">
+        </ul>
+
+        <!-- Show ANY error in the form -->
+        <div th:if="${#fields.hasAnyErrors()}">
+            <ul>
+                <li th:each="error : ${#fields.allErrors()}" th:text="${error}">
+
+                </li>
+            </ul>
+        </div>
+
+    </form>
+
+
+
+    <p>Debugging, don't mind this input! :)</p>
+    <input name="username" >
+
+</div>
+
+</body>
+</html>

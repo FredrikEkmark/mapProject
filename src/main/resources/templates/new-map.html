@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Map</title>
+</head>
+<body>
+
+<div>
+    <h1>New Map</h1>
+
+    <form method="post" th:action="@{/new-map}" th:object="${newMap}">
+
+        <label for="mapSizes">Map Size</label>
+        <select id="mapSizes" name="mapSizes" th:field="*{mapSize}">
+            <option th:each="mapSize : ${mapSizes}" th:value="${mapSize.name()}" th:text="${mapSize.name()}"></option>
+        </select>
+
+        <label for="turnLength">Turn Length</label>
+        <select id="turnLength" name="turnLength" th:field="*{turnLength}">
+            <option th:each="turnLength : ${turnLengths}" th:value="${turnLength.name()}" th:text="${turnLength.name()}"></option>
+        </select>
+
+        <button type="submit"> Create Task </button>
+
+        <!-- Show ANY error in the form -->
+        <div th:if="${#fields.hasAnyErrors()}">
+            <ul>
+                <li th:each="error : ${#fields.allErrors()}" th:text="${error}">
+
+                </li>
+            </ul>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

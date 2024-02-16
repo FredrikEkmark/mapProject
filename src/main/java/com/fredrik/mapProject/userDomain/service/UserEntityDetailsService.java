@@ -1,5 +1,6 @@
-package com.fredrik.mapProject.userDomain;
+package com.fredrik.mapProject.userDomain.service;
 
+import com.fredrik.mapProject.userDomain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

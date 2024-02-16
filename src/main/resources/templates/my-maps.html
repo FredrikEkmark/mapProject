@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Maps</title>
+</head>
+<body>
+<h1>My Tasks</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Map Size</th>
+        <th>Turn Length</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="map : ${userMaps}">
+        <!-- Access task properties -->
+        <td th:text="${map.id}"></td>
+        <td th:text="${map.mapSize}"></td>
+        <td th:text="${map.turnLength}"></td>
+        <!-- Add a button to edit the task -->
+        <td>
+            <a th:href="@{/delete-map/{id}(id=${map.id})}">Delete Map</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

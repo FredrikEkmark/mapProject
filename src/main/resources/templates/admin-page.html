@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+</head>
+<body>
+<h1>Admin Page</h1>
+<h2>Users</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Username</th>
+    <th>E-mail</th>
+    <th>Role</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="user : ${users}">
+    <form th:action="@{/edit-user}" method="post">
+      <input  type="hidden" th:name="userId" th:value="${user.id}">
+      <td>
+        <input type="text" th:name="username" th:placeholder="${user.username}" th:value="${user.username}" id="username">
+      </td>
+      <td>
+        <input type="email" th:name="email" th:placeholder="${user.email}" th:value="${user.email}" id="email">
+      </td>
+      <td>
+        <select id="roles" name="roles" th:name="role">
+          <option th:each="role : ${roles}" th:value="${role.name()}" th:selected="${role.name() == user.role.name()}" th:text="${role.name()}"></option>
+        </select>
+      </td>
+      <td>
+        <button type="submit">Edit User</button>
+      </td>
+      <td>
+        <a th:href="@{/delete-user/{userId}(userId=${user.id})}">Delete User</a>
+      </td>
+    </form>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
