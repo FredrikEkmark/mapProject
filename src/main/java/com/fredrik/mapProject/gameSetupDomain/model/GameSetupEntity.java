@@ -14,6 +14,9 @@ public class GameSetupEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(nullable = false)
+    private int seed;
+
     @ManyToOne()
     @JoinColumn(name = "users_id")
     private UserEntity user;
@@ -40,6 +43,14 @@ public class GameSetupEntity {
 
     public UUID getId() {
         return id;
+    }
+
+    public int getSeed() {
+        return seed;
+    }
+
+    public void setSeed(int seed) {
+        this.seed = seed;
     }
 
     public UserEntity getUser() {

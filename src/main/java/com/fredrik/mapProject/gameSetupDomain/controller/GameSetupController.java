@@ -3,15 +3,14 @@ package com.fredrik.mapProject.gameSetupDomain.controller;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.TurnLength;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
-import com.fredrik.mapProject.gameSetupDomain.repository.GameSetupRepository;
 import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -20,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Controller
@@ -35,45 +35,50 @@ public class GameSetupController {
     }
 
     @GetMapping("/new-map")
+    @PreAuthorize("hasAuthority('POST')")
     public String setupNewGamePage(GameSetupEntity gameSetup, Model model) {
+
+        int randomSeed = new Random().nextInt(1, 100000);
 
         model.addAttribute("newMap", gameSetup);
         model.addAttribute("turnLengths", TurnLength.values());
         model.addAttribute("mapSizes", MapSizes.values());
+        model.addAttribute("randomSeed", randomSeed);
 
         return "new-map";
     }
 
     @PostMapping("/new-map")
+    @PreAuthorize("hasAuthority('POST')")
     public String setupNewGame(
             GameSetupEntity gameSetup,   // Enables Error Messages
             BindingResult result, // Ties the object with result
             MapSizes mapSize,
-            TurnLength turnLength
+            TurnLength turnLength,
+            int seed
     ) {
 
-        // Check FOR @Valid Errors
         if (result.hasErrors()) {
             return "new-map";
         }
 
-        // TODO - Check for Authentication can be done through @ annotation
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
         UserEntity currentUser = userService.findByUsername(username);
 
         gameSetup.setUser(currentUser);
+        gameSetup.setSeed(seed);
         gameSetup.setMapSize(mapSize);
         gameSetup.setTurnLength(turnLength);
 
-        // Save the task with the user association
         gameSetupService.createNewGameSetup(gameSetup);
 
         return "redirect:/my-maps";
     }
 
     @GetMapping("my-maps")
+    @PreAuthorize("hasAuthority('GET')")
     public String showMapsPage(GameSetupEntity gameSetup, Model model) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -87,6 +92,7 @@ public class GameSetupController {
     }
 
     @GetMapping("/delete-map/{id}")
+    @PreAuthorize("hasAuthority('POST')")
     public String deleteMap(@PathVariable("id") UUID mapId) {
 
         GameSetupEntity map = gameSetupService.findById(mapId);

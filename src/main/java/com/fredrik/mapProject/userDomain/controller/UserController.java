@@ -2,19 +2,23 @@ package com.fredrik.mapProject.userDomain.controller;
 
 import com.fredrik.mapProject.config.AppPasswordConfig;
 import com.fredrik.mapProject.config.Roles;
+import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -48,7 +52,6 @@ public class UserController {
             return "register";
         }
 
-        // TODO - Optionally: handle duplicate entries (@Unique PREFERABLY within ENTITY)
         userEntity.setPassword(
                 appPasswordConfig.bCryptPasswordEncoder().encode(userEntity.getPassword())
         );
@@ -59,6 +62,7 @@ public class UserController {
     }
 
     @GetMapping("admin-page")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showAllUsers(UserEntity userEntity, Model model) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -71,14 +75,13 @@ public class UserController {
     }
 
     @PostMapping("/edit-user")
+    @PreAuthorize("hasRole('ADMIN')")
     public String editUser(
             @RequestParam("userId") UUID userId,
             @RequestParam("username") String username,
             @RequestParam("email") String email,
             @RequestParam("role") Roles role)
     {
-
-        System.out.println("EDIT USER");
 
         UserEntity user = userService.findById(userId).orElse(null);
         if (user == null) {
@@ -89,6 +92,20 @@ public class UserController {
         user.setEmail(email);
         user.setRole(role);
         userService.updateUser(user);
+
+        return "redirect:/admin-page";
+    }
+
+    @GetMapping("/delete-user/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String deleteUser(@PathVariable("id") UUID userId) {
+
+        Optional<UserEntity> user = userService.findById(userId);
+        if (user.isEmpty()) {
+            return "error-page";
+        }
+
+        userService.deleteUser(user.get());
 
         return "redirect:/admin-page";
     }

@@ -5,11 +5,13 @@
     <title>My Maps</title>
 </head>
 <body>
-<h1>My Tasks</h1>
+<h1>My Maps</h1>
+<a th:href="@{/new-map}">Create new Map</a>
 <table>
     <thead>
     <tr>
         <th>Id</th>
+        <th>Seed</th>
         <th>Map Size</th>
         <th>Turn Length</th>
         <th>Action</th>
@@ -17,17 +19,17 @@
     </thead>
     <tbody>
     <tr th:each="map : ${userMaps}">
-        <!-- Access task properties -->
         <td th:text="${map.id}"></td>
+        <td th:text="${map.seed}"></td>
         <td th:text="${map.mapSize}"></td>
         <td th:text="${map.turnLength}"></td>
-        <!-- Add a button to edit the task -->
         <td>
             <a th:href="@{/delete-map/{id}(id=${map.id})}">Delete Map</a>
         </td>
     </tr>
     </tbody>
 </table>
-
+<a th:href="@{/}">Home</a>
+<a th:href="@{/logout}">Logout</a>
 </body>
 </html>

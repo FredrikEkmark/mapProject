@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public enum Roles {
 
     ADMIN("GET_POST"),
-    USER("GET");
+    USER("GET_POST");
 
     private final String permissions;
 
@@ -37,9 +37,9 @@ public enum Roles {
         List<GrantedAuthority> permissions = new ArrayList<>();
 
         permissions.add(role);
-        permissions.addAll(splitPermissions()); // [GET, POST]
+        permissions.addAll(splitPermissions());
 
-        return permissions;     // [ROLE_ADMIN, GET, POST]
+        return permissions;
     }
 
 }

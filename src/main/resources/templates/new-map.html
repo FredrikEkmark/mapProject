@@ -8,8 +8,11 @@
 
 <div>
     <h1>New Map</h1>
-
+    <a th:href="@{/my-maps}">My Maps</a>
     <form method="post" th:action="@{/new-map}" th:object="${newMap}">
+
+        <label for="seed">Seed</label>
+        <input type="number" th:field="*{seed}" id="seed"  min="0" max="99999">
 
         <label for="mapSizes">Map Size</label>
         <select id="mapSizes" name="mapSizes" th:field="*{mapSize}">
@@ -21,7 +24,7 @@
             <option th:each="turnLength : ${turnLengths}" th:value="${turnLength.name()}" th:text="${turnLength.name()}"></option>
         </select>
 
-        <button type="submit"> Create Task </button>
+        <button type="submit"> Create Map </button>
 
         <!-- Show ANY error in the form -->
         <div th:if="${#fields.hasAnyErrors()}">
@@ -33,8 +36,12 @@
         </div>
 
     </form>
-
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/logout}">Logout</a>
 </div>
 
 </body>
+<script>
+    document.getElementById('seed').value=Math.floor(Math.random() * 99999);
+</script>
 </html>

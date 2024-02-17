@@ -11,6 +11,9 @@
         <label for="username">username</label>
         <input type="text" th:field="*{username}" placeholder="username..." id="username" autofocus>
 
+        <label for="email">email</label>
+        <input type="email" th:field="*{email}" placeholder="email..." id="email" >
+
         <label for="password">password</label>
         <input type="password" th:field="*{password}" placeholder="password..." id="password">
 
@@ -42,13 +45,7 @@
         </div>
 
     </form>
-
-
-
-    <p>Debugging, don't mind this input! :)</p>
-    <input name="username" >
-
 </div>
-
+<a th:href="@{/}">Home</a>
 </body>
 </html>

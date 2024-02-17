@@ -23,7 +23,7 @@ public class UserEntity implements UserDetails {
     @Column(length = 64)
     private String password;
 
-    @Column(nullable = true, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -45,13 +45,9 @@ public class UserEntity implements UserDetails {
         this.role = role;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        // [GET, POST]
-        // From ROLES ([ROLE_ADMIN, GET, POST])
-        // return role.getAuthorities();
         return role.getAuthorities();
     }
 

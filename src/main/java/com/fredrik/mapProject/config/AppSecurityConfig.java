@@ -2,6 +2,7 @@ package com.fredrik.mapProject.config;
 
 import com.fredrik.mapProject.userDomain.service.UserEntityDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,6 +25,9 @@ public class AppSecurityConfig {
     private final AppPasswordConfig appPasswordConfig;
     private final UserEntityDetailsService userEntityDetailsService;
 
+    @Value("${custom.token.key}")
+    private String tokenKey;
+
     @Autowired
     public AppSecurityConfig(AppPasswordConfig appPasswordConfig, UserEntityDetailsService userEntityDetailsService) {
         this.appPasswordConfig = appPasswordConfig;
@@ -39,8 +43,7 @@ public class AppSecurityConfig {
                                 "/",
                                 "/login",
                                 "/logout",
-                                "/register",
-                                "/myPerms").permitAll()
+                                "/register").permitAll()
                         .requestMatchers(
                                 "/new-map",
                                 "/my-maps",
@@ -62,11 +65,11 @@ public class AppSecurityConfig {
 
                 .rememberMe(rememberMe -> rememberMe
                         .tokenValiditySeconds(Math.toIntExact(TimeUnit.DAYS.toSeconds(21)))
-                        .key("someSecureKey") // TODO: this is placeholder
+                        .key(tokenKey)
                         .userDetailsService(userEntityDetailsService)
                         .rememberMeParameter("remember-me"))
 
-                .authenticationProvider(daoAuthenticationProvider())    // Tell Spring to use our implementation (Password & Service)
+                .authenticationProvider(daoAuthenticationProvider())
                 .build();
     }
 
