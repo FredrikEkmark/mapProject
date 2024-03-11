@@ -11,15 +11,26 @@ import java.util.UUID;
 @Service
 public class GameSetupService {
 
-    private GameSetupRepository gameSetupRepository;
+    private final GameSetupRepository gameSetupRepository;
+
+    private final MapTileService mapTileService;
 
     @Autowired
-    public GameSetupService(GameSetupRepository gameSetupRepository) {
+    public GameSetupService(GameSetupRepository gameSetupRepository, MapTileService mapTileService) {
         this.gameSetupRepository = gameSetupRepository;
+        this.mapTileService = mapTileService;
     }
 
     public void createNewGameSetup(GameSetupEntity gameSetup) {
         gameSetupRepository.save(gameSetup);
+
+        if (gameSetupRepository.findById(gameSetup.getId()).isPresent()) {
+
+            mapTileService.createNewGameMap(gameSetup);
+
+        } else {
+            System.out.printf("ERROR Game setup with id %s was not saved properly", gameSetup.getId());
+        }
     }
 
     public GameSetupEntity findById(UUID id) {
@@ -33,5 +44,13 @@ public class GameSetupService {
 
     public void delete(GameSetupEntity gameSetup) {
         gameSetupRepository.delete(gameSetup);
+
+        if (gameSetupRepository.findById(gameSetup.getId()).isEmpty()) {
+
+            mapTileService.deleteGameMap(gameSetup.getId());
+
+        } else {
+            System.out.printf("ERROR Game setup with id %s was not deleted properly", gameSetup.getId());
+        }
     }
 }

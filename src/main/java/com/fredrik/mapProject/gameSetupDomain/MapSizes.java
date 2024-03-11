@@ -2,11 +2,23 @@ package com.fredrik.mapProject.gameSetupDomain;
 
 public enum MapSizes {
 
-    SMALL(50),
-    MEDIUM(100),
-    LARGE(150);
+    SMALL(50, 25),
+    MEDIUM(100, 50),
+    LARGE(150, 75);
 
-    MapSizes(int i) {
+    private final int x;
+    private final int y;
 
+    MapSizes(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

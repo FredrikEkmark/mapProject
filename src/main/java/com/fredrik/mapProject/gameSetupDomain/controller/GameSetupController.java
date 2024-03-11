@@ -35,7 +35,7 @@ public class GameSetupController {
     }
 
     @GetMapping("/new-map")
-    @PreAuthorize("hasAuthority('POST')")
+    @PreAuthorize("hasAuthority('GET')")
     public String setupNewGamePage(GameSetupEntity gameSetup, Model model) {
 
         int randomSeed = new Random().nextInt(1, 100000);
