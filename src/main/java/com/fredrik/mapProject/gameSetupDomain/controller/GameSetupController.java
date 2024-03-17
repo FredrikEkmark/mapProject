@@ -67,7 +67,7 @@ public class GameSetupController {
         String username = authentication.getName();
         UserEntity currentUser = userService.findByUsername(username);
 
-        gameSetup.setUser(currentUser);
+        gameSetup.setOwner(currentUser);
         gameSetup.setSeed(seed);
         gameSetup.setMapSize(mapSize);
         gameSetup.setTurnLength(turnLength);

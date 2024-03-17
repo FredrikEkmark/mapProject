@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile;
 
+import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameSetupDomain.mapGenerator.PerlinNoise.OpenSimplex;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
@@ -28,6 +29,8 @@ public class TileInterpretation {
 
         MapTileEntity tile = new MapTileEntity();
         tile.setMapTileId(mapTileId);
+        tile.setTileOwner(Player.NONE);
+        tile.setVisibility("00000000000000000000000000000000");
 
         int x = mapTileId.getX();
         int y = mapTileId.getY();

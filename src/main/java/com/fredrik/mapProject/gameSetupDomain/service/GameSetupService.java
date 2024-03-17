@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gameSetupDomain.service;
 
+import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.repository.GameSetupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,16 @@ public class GameSetupService {
     private final GameSetupRepository gameSetupRepository;
 
     private final MapTileService mapTileService;
+    private final GamePlayerService gamePlayerService;
 
     @Autowired
-    public GameSetupService(GameSetupRepository gameSetupRepository, MapTileService mapTileService) {
+    public GameSetupService(
+            GameSetupRepository gameSetupRepository,
+            MapTileService mapTileService,
+            GamePlayerService gamePlayerService) {
         this.gameSetupRepository = gameSetupRepository;
         this.mapTileService = mapTileService;
+        this.gamePlayerService = gamePlayerService;
     }
 
     public void createNewGameSetup(GameSetupEntity gameSetup) {
@@ -27,6 +33,7 @@ public class GameSetupService {
         if (gameSetupRepository.findById(gameSetup.getId()).isPresent()) {
 
             mapTileService.createNewGameMap(gameSetup);
+            gamePlayerService.createNewGamePlayer(gameSetup, gameSetup.getOwner().getId());
 
         } else {
             System.out.printf("ERROR Game setup with id %s was not saved properly", gameSetup.getId());

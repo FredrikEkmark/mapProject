@@ -29,7 +29,7 @@ public class UserEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<GameSetupEntity> gameSetups;
 
     private boolean accountNonExpired;
