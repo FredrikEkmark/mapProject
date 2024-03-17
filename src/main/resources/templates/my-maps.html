@@ -19,7 +19,7 @@
     </thead>
     <tbody>
     <tr th:each="map : ${userMaps}">
-        <td th:text="${map.id}"></td>
+        <td><a th:href="@{/map/{id}(id=${map.id})}" th:text="${map.id}"></a></td>
         <td th:text="${map.seed}"></td>
         <td th:text="${map.mapSize}"></td>
         <td th:text="${map.turnLength}"></td>

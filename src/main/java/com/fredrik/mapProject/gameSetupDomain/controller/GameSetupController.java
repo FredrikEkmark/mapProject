@@ -104,28 +104,4 @@ public class GameSetupController {
 
         return "redirect:/my-maps";
     }
-
-    @GetMapping("/myPerms")
-    public ResponseEntity<String> viewPermissions() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Get the principal (authenticated user)
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) principal;
-            String username = userDetails.getUsername();
-            String authorities = userDetails.getAuthorities().toString();
-
-            // Now you have the username of the currently logged-in user
-            System.out.println("Currently logged-in user: " + username + authorities);
-        } else {
-            // Handle the case where the principal is not a UserDetails object
-            System.out.println("Unable to determine the currently logged-in user");
-        }
-
-        // Your method logic...
-
-        return new ResponseEntity<>("Check log", HttpStatus.ACCEPTED);
-    }
 }

@@ -17,4 +17,36 @@ public class MapTile {
         this.tileStyleClass = tileStyleClass;
         this.visible = visible;
     }
+
+    public MapCoordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(MapCoordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public Player getTileOwner() {
+        return tileOwner;
+    }
+
+    public void setTileOwner(Player tileOwner) {
+        this.tileOwner = tileOwner;
+    }
+
+    public int getTileStyleClass() {
+        return tileStyleClass;
+    }
+
+    public void setTileStyleClass(int tileStyleClass) {
+        this.tileStyleClass = tileStyleClass;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map</title>
+    <link rel="stylesheet" th:href="@{/style/map-style.css}">
+</head>
+<body>
+<main>
+<div class="container" th:each="row : ${playerView.map}">
+    <div th:each="tile : ${row}">
+        <div th:unless="${tile == null}">
+        <!-- Access properties of each tile -->
+        <div class="temperateForest" th:text="${tile.tileOwner}"></div>
+        <div th:text="${tile.tileStyleClass}"></div>
+        </div>
+        <!-- Add more properties as needed -->
+    </div>
+</div>
+</main>
+</body>
+</html>

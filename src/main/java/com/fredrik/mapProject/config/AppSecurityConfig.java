@@ -47,6 +47,7 @@ public class AppSecurityConfig {
                         .requestMatchers(
                                 "/new-map",
                                 "/my-maps",
+                                "/map/**",
                                 "/delete-map/**").hasRole(USER.name())
                         .requestMatchers(
                                 "admin-page",

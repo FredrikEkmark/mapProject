@@ -11,16 +11,18 @@ import java.util.UUID;
 
 public class PlayerView {
 
-    private final UUID gameId;
+    private UUID gameId;
 
-    private final UUID playerId;
+    private UUID playerId;
 
-    private final String playerName;
-    private final MapSizes mapSize;
-    private final MapCoordinates startCoordinates;
-    private final Player playerNr;
+    private String playerName;
+    private MapSizes mapSize;
+    private MapCoordinates startCoordinates;
+    private Player playerNr;
     private MapTile[][] map;
 
+
+    public PlayerView() {}
     public PlayerView(UUID gameId,
                       UUID playerId,
                       String playerName,
@@ -51,5 +53,61 @@ public class PlayerView {
         }
             return map;
 
+    }
+
+    public UUID getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(UUID gameId) {
+        this.gameId = gameId;
+    }
+
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(UUID playerId) {
+        this.playerId = playerId;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public MapSizes getMapSize() {
+        return mapSize;
+    }
+
+    public void setMapSize(MapSizes mapSize) {
+        this.mapSize = mapSize;
+    }
+
+    public MapCoordinates getStartCoordinates() {
+        return startCoordinates;
+    }
+
+    public void setStartCoordinates(MapCoordinates startCoordinates) {
+        this.startCoordinates = startCoordinates;
+    }
+
+    public Player getPlayerNr() {
+        return playerNr;
+    }
+
+    public void setPlayerNr(Player playerNr) {
+        this.playerNr = playerNr;
+    }
+
+    public MapTile[][] getMap() {
+        return map;
+    }
+
+    public void setMap(MapTile[][] map) {
+        this.map = map;
     }
 }
