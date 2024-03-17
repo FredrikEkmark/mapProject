@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gameSetupDomain.service;
 
+import com.fredrik.mapProject.gamePlayDomain.model.MapTile;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.mapGenerator.MapGenerator;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
@@ -47,5 +48,9 @@ public class MapTileService {
 
     public void deleteGameMap(UUID gameId) {
         mapTileRepository.deleteByGameId(gameId);
+    }
+
+    public List<MapTileEntity> getGameMap(UUID gameId) {
+        return mapTileRepository.findByGameId(gameId);
     }
 }

@@ -20,4 +20,7 @@ public interface MapTileRepository extends JpaRepository<MapTileEntity, MapTileI
     @Query("DELETE FROM MapTileEntity m WHERE m.id.gameId = :gameId")
     void deleteByGameId(UUID gameId);
 
+    @Query("SELECT m FROM MapTileEntity m WHERE m.id.gameId = :gameId")
+    List<MapTileEntity> findByGameId(UUID gameId);
+
 }

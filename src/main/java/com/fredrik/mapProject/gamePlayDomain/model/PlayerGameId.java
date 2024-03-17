@@ -1,9 +1,13 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+@Embeddable
 public class PlayerGameId implements Serializable {
 
     private UUID gameId;

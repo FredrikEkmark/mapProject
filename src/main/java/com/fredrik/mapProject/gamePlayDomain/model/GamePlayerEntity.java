@@ -28,4 +28,28 @@ public class GamePlayerEntity {
 
     public GamePlayerEntity() {
     }
+
+    public PlayerGameId getPlayerGameId() {
+        return playerGameId;
+    }
+
+    public void setPlayerGameId(PlayerGameId playerGameId) {
+        this.playerGameId = playerGameId;
+    }
+
+    public MapCoordinates getStartCoordinates() {
+        return startCoordinates;
+    }
+
+    public void setStartCoordinates(MapCoordinates startCoordinates) {
+        this.startCoordinates = startCoordinates;
+    }
+
+    public Player getPlayerNr() {
+        return playerNr;
+    }
+
+    public void setPlayerNr(Player playerNr) {
+        this.playerNr = playerNr;
+    }
 }

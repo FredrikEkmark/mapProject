@@ -79,7 +79,7 @@ public class GameSetupController {
 
     @GetMapping("my-maps")
     @PreAuthorize("hasAuthority('GET')")
-    public String showMapsPage(GameSetupEntity gameSetup, Model model) {
+    public String showMapsPage( Model model) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
