@@ -32,8 +32,8 @@ public class TileInterpretation {
         tile.setTileOwner(Player.NONE);
         tile.setVisibility("00000000000000000000000000000000");
 
-        int x = mapTileId.getX();
-        int y = mapTileId.getY();
+        int x = mapTileId.getCoordinates().getX();
+        int y = mapTileId.getCoordinates().getY();
 
         double frequency1 = 1 / 36.0;
         double frequency2 = 1 / 120.0;

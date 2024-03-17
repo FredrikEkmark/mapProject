@@ -1,6 +1,8 @@
 package com.fredrik.mapProject.gameSetupDomain.model;
 
+import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,14 +12,14 @@ import java.util.UUID;
 public class MapTileId implements Serializable {
 
     private UUID gameId;
-    private int x;
-    private int y;
+
+    @Embedded
+    private MapCoordinates coordinates;
     public MapTileId() {
     }
     public MapTileId(UUID gameId, int x, int y) {
         this.gameId = gameId;
-        this.x = x;
-        this.y = y;
+        this.coordinates = new MapCoordinates(x, y);
     }
 
     // Getters and setters
@@ -29,20 +31,12 @@ public class MapTileId implements Serializable {
         this.gameId = gameId;
     }
 
-    public int getX() {
-        return x;
+    public MapCoordinates getCoordinates() {
+        return coordinates;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    public void setCoordinates(MapCoordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override
@@ -50,13 +44,11 @@ public class MapTileId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MapTileId mapTileId = (MapTileId) o;
-        return x == mapTileId.x &&
-                y == mapTileId.y &&
-                Objects.equals(gameId, mapTileId.gameId);
+        return Objects.equals(gameId, mapTileId.gameId) && Objects.equals(coordinates, mapTileId.coordinates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameId, x, y);
+        return Objects.hash(gameId, coordinates);
     }
 }
