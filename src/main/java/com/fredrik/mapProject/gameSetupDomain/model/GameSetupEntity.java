@@ -19,7 +19,7 @@ public class GameSetupEntity {
 
     @ManyToOne()
     @JoinColumn(name = "users_id")
-    private UserEntity user;
+    private UserEntity owner;
 
     @Enumerated(EnumType.STRING)
     private TurnLength turnLength;
@@ -27,8 +27,8 @@ public class GameSetupEntity {
     @Enumerated(EnumType.STRING)
     private MapSizes mapSize;
 
-    public GameSetupEntity(UserEntity user, TurnLength turnLength, MapSizes mapSize) {
-        this.user = user;
+    public GameSetupEntity(UserEntity owner, TurnLength turnLength, MapSizes mapSize) {
+        this.owner = owner;
         this.turnLength = turnLength;
         this.mapSize = mapSize;
     }
@@ -53,12 +53,12 @@ public class GameSetupEntity {
         this.seed = seed;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public UserEntity getOwner() {
+        return owner;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setOwner(UserEntity owner) {
+        this.owner = owner;
     }
 
     public TurnLength getTurnLength() {

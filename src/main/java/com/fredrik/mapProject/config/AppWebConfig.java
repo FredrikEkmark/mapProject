@@ -16,12 +16,23 @@ public class AppWebConfig implements WebMvcConfigurer {
         registry.addViewController("/new-map").setViewName("new-map");
         registry.addViewController("/my-maps").setViewName("my-maps");
         registry.addViewController("/admin-page").setViewName("admin-page");
+        registry.addViewController("/map/**").setViewName("map-page");
+
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry register) {
-        register.addResourceHandler("/resources/**", "/static/**")
-                .addResourceLocations("/resources/", "classpath:/static/");
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
+
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("classpath:/resources/");
+
+        registry.addResourceHandler("/style/**")
+                .addResourceLocations("classpath:/static/style/");
+
+        registry.addResourceHandler("/script/**")
+                .addResourceLocations("classpath:/static/script/");
     }
 
     @Override

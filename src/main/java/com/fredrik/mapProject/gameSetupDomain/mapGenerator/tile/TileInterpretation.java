@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile;
 
+import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameSetupDomain.mapGenerator.PerlinNoise.OpenSimplex;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
@@ -28,9 +29,11 @@ public class TileInterpretation {
 
         MapTileEntity tile = new MapTileEntity();
         tile.setMapTileId(mapTileId);
+        tile.setTileOwner(Player.NONE);
+        tile.setVisibility("00000000000000000000000000000000");
 
-        int x = mapTileId.getX();
-        int y = mapTileId.getY();
+        int y = mapTileId.getCoordinates().getY();
+        int x = mapTileId.getCoordinates().getX();
 
         double frequency1 = 1 / 36.0;
         double frequency2 = 1 / 120.0;
@@ -38,15 +41,15 @@ public class TileInterpretation {
         double frequency4 = 1 / 24.0;
         double frequency5 = 1 / 6.0;
 
-        double terrainNoiseValue = threeFrequencyNoise(x, y, frequency1, frequency2, frequency3);
-        terrainNoiseValue = waterPath( y, terrainNoiseValue);
+        double terrainNoiseValue = threeFrequencyNoise(y, x, frequency1, frequency2, frequency3);
+        terrainNoiseValue = waterPath( x, terrainNoiseValue);
 
-        double difNoiseValue = twoFrequencyNoise(x, y, frequency4, frequency5);
-        double precipitationNoiseValue = singleFrequencyNoise(x, y, frequency2) + (difNoiseValue * 0.05);
+        double difNoiseValue = twoFrequencyNoise(y, x, frequency4, frequency5);
+        double precipitationNoiseValue = singleFrequencyNoise(y, x, frequency2) + (difNoiseValue * 0.05);
 
-        int terrainValue = terrain(terrainNoiseValue, difNoiseValue , x, y);
+        int terrainValue = terrain(terrainNoiseValue, difNoiseValue , y, x);
 
-        int temperatureValue = temperature(y, (terrainNoiseValue + difNoiseValue - 0.8)/3);
+        int temperatureValue = temperature(x, (terrainNoiseValue + difNoiseValue - 0.8)/3);
         int precipitationValue = precipitation(precipitationNoiseValue, terrainValue, difNoiseValue, terrainNoiseValue);
 
         tile.setTileValue(terrainValue + temperatureValue + precipitationValue);
