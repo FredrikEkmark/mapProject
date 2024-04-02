@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,11 +44,14 @@ public class AppSecurityConfig {
                                 "/",
                                 "/login",
                                 "/logout",
+                                "/api/**",
+                                "/map/**", // toDo move to user roll
                                 "/register").permitAll()
                         .requestMatchers(
+
                                 "/new-map",
                                 "/my-maps",
-                                "/map/**",
+
                                 "/delete-map/**").hasRole(USER.name())
                         .requestMatchers(
                                 "admin-page",
@@ -82,6 +86,4 @@ public class AppSecurityConfig {
 
         return provider;
     }
-
-
 }

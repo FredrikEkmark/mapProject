@@ -8,40 +8,43 @@ import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.SecurityUtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@Controller
-public class PlayerViewController {
+@RestController
+public class PlayerViewRestController {
 
     private final SecurityUtilityService securityUtilityService;
     private final PlayerViewService playerViewService;
     private final GameSetupService gameSetupService;
 
     @Autowired
-    public PlayerViewController(SecurityUtilityService securityUtilityService, PlayerViewService playerViewService, GameSetupService gameSetupService) {
+    public PlayerViewRestController(SecurityUtilityService securityUtilityService, PlayerViewService playerViewService, GameSetupService gameSetupService) {
         this.securityUtilityService = securityUtilityService;
         this.playerViewService = playerViewService;
         this.gameSetupService = gameSetupService;
     }
 
-    @GetMapping("/map/{gameId}")
-    @PreAuthorize("hasAuthority('GET')")
-    public String setupNewGamePage(@PathVariable("gameId") UUID gameId, PlayerView playerView, Model model) throws JsonProcessingException {
+    @GetMapping("api/test/{gameId}")
+    public PlayerView testApi(@PathVariable("gameId") UUID gameId) throws JsonProcessingException {
 
-        UserEntity user = securityUtilityService.getCurrentUser();
+        UserEntity user = new UserEntity(); // toDO replace with = securityUtilityService.getCurrentUser();
+
+        String uuidString = "efa2f87e-4d48-482e-99eb-754495bcceda"; // toDo delete when auth is ok
+        UUID uuid = UUID.fromString(uuidString); // toDo delete when auth is ok
+        user.setUsername("Test user"); user.setId(uuid);// toDo delete when auth is ok
+
+        System.out.println(user.getId());
 
         GameSetupEntity gameSetup = gameSetupService.findById(gameId);
 
-        playerView = playerViewService.getPlayerView(gameSetup, user);
+        PlayerView playerView = playerViewService.getPlayerView(gameSetup, user);
 
-        model.addAttribute("playerView", playerView);
+        System.out.println(playerView);
 
-        return "map-page";
+        return playerView;
     }
 }

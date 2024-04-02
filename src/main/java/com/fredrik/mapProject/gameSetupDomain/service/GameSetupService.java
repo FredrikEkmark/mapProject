@@ -55,6 +55,7 @@ public class GameSetupService {
         if (gameSetupRepository.findById(gameSetup.getId()).isEmpty()) {
 
             mapTileService.deleteGameMap(gameSetup.getId());
+            gamePlayerService.deleteAllGamePlayerByGameId(gameSetup.getId());
 
         } else {
             System.out.printf("ERROR Game setup with id %s was not deleted properly", gameSetup.getId());

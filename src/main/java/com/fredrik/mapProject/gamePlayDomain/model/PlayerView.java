@@ -1,28 +1,25 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
-import com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile.TileInterpretation;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
-import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class PlayerView {
 
-    private UUID gameId;
+    final private UUID gameId;
 
-    private UUID playerId;
+    final private UUID playerId;
 
-    private String playerName;
-    private MapSizes mapSize;
+    final private String playerName;
+    final private MapSizes mapSize;
     private MapCoordinates startCoordinates;
-    private Player playerNr;
-    private MapTile[][] map;
+    final private Player playerNr;
+    private List<MapTile> map;
 
-
-    public PlayerView() {}
     public PlayerView(UUID gameId,
                       UUID playerId,
                       String playerName,
@@ -30,7 +27,7 @@ public class PlayerView {
                       List<MapTileEntity> tileList,
                       MapCoordinates startCoordinates,
                       Player playerNr
-    ) {
+    ) throws JsonProcessingException {
         this.gameId = gameId;
         this.playerId = playerId;
         this.playerName = playerName;
@@ -38,18 +35,19 @@ public class PlayerView {
         this.startCoordinates = startCoordinates;
         this.playerNr = playerNr;
         this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
-
     }
 
-    private MapTile[][] convertMapTileEntityListToMap(List<MapTileEntity> tileList, MapSizes mapSize, Player playerNr) {
+    private List<MapTile> convertMapTileEntityListToMap(List<MapTileEntity> tileList, MapSizes mapSize, Player playerNr) {
 
-            MapTile[][] map = new MapTile[mapSize.getY()][mapSize.getX()];
+        int initialCapacity = mapSize.getWidth() * mapSize.getHeight();
+        List<MapTile> map = new ArrayList<>(initialCapacity);
 
         for (MapTileEntity tile : tileList) {
             int y = tile.getMaptileId().getCoordinates().getY();
             int x = tile.getMaptileId().getCoordinates().getX();
 
-            map[y][x] = new MapTile(tile.getMaptileId().getCoordinates(), tile.getTileOwner(), tile.getTileValue(), tile.isVisible(playerNr.number()));
+            MapTile rePackagedTile = new MapTile(tile.getMaptileId().getCoordinates(), tile.getTileOwner(), tile.getTileValue(), tile.isVisible(playerNr.number()));
+            map.add(rePackagedTile);
         }
             return map;
 
@@ -59,33 +57,21 @@ public class PlayerView {
         return gameId;
     }
 
-    public void setGameId(UUID gameId) {
-        this.gameId = gameId;
-    }
 
     public UUID getPlayerId() {
         return playerId;
     }
 
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
-    }
 
     public String getPlayerName() {
         return playerName;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
 
     public MapSizes getMapSize() {
         return mapSize;
     }
 
-    public void setMapSize(MapSizes mapSize) {
-        this.mapSize = mapSize;
-    }
 
     public MapCoordinates getStartCoordinates() {
         return startCoordinates;
@@ -99,15 +85,12 @@ public class PlayerView {
         return playerNr;
     }
 
-    public void setPlayerNr(Player playerNr) {
-        this.playerNr = playerNr;
-    }
 
-    public MapTile[][] getMap() {
+    public List<MapTile> getMap() {
         return map;
     }
 
-    public void setMap(MapTile[][] map) {
-        this.map = map;
+    public void setMap(List<MapTileEntity> tileList) {
+        this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
     }
 }

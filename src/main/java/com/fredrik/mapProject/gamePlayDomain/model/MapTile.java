@@ -6,15 +6,13 @@ public class MapTile {
 
     private MapCoordinates coordinates;
     private Player tileOwner;
-
-    // toDo change tileStyleClass to string but have to change the MapTileEntity to so that it saves it as the class name from the beginning
-    private int tileStyleClass;
+    private int tileTerrainValue;
     private boolean visible;
 
-    public MapTile(MapCoordinates coordinates, Player tileOwner, int tileStyleClass, boolean visible) {
+    public MapTile(MapCoordinates coordinates, Player tileOwner, int tileTerrainValue, boolean visible) {
         this.coordinates = coordinates;
         this.tileOwner = tileOwner;
-        this.tileStyleClass = tileStyleClass;
+        this.tileTerrainValue = tileTerrainValue;
         this.visible = visible;
     }
 
@@ -34,12 +32,12 @@ public class MapTile {
         this.tileOwner = tileOwner;
     }
 
-    public int getTileStyleClass() {
-        return tileStyleClass;
+    public int getTileTerrainValue() {
+        return tileTerrainValue;
     }
 
-    public void setTileStyleClass(int tileStyleClass) {
-        this.tileStyleClass = tileStyleClass;
+    public void setTileTerrainValue(int tileTerrainValue) {
+        this.tileTerrainValue = tileTerrainValue;
     }
 
     public boolean isVisible() {

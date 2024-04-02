@@ -1,6 +1,7 @@
 package com.fredrik.mapProject.gamePlayDomain.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
@@ -14,6 +15,7 @@ import com.fredrik.mapProject.userDomain.model.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,7 +29,7 @@ public class PlayerViewService {
         this.gamePlayerService = gamePlayerService;
     }
 
-    public PlayerView getPlayerView(GameSetupEntity gameSetup, UserEntity user) {
+    public PlayerView getPlayerView(GameSetupEntity gameSetup, UserEntity user) throws JsonProcessingException {
 
         List<MapTileEntity> mapTileEntities = mapTileService.getGameMap(gameSetup.getId());
         PlayerGameId playerGameId = new PlayerGameId(gameSetup.getId(), user.getId());

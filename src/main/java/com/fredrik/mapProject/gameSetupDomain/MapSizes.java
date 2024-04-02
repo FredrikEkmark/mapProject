@@ -4,21 +4,22 @@ public enum MapSizes {
 
     SMALL(50, 25),
     MEDIUM(100, 50),
-    LARGE(150, 75);
+    LARGE(150, 75),
+    XLARGE(400, 200);
 
-    private final int x;
-    private final int y;
+    private final int width;
+    private final int height;
 
-    MapSizes(int x, int y) {
-        this.x = x;
-        this.y = y;
+    MapSizes(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
-    public int getX() {
-        return x;
+    public int getWidth() {
+        return width;
     }
 
-    public int getY() {
-        return y;
+    public int getHeight() {
+        return height;
     }
 }

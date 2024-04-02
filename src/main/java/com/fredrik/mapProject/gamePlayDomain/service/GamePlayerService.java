@@ -6,6 +6,8 @@ import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gamePlayDomain.repository.GamePlayerRepository;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
+import com.fredrik.mapProject.gameSetupDomain.service.MapTileService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +19,18 @@ public class GamePlayerService {
 
     private final GamePlayerRepository gamePlayerRepository;
 
+    private final MapTileService mapTileService;
+
     @Autowired
-    public GamePlayerService(GamePlayerRepository gamePlayerRepository) {
+    public GamePlayerService(GamePlayerRepository gamePlayerRepository, MapTileService mapTileService) {
         this.gamePlayerRepository = gamePlayerRepository;
+        this.mapTileService = mapTileService;
     }
 
     public void createNewGamePlayer(GameSetupEntity gameSetup, UUID player) {
 
-        MapCoordinates startCoordinate = new MapCoordinates(gameSetup.getMapSize().getX()/2, gameSetup.getMapSize().getY()/2);
-
         // ToDo write code to random out good starting locations
+        MapCoordinates startCoordinate = mapTileService.getPlayerStartPosition(Player.PLAYER_ONE);
 
         GamePlayerEntity playerEntity = new GamePlayerEntity(gameSetup.getId(), player, startCoordinate, Player.PLAYER_ONE);
 
@@ -37,5 +41,11 @@ public class GamePlayerService {
 
     public Optional<GamePlayerEntity> getGamePlayer(PlayerGameId playerGameId) {
         return gamePlayerRepository.findByPlayerGameIdGameIdAndPlayerGameIdUserId(playerGameId.getGameId(), playerGameId.getUserId());
+    }
+
+    @Transactional
+    public void deleteAllGamePlayerByGameId(UUID gameId) {
+        gamePlayerRepository.deleteAllByGameId(gameId);
+
     }
 }

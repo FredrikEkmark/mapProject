@@ -1,6 +1,7 @@
 package com.fredrik.mapProject.gameSetupDomain.service;
 
-import com.fredrik.mapProject.gamePlayDomain.model.MapTile;
+import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.mapGenerator.MapGenerator;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
@@ -10,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,9 +31,15 @@ public class MapTileService {
         MapTileEntity[][] map = MapGenerator.generateMap(
                 gameSetup.getId(),
                 gameSetup.getSeed(),
-                mapSize.getY(),
-                mapSize.getX()
+                mapSize.getHeight(),
+                mapSize.getWidth()
         );
+
+        List<MapCoordinates> startLocations = MapGenerator.generateStartLocations(map);
+
+        for (int i = 0; i < startLocations.size(); i++) {
+            map[startLocations.get(i).getY()][startLocations.get(i).getX()].setTileOwner(Player.values()[i+1]);
+        }
 
         List<MapTileEntity> flatList = new ArrayList<>();
         for (MapTileEntity[] row : map) {
@@ -52,5 +59,13 @@ public class MapTileService {
 
     public List<MapTileEntity> getGameMap(UUID gameId) {
         return mapTileRepository.findByGameId(gameId);
+    }
+
+    public MapCoordinates getPlayerStartPosition(Player player) {
+        Optional<MapTileEntity> startTile = mapTileRepository.findFirstByTileOwner(player);
+        if (startTile.isEmpty())
+            return null;
+
+        return startTile.get().getMaptileId().getCoordinates();
     }
 }
