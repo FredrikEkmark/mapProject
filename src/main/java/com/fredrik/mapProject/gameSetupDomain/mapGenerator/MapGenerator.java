@@ -42,7 +42,7 @@ public class MapGenerator
             for (int j = 10; j < map[0].length - 10; j++) {
                 MapTileEntity tile = map[i][j];
                 if (tile.getTileValue() > 299 && tile.getTileValue() < 499) {
-                    possibleStartLocations.add(tile.getMaptileId().getCoordinates());
+                    possibleStartLocations.add(tile.getMapTileId().getCoordinates());
                 }
             }
         }

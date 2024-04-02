@@ -6,11 +6,14 @@ import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gamePlayDomain.repository.GamePlayerRepository;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
+import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
 import com.fredrik.mapProject.gameSetupDomain.service.MapTileService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,12 +32,25 @@ public class GamePlayerService {
 
     public void createNewGamePlayer(GameSetupEntity gameSetup, UUID player) {
 
-        // ToDo write code to random out good starting locations
-        MapCoordinates startCoordinate = mapTileService.getPlayerStartPosition(Player.PLAYER_ONE);
+        MapCoordinates startCoordinate = mapTileService.getPlayerStartPosition(Player.PLAYER_ONE, gameSetup.getId());
 
         GamePlayerEntity playerEntity = new GamePlayerEntity(gameSetup.getId(), player, startCoordinate, Player.PLAYER_ONE);
 
-        // ToDo add owner change of the starting position tiles
+        List<MapTileId> mapTileIdList = new ArrayList<MapTileId>();
+
+        int[] xOffsets = {-1, -1, 0, 0, 0, 1, 1};
+        int[] yOffsets = {0, 1, -1, 1, 0, 0, 1};
+
+        if (startCoordinate.getX() % 2 == 0) {
+            yOffsets[1] = -1;
+            yOffsets[6] = -1;
+        }
+
+        for (int i = 0; i < xOffsets.length; i++) {
+            mapTileIdList.add(new MapTileId(gameSetup.getId(), startCoordinate.getX() + xOffsets[i], startCoordinate.getY() + yOffsets[i]));
+        }
+
+        mapTileService.updateTileVisibilityForPlayer(mapTileIdList, playerEntity.getPlayerNr());
 
         gamePlayerRepository.save(playerEntity);
     }

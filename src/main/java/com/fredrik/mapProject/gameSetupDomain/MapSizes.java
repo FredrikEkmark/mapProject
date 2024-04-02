@@ -3,9 +3,9 @@ package com.fredrik.mapProject.gameSetupDomain;
 public enum MapSizes {
 
     SMALL(50, 25),
-    MEDIUM(100, 50),
+    MEDIUM(100, 51),
     LARGE(150, 75),
-    XLARGE(400, 200);
+    XLARGE(400, 201);
 
     private final int width;
     private final int height;

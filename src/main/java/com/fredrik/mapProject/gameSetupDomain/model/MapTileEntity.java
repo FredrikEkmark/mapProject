@@ -1,6 +1,5 @@
 package com.fredrik.mapProject.gameSetupDomain.model;
 
-import com.fredrik.mapProject.config.Roles;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import jakarta.persistence.*;
 
@@ -24,7 +23,7 @@ public class MapTileEntity {
     public MapTileEntity() {
     }
 
-    public MapTileId getMaptileId() {
+    public MapTileId getMapTileId() {
         return mapTileId;
     }
 

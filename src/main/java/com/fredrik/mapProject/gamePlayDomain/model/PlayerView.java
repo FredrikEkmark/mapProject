@@ -43,10 +43,10 @@ public class PlayerView {
         List<MapTile> map = new ArrayList<>(initialCapacity);
 
         for (MapTileEntity tile : tileList) {
-            int y = tile.getMaptileId().getCoordinates().getY();
-            int x = tile.getMaptileId().getCoordinates().getX();
+            int y = tile.getMapTileId().getCoordinates().getY();
+            int x = tile.getMapTileId().getCoordinates().getX();
 
-            MapTile rePackagedTile = new MapTile(tile.getMaptileId().getCoordinates(), tile.getTileOwner(), tile.getTileValue(), tile.isVisible(playerNr.number()));
+            MapTile rePackagedTile = new MapTile(tile.getMapTileId().getCoordinates(), tile.getTileOwner(), tile.getTileValue(), tile.isVisible(playerNr.number()));
             map.add(rePackagedTile);
         }
             return map;

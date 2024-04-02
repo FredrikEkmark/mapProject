@@ -6,6 +6,7 @@ import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.mapGenerator.MapGenerator;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
+import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
 import com.fredrik.mapProject.gameSetupDomain.repository.MapTileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,11 +62,31 @@ public class MapTileService {
         return mapTileRepository.findByGameId(gameId);
     }
 
-    public MapCoordinates getPlayerStartPosition(Player player) {
-        Optional<MapTileEntity> startTile = mapTileRepository.findFirstByTileOwner(player);
+    public List<MapTileEntity> getPlayerGameMap(UUID gameId, Player player) {
+        List<MapTileEntity> fullMap = mapTileRepository.findByGameId(gameId);
+        List<MapTileEntity> playerMap = new ArrayList<MapTileEntity>();
+
+        for (MapTileEntity tile: fullMap) {
+            if (tile.isVisible(player.number()))
+            playerMap.add(tile);
+        }
+        return playerMap;
+    }
+
+    public MapCoordinates getPlayerStartPosition(Player player, UUID gameId) {
+        Optional<MapTileEntity> startTile = mapTileRepository.findFirstByTileOwnerAndGameId(player, gameId);
         if (startTile.isEmpty())
             return null;
 
-        return startTile.get().getMaptileId().getCoordinates();
+        return startTile.get().getMapTileId().getCoordinates();
+    }
+
+    public void updateTileVisibilityForPlayer(List<MapTileId> mapTileIds, Player player) {
+        List<MapTileEntity> mapTiles = mapTileRepository.findAllById(mapTileIds);
+        for (MapTileEntity tile: mapTiles) {
+            tile.setPlayerVisibility(true, player.number());
+        }
+        mapTileRepository.updateMapTileEntities(mapTiles);
+
     }
 }

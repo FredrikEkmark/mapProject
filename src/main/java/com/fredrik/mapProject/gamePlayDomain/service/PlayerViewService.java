@@ -31,12 +31,12 @@ public class PlayerViewService {
 
     public PlayerView getPlayerView(GameSetupEntity gameSetup, UserEntity user) throws JsonProcessingException {
 
-        List<MapTileEntity> mapTileEntities = mapTileService.getGameMap(gameSetup.getId());
         PlayerGameId playerGameId = new PlayerGameId(gameSetup.getId(), user.getId());
         GamePlayerEntity gamePlayer = gamePlayerService.getGamePlayer(playerGameId).get();
+        Player playerNr = gamePlayer.getPlayerNr();
+        List<MapTileEntity> mapTileEntities = mapTileService.getPlayerGameMap(gameSetup.getId(), playerNr);
 
         MapCoordinates startCoordinates = gamePlayer.getStartCoordinates();
-        Player playerNr = gamePlayer.getPlayerNr();
 
         PlayerView playerView = new PlayerView(
                 gameSetup.getId(),
