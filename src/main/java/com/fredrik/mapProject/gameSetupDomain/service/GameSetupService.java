@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gameSetupDomain.service;
 
+import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.repository.GameSetupRepository;

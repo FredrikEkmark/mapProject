@@ -2,17 +2,20 @@ package com.fredrik.mapProject.gameSetupDomain;
 
 public enum MapSizes {
 
-    SMALL(50, 25),
-    MEDIUM(100, 51),
-    LARGE(200, 101),
-    XLARGE(400, 201);
+    SMALL(50, 25, 4),
+    MEDIUM(100, 51, 6),
+    LARGE(200, 101, 8),
+    XLARGE(400, 201, 12);
 
     private final int width;
     private final int height;
 
-    MapSizes(int width, int height) {
+    private final int maxPlayers;
+
+    MapSizes(int width, int height, int maxPlayers) {
         this.width = width;
         this.height = height;
+        this.maxPlayers = maxPlayers;
     }
 
     public int getWidth() {
@@ -22,4 +25,6 @@ public enum MapSizes {
     public int getHeight() {
         return height;
     }
+
+    public int getMaxPlayers() {return maxPlayers;}
 }

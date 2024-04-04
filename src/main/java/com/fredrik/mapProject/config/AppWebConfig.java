@@ -16,8 +16,7 @@ public class AppWebConfig implements WebMvcConfigurer {
         registry.addViewController("/new-map").setViewName("new-map");
         registry.addViewController("/my-maps").setViewName("my-maps");
         registry.addViewController("/admin-page").setViewName("admin-page");
-        registry.addViewController("/map/**").setViewName("map-page");
-
+        registry.addViewController("/manage-map-players/**").setViewName("manage-map-players");
     }
 
     @Override

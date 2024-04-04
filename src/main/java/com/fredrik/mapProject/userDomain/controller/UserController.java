@@ -44,8 +44,7 @@ public class UserController {
     @PostMapping("/register")
     public String registerUser(
             UserEntity userEntity,
-            BindingResult result,
-            Roles roles
+            BindingResult result
     ) {
 
         if (result.hasErrors()) {

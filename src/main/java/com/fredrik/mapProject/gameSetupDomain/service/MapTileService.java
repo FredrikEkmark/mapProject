@@ -39,7 +39,7 @@ public class MapTileService {
         List<MapCoordinates> startLocations = MapGenerator.generateStartLocations(map);
 
         for (int i = 0; i < startLocations.size(); i++) {
-            map[startLocations.get(i).getY()][startLocations.get(i).getX()].setTileOwner(Player.values()[i+1]);
+            map[startLocations.get(i).getY()][startLocations.get(i).getX()].setTileOwner(Player.values()[i]);
         }
 
         List<MapTileEntity> flatList = new ArrayList<>();

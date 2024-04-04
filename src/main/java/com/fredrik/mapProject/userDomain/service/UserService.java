@@ -45,7 +45,7 @@ public class UserService {
 
     public void deleteUser(UserEntity userEntity) {userRepository.delete(userEntity);}
 
-    public UserEntity findByUsername(String username) {
+    public Optional<UserEntity> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 }

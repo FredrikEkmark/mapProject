@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Invite Players</title>
+</head>
+<body>
+<h1>Invite Players</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Player</th>
+        <th>Username</th>
+        <th>Kick</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="player, iterStat : ${gamePlayers}">
+        <td th:style="'background-color: ' + ${player.getPlayerNr().getColorHex()}" th:text="${player.getPlayerNr().number()}"></td>
+        <td th:text="${usernames[iterStat.index]}"></td>
+        <td>
+            <a th:href="@{/delete-game-player/{gameid}/{id}(id=${player.getPlayerGameId().getUserId()})}">Remove</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form method="post" th:action="@{/invite-player/{gameId}(gameId=${gameId})}">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" placeholder="Enter username...">
+    <button type="submit">Invite</button>
+</form>
+<a th:href="@{/}">Home</a>
+<a th:href="@{/logout}">Logout</a>
+</body>
+</html>

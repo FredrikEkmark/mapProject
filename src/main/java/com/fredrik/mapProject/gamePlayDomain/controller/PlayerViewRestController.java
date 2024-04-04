@@ -33,7 +33,7 @@ public class PlayerViewRestController {
 
         UserEntity user = new UserEntity(); // toDO replace with = securityUtilityService.getCurrentUser();
 
-        String uuidString = "efa2f87e-4d48-482e-99eb-754495bcceda"; // toDo delete when auth is ok
+        String uuidString = "0c14a6e3-d2a7-4656-a8af-92137a786b55"; // toDo delete when auth is ok
         UUID uuid = UUID.fromString(uuidString); // toDo delete when auth is ok
         user.setUsername("Test user"); user.setId(uuid);// toDo delete when auth is ok
 

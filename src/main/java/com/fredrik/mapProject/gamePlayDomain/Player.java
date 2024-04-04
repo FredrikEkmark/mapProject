@@ -2,7 +2,6 @@ package com.fredrik.mapProject.gamePlayDomain;
 
 public enum Player {
 
-    NONE(0, "white", "#ffffff" ),
     PLAYER_ONE(1, "red", "#ff0000"),
     PLAYER_TWO(2, "blue", "#0000ff"),
     PLAYER_THREE(3, "green", "#00ff00"),
@@ -14,7 +13,8 @@ public enum Player {
     PLAYER_NINE(9, "lime", "#00ff00"),
     PLAYER_TEN(10, "teal", "#008080"),
     PLAYER_ELEVEN(11, "pink", "#ffc0cb"),
-    PLAYER_TWELVE(12, "brown", "#a52a2a");
+    PLAYER_TWELVE(12, "brown", "#a52a2a"),
+    NONE(0, "white", "#ffffff" );
 
     private int number;
     private String color;

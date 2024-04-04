@@ -10,6 +10,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "game_setup")
 public class GameSetupEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -21,9 +22,11 @@ public class GameSetupEntity {
     @JoinColumn(name = "users_id")
     private UserEntity owner;
 
+    @Column(length = 24)
     @Enumerated(EnumType.STRING)
     private TurnLength turnLength;
 
+    @Column(length = 32)
     @Enumerated(EnumType.STRING)
     private MapSizes mapSize;
 
@@ -34,7 +37,6 @@ public class GameSetupEntity {
     }
 
     public GameSetupEntity() {
-
     }
 
     public void setId(UUID id) {

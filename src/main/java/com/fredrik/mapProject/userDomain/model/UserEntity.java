@@ -26,6 +26,7 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(length = 12)
     @Enumerated(EnumType.STRING)
     private Roles role;
 

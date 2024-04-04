@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gameSetupDomain.controller;
 
+import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.TurnLength;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
@@ -7,17 +8,15 @@ import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -27,11 +26,13 @@ public class GameSetupController {
 
     private final GameSetupService gameSetupService;
     private final UserService userService;
+    private final GamePlayerService gamePlayerService;
 
     @Autowired
-    public GameSetupController(GameSetupService gameSetupService, UserService userService) {
+    public GameSetupController(GameSetupService gameSetupService, UserService userService, GamePlayerService gamePlayerSerive) {
         this.gameSetupService = gameSetupService;
         this.userService = userService;
+        this.gamePlayerService = gamePlayerSerive;
     }
 
     @GetMapping("/new-map")
@@ -65,7 +66,7 @@ public class GameSetupController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
-        UserEntity currentUser = userService.findByUsername(username);
+        UserEntity currentUser = userService.findByUsername(username).get();
 
         gameSetup.setOwner(currentUser);
         gameSetup.setSeed(seed);
@@ -83,9 +84,14 @@ public class GameSetupController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        UserEntity currentUser = userService.findByUsername(username);
+        UserEntity currentUser = userService.findByUsername(username).get();
         List<GameSetupEntity> userMaps = currentUser.getGameSetups();
+        List<Integer> currentPlayersAmountList = new ArrayList<>(12);
+        for (GameSetupEntity map: userMaps) {
+            currentPlayersAmountList.add(gamePlayerService.getAllGamePlayersByGame(map.getId()).size());
+        }
 
+        model.addAttribute("currentPlayers", currentPlayersAmountList);
         model.addAttribute("userMaps", userMaps);
 
         return "my-maps";

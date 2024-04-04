@@ -13,15 +13,21 @@
         <th>Id</th>
         <th>Seed</th>
         <th>Map Size</th>
+        <th>Players</th>
+        <th>Invite Player</th>
         <th>Turn Length</th>
-        <th>Action</th>
+        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="map : ${userMaps}">
+    <tr th:each="map, iterStat : ${userMaps}">
         <td><a th:href="@{http://localhost:3000/map/{id}(id=${map.id})}" th:text="${map.id}"></a></td>
         <td th:text="${map.seed}"></td>
         <td th:text="${map.mapSize}"></td>
+        <td th:text="${currentPlayers[iterStat.index] + '/' + map.mapSize.getMaxPlayers()}"></td>
+        <td>
+            <a th:href="@{/manage-map-players/{id}(id=${map.id})}">Manage Players</a>
+        </td>
         <td th:text="${map.turnLength}"></td>
         <td>
             <a th:href="@{/delete-map/{id}(id=${map.id})}">Delete Map</a>

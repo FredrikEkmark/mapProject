@@ -12,10 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class GamePlayerService {
@@ -30,11 +27,27 @@ public class GamePlayerService {
         this.mapTileService = mapTileService;
     }
 
-    public void createNewGamePlayer(GameSetupEntity gameSetup, UUID player) {
+    public String createNewGamePlayer(GameSetupEntity gameSetup, UUID playerId) {
 
-        MapCoordinates startCoordinate = mapTileService.getPlayerStartPosition(Player.PLAYER_ONE, gameSetup.getId());
+        List<Player> allPlayerNumbers = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(Player.values(), 0, gameSetup.getMapSize().getMaxPlayers())));
 
-        GamePlayerEntity playerEntity = new GamePlayerEntity(gameSetup.getId(), player, startCoordinate, Player.PLAYER_ONE);
+        List<GamePlayerEntity> gamePlayers = getAllGamePlayersByGame(gameSetup.getId());
+
+        if (gamePlayers.size() >= gameSetup.getMapSize().getMaxPlayers()) {
+            return "To many players";
+        }
+
+        for (GamePlayerEntity gamePlayer: gamePlayers) {
+            allPlayerNumbers.remove(gamePlayer.getPlayerNr());
+        }
+
+        Player player = allPlayerNumbers.get(0);
+        System.out.println(player.getColorHex() + player.name());
+        System.out.println(mapTileService.getPlayerStartPosition(player, gameSetup.getId()));
+
+        MapCoordinates startCoordinate = mapTileService.getPlayerStartPosition(player, gameSetup.getId());
+
+        GamePlayerEntity playerEntity = new GamePlayerEntity(gameSetup.getId(), playerId, startCoordinate, player);
 
         List<MapTileId> mapTileIdList = new ArrayList<MapTileId>();
 
@@ -53,10 +66,16 @@ public class GamePlayerService {
         mapTileService.updateTileVisibilityForPlayer(mapTileIdList, playerEntity.getPlayerNr());
 
         gamePlayerRepository.save(playerEntity);
+
+        return "new Player added";
     }
 
     public Optional<GamePlayerEntity> getGamePlayer(PlayerGameId playerGameId) {
         return gamePlayerRepository.findByPlayerGameIdGameIdAndPlayerGameIdUserId(playerGameId.getGameId(), playerGameId.getUserId());
+    }
+
+    public List<GamePlayerEntity> getAllGamePlayersByGame(UUID gameId) {
+        return gamePlayerRepository.findAllByPlayerGameIdGameId(gameId);
     }
 
     @Transactional

@@ -15,8 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import java.util.concurrent.TimeUnit;
 
-import static com.fredrik.mapProject.config.Roles.ADMIN;
-import static com.fredrik.mapProject.config.Roles.USER;
+import static com.fredrik.mapProject.config.Roles.*;
 
 @Configuration
 @EnableWebSecurity
@@ -44,19 +43,18 @@ public class AppSecurityConfig {
                                 "/",
                                 "/login",
                                 "/logout",
-                                "/api/**",
-                                "/map/**", // toDo move to user roll
+                                "/api/**", // toDo Figure out token
                                 "/register").permitAll()
                         .requestMatchers(
-
+                                "/my-maps").hasAnyRole(USER.name(), HOST.name()) // Allow USER and HOST roles
+                        .requestMatchers(
                                 "/new-map",
-                                "/my-maps",
-
-                                "/delete-map/**").hasRole(USER.name())
+                                "/manage-map-players/**",
+                                "/delete-map/**").hasRole(HOST.name()) // Only HOST role
                         .requestMatchers(
                                 "admin-page",
                                 "edit-user"
-                                ).hasRole(ADMIN.name())
+                                ).hasRole(ADMIN.name()) // Only ADMIN role
                         .anyRequest().authenticated())
 
                 .formLogin(formLogin -> formLogin.loginPage("/login"))   // Override /login
