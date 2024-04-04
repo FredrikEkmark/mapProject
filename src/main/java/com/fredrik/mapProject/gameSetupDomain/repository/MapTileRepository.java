@@ -28,6 +28,9 @@ public interface MapTileRepository extends JpaRepository<MapTileEntity, MapTileI
     @Query("SELECT m FROM MapTileEntity m WHERE m.id.gameId = :gameId")
     List<MapTileEntity> findByGameId(UUID gameId);
 
+    @Query("SELECT m FROM MapTileEntity m WHERE m.mapTileId.gameId = :gameId AND SUBSTRING(m.visibility, :playerNumber, 1) = '1'")
+    List<MapTileEntity> findByGameIdAndPlayerVisibility(@Param("gameId") UUID gameId, @Param("playerNumber") int playerNumber);
+
     @Query("SELECT m FROM MapTileEntity m WHERE m.id.gameId = :gameId AND m.tileOwner = :player")
     Optional<MapTileEntity> findFirstByTileOwnerAndGameId(Player player, UUID gameId);
 

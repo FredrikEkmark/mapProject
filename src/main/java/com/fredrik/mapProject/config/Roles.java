@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public enum Roles {
 
     ADMIN("GET_POST"),
+    HOST("GET_POST"),
     USER("GET_POST");
 
     private final String permissions;

@@ -63,14 +63,14 @@ public class MapTileService {
     }
 
     public List<MapTileEntity> getPlayerGameMap(UUID gameId, Player player) {
-        List<MapTileEntity> fullMap = mapTileRepository.findByGameId(gameId);
+        List<MapTileEntity> fullMap = mapTileRepository.findByGameIdAndPlayerVisibility(gameId, player.number());
         List<MapTileEntity> playerMap = new ArrayList<MapTileEntity>();
 
         for (MapTileEntity tile: fullMap) {
             if (tile.isVisible(player.number()))
             playerMap.add(tile);
         }
-        return playerMap;
+        return fullMap;
     }
 
     public MapCoordinates getPlayerStartPosition(Player player, UUID gameId) {

@@ -17,11 +17,6 @@
         <label for="password">password</label>
         <input type="password" th:field="*{password}" placeholder="password..." id="password">
 
-        <label for="roles">Select Role:</label>
-        <select id="roles" name="roles" th:field="*{role}">
-            <option th:each="role : ${roles}" th:value="${role.name()}" th:text="${role.name()}"></option>
-        </select>
-
         <button type="submit"> Register </button>
 
         <!-- IMPORTANT : Must be inside FORM -->

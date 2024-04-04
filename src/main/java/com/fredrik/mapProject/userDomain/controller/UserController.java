@@ -56,6 +56,8 @@ public class UserController {
                 appPasswordConfig.bCryptPasswordEncoder().encode(userEntity.getPassword())
         );
 
+        userEntity.setRole(Roles.USER);
+
         userService.createNewUser(userEntity);
 
         return "redirect:/login";

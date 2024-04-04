@@ -37,13 +37,9 @@ public class PlayerViewRestController {
         UUID uuid = UUID.fromString(uuidString); // toDo delete when auth is ok
         user.setUsername("Test user"); user.setId(uuid);// toDo delete when auth is ok
 
-        System.out.println(user.getId());
-
         GameSetupEntity gameSetup = gameSetupService.findById(gameId);
 
         PlayerView playerView = playerViewService.getPlayerView(gameSetup, user);
-
-        System.out.println(playerView);
 
         return playerView;
     }
