@@ -1,41 +1,66 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>My Maps</title>
-</head>
-<body>
-<h1>My Maps</h1>
-<a th:href="@{/new-map}">Create new Map</a>
-<table>
-    <thead>
-    <tr>
-        <th>Id</th>
-        <th>Seed</th>
-        <th>Map Size</th>
-        <th>Players</th>
-        <th>Invite Player</th>
-        <th>Turn Length</th>
-        <th>Delete</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="map, iterStat : ${userMaps}">
-        <td><a th:href="@{http://localhost:3000/map/{id}(id=${map.id})}" th:text="${map.id}"></a></td>
-        <td th:text="${map.seed}"></td>
-        <td th:text="${map.mapSize}"></td>
-        <td th:text="${currentPlayers[iterStat.index] + '/' + map.mapSize.getMaxPlayers()}"></td>
-        <td>
-            <a th:href="@{/manage-map-players/{id}(id=${map.id})}">Manage Players</a>
-        </td>
-        <td th:text="${map.turnLength}"></td>
-        <td>
-            <a th:href="@{/delete-map/{id}(id=${map.id})}">Delete Map</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<a th:href="@{/}">Home</a>
-<a th:href="@{/logout}">Logout</a>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>My Maps</title>
+    </head>
+    <body>
+        <h1>My Maps</h1>
+
+        <div th:if="${not #lists.isEmpty(userMaps)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Map</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="map : ${userMaps}">
+                        <td>
+                            <a th:href="@{http://localhost:3000/map/{gameId}(gameId=${map.playerGameId.gameId})}" th:text="${map.playerGameId.gameId}"></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(hostedMaps)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Seed</th>
+                        <th>Map Size</th>
+                        <th>Players</th>
+                        <th>Invite Player</th>
+                        <th>Turn Change</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="map : ${hostedMaps}">
+                        <td>
+                            <a th:href="@{http://localhost:3000/map/{id}(id=${map.id})}" th:text="${map.id}"></a>
+                        </td>
+                        <td th:text="${map.seed}"></td>
+                        <td th:text="${map.mapSize}"></td>
+                        <td th:text="${map.getPlayerCount() + '/' + map.mapSize.getMaxPlayers()}"></td>
+                        <td>
+                            <a th:href="@{/manage-map-players/{id}(id=${map.id})}">Manage Players</a>
+                        </td>
+                        <td th:text="${map.turnChange}"></td>
+                        <td>
+                            <a th:href="@{/delete-map/{id}(id=${map.id})}">Delete Map</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${userRole == 'HOST'}">
+            <a th:href="@{/new-map}">Create new Map</a>
+        </div>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/logout}">Logout</a>
+    </body>
 </html>

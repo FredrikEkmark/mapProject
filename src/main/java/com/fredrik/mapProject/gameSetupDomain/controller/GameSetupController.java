@@ -1,10 +1,11 @@
 package com.fredrik.mapProject.gameSetupDomain.controller;
 
+import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
-import com.fredrik.mapProject.gameSetupDomain.TurnLength;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
+import com.fredrik.mapProject.globalModels.Hours;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -41,8 +41,10 @@ public class GameSetupController {
 
         int randomSeed = new Random().nextInt(1, 100000);
 
+        Hours[] hours = Hours.values();
+
+        model.addAttribute("hours", hours);
         model.addAttribute("newMap", gameSetup);
-        model.addAttribute("turnLengths", TurnLength.values());
         model.addAttribute("mapSizes", MapSizes.values());
         model.addAttribute("randomSeed", randomSeed);
 
@@ -55,7 +57,7 @@ public class GameSetupController {
             GameSetupEntity gameSetup,   // Enables Error Messages
             BindingResult result, // Ties the object with result
             MapSizes mapSize,
-            TurnLength turnLength,
+            String turnChange,
             int seed
     ) {
 
@@ -71,7 +73,7 @@ public class GameSetupController {
         gameSetup.setOwner(currentUser);
         gameSetup.setSeed(seed);
         gameSetup.setMapSize(mapSize);
-        gameSetup.setTurnLength(turnLength);
+        gameSetup.setTurnChangeFromInputString(turnChange);
 
         gameSetupService.createNewGameSetup(gameSetup);
 
@@ -85,14 +87,12 @@ public class GameSetupController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         UserEntity currentUser = userService.findByUsername(username).get();
-        List<GameSetupEntity> userMaps = currentUser.getGameSetups();
-        List<Integer> currentPlayersAmountList = new ArrayList<>(12);
-        for (GameSetupEntity map: userMaps) {
-            currentPlayersAmountList.add(gamePlayerService.getAllGamePlayersByGame(map.getId()).size());
-        }
+        List<GameSetupEntity> hostedMaps = currentUser.getGameSetups();
+        List<GamePlayerEntity> gamePlayers = gamePlayerService.getAllGamePlayersByPlayer(currentUser.getId());
 
-        model.addAttribute("currentPlayers", currentPlayersAmountList);
-        model.addAttribute("userMaps", userMaps);
+        model.addAttribute("userMaps", gamePlayers);
+        model.addAttribute("userRole", currentUser.getRole().name());
+        model.addAttribute("hostedMaps", hostedMaps);
 
         return "my-maps";
     }

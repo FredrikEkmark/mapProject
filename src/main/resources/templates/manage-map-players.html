@@ -16,9 +16,9 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="player, iterStat : ${gamePlayers}">
+    <tr th:each="player : ${gamePlayers}">
         <td th:style="'background-color: ' + ${player.getPlayerNr().getColorHex()}" th:text="${player.getPlayerNr().number()}"></td>
-        <td th:text="${usernames[iterStat.index]}"></td>
+        <td th:text="${player.getUsername()}"></td>
         <td>
             <a th:href="@{/delete-game-player/{gameid}/{id}(id=${player.getPlayerGameId().getUserId()})}">Remove</a>
         </td>
@@ -30,6 +30,7 @@
     <input type="text" id="username" name="username" placeholder="Enter username...">
     <button type="submit">Invite</button>
 </form>
+<a th:href="@{/my-maps}">Back</a>
 <a th:href="@{/}">Home</a>
 <a th:href="@{/logout}">Logout</a>
 </body>

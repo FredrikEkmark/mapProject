@@ -19,10 +19,14 @@
             <option th:each="mapSize : ${mapSizes}" th:value="${mapSize.name()}" th:text="${mapSize.name()}"></option>
         </select>
 
-        <label for="turnLength">Turn Length</label>
-        <select id="turnLength" name="turnLength" th:field="*{turnLength}">
-            <option th:each="turnLength : ${turnLengths}" th:value="${turnLength.name()}" th:text="${turnLength.name()}"></option>
-        </select>
+        <div id="turnChange">
+            <ul>
+                <li th:each="hour, iterStat : ${hours}">
+                    <input type="checkbox" th:field="*{turnChange}" th:value="${hour}" th:id="'hour_' + ${iterStat.index}" />
+                    <label th:for="${'hour_' + hour}" th:text="${hour.getValue()}"></label>
+                </li>
+            </ul>
+        </div>
 
         <button type="submit"> Create Map </button>
 

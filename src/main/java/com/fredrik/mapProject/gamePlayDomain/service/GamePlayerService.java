@@ -78,6 +78,10 @@ public class GamePlayerService {
         return gamePlayerRepository.findAllByPlayerGameIdGameId(gameId);
     }
 
+    public List<GamePlayerEntity> getAllGamePlayersByPlayer(UUID userId) {
+        return gamePlayerRepository.findAllByPlayerGameIdUserId(userId);
+    }
+
     @Transactional
     public void deleteAllGamePlayerByGameId(UUID gameId) {
         gamePlayerRepository.deleteAllByGameId(gameId);

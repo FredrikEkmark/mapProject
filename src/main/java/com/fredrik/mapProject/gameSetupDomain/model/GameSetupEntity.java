@@ -1,10 +1,12 @@
 package com.fredrik.mapProject.gameSetupDomain.model;
 
+import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
-import com.fredrik.mapProject.gameSetupDomain.TurnLength;
+import com.fredrik.mapProject.globalModels.Hours;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,16 +25,18 @@ public class GameSetupEntity {
     private UserEntity owner;
 
     @Column(length = 24)
-    @Enumerated(EnumType.STRING)
-    private TurnLength turnLength;
+    private String turnChange;
 
     @Column(length = 32)
     @Enumerated(EnumType.STRING)
     private MapSizes mapSize;
 
-    public GameSetupEntity(UserEntity owner, TurnLength turnLength, MapSizes mapSize) {
+    @OneToMany(mappedBy = "playerGameId.gameId", cascade = CascadeType.ALL)
+    private List<GamePlayerEntity> gamePlayers;
+
+    public GameSetupEntity(UserEntity owner, String turnChange, MapSizes mapSize) {
         this.owner = owner;
-        this.turnLength = turnLength;
+        this.turnChange = turnChange;
         this.mapSize = mapSize;
     }
 
@@ -63,12 +67,30 @@ public class GameSetupEntity {
         this.owner = owner;
     }
 
-    public TurnLength getTurnLength() {
-        return turnLength;
+    public String getTurnChange() {
+        return turnChange;
     }
 
-    public void setTurnLength(TurnLength turnLength) {
-        this.turnLength = turnLength;
+    public void setTurnChange(String turnChange) {
+        this.turnChange = turnChange;
+    }
+    public void setTurnChangeFromInputString(String turnChangeInput) {
+
+        StringBuilder builder = new StringBuilder("000000000000000000000000"); // Initialize with 24 zeroes
+        if (turnChangeInput == null) {this.turnChange = builder.toString(); return;}
+
+        String[] hoursStringArray = turnChangeInput.split(",");
+        Hours[] hoursEnumArray = new Hours[hoursStringArray.length];
+
+        for (int i = 0; i < hoursStringArray.length; i++) {
+            hoursEnumArray[i] = Hours.valueOf(hoursStringArray[i]);
+        }
+
+        for (Hours hour : hoursEnumArray) {// Get the index of the hour
+            builder.setCharAt(hour.getTurnChangeIndex(), '1'); // Set the corresponding character to '1'
+        }
+
+        this.turnChange = builder.toString();
     }
 
     public MapSizes getMapSize() {
@@ -77,5 +99,17 @@ public class GameSetupEntity {
 
     public void setMapSize(MapSizes mapSize) {
         this.mapSize = mapSize;
+    }
+
+    public List<GamePlayerEntity> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(List<GamePlayerEntity> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    public int getPlayerCount() {
+        return gamePlayers != null ? gamePlayers.size() : 0;
     }
 }

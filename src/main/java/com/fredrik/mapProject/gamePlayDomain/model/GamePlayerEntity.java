@@ -1,6 +1,7 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -18,6 +19,9 @@ public class GamePlayerEntity {
 
     @Enumerated(EnumType.STRING)
     private Player playerNr;
+
+    @Transient
+    private String username; // Transient field to hold username temporarily
 
     public GamePlayerEntity(UUID gameId, UUID playerId, MapCoordinates startCoordinates, Player playerNr) {
         this.playerGameId = new PlayerGameId(gameId, playerId);
@@ -51,5 +55,13 @@ public class GamePlayerEntity {
 
     public void setPlayerNr(Player playerNr) {
         this.playerNr = playerNr;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

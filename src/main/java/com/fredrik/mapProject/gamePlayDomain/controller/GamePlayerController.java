@@ -44,17 +44,11 @@ public class GamePlayerController {
     public String manageMapPlayers(@PathVariable("gameId") UUID gameId, Model model) {
         List<GamePlayerEntity> gamePlayers = gamePlayerService.getAllGamePlayersByGame(gameId);
 
-        List<String> usernames = new ArrayList<>();
         for (GamePlayerEntity gamePlayer : gamePlayers) {
             Optional<UserEntity> userEntity = userService.findById(gamePlayer.getPlayerGameId().getUserId());
-            if (userEntity.isPresent()) {
-                usernames.add(userEntity.get().getUsername());
-            } else {
-                usernames.add("Unknown"); // Or any other default value
-            }
+            userEntity.ifPresent(entity -> gamePlayer.setUsername(entity.getUsername()));
         }
         model.addAttribute("gameId", gameId);
-        model.addAttribute("usernames", usernames);
         model.addAttribute("gamePlayers", gamePlayers);
         return "manage-map-players";
     }

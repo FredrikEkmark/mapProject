@@ -20,7 +20,12 @@ public interface GamePlayerRepository extends JpaRepository<GamePlayerEntity, Pl
 
     List<GamePlayerEntity> findAllByPlayerGameIdGameId(UUID gameId);
 
+    List<GamePlayerEntity> findAllByPlayerGameIdUserId(UUID gameId);
+
     @Modifying
     @Query(value = "DELETE FROM game_player WHERE game_id = :gameId", nativeQuery = true)
     void deleteAllByGameId(@Param("gameId") UUID gameId);
+
+    @Query("SELECT u.username FROM UserEntity u WHERE u.id = :userId")
+    Optional<String> findUsernameByUserId(@Param("userId") UUID userId);
 }
