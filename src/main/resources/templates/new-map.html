@@ -28,6 +28,8 @@
             </ul>
         </div>
 
+        <input type="hidden" id="timeZone" name="timeZone" />
+
         <button type="submit"> Create Map </button>
 
         <!-- Show ANY error in the form -->
@@ -47,5 +49,24 @@
 </body>
 <script>
     document.getElementById('seed').value=Math.floor(Math.random() * 99999);
+
+    function getClientTimeZone() {
+        // Get the time zone offset in minutes
+        const offsetMinutes = new Date().getTimezoneOffset();
+
+        // Convert the offset to hours
+        const offsetHours = Math.abs(offsetMinutes / 60);
+
+        // Determine the sign of the offset
+        const sign = offsetMinutes < 0 ? '+' : '-';
+
+        // Format the time zone string (e.g., "+02:00")
+        const timeZone = sign + ('0' + offsetHours).slice(-2) + ':00';
+
+        return timeZone;
+    }
+
+    // Set the client's time zone in the hidden input field
+    document.getElementById('timeZone').value = getClientTimeZone();
 </script>
 </html>

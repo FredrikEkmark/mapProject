@@ -42,8 +42,6 @@ public class GamePlayerService {
         }
 
         Player player = allPlayerNumbers.get(0);
-        System.out.println(player.getColorHex() + player.name());
-        System.out.println(mapTileService.getPlayerStartPosition(player, gameSetup.getId()));
 
         MapCoordinates startCoordinate = mapTileService.getPlayerStartPosition(player, gameSetup.getId());
 

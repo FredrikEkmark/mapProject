@@ -5,7 +5,11 @@ import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.globalModels.Hours;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import jakarta.persistence.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,12 +28,18 @@ public class GameSetupEntity {
     @JoinColumn(name = "users_id")
     private UserEntity owner;
 
-    @Column(length = 24)
+    @Column(nullable = false, length = 24)
     private String turnChange;
 
-    @Column(length = 32)
+    @Column(nullable = false)
+    private int turn;
+
+    @Column(nullable = false, length = 32)
     @Enumerated(EnumType.STRING)
     private MapSizes mapSize;
+
+    @Column(nullable = false)
+    private boolean isUpdating;
 
     @OneToMany(mappedBy = "playerGameId.gameId", cascade = CascadeType.ALL)
     private List<GamePlayerEntity> gamePlayers;
@@ -74,7 +84,12 @@ public class GameSetupEntity {
     public void setTurnChange(String turnChange) {
         this.turnChange = turnChange;
     }
-    public void setTurnChangeFromInputString(String turnChangeInput) {
+    public void setTurnChangeFromInputString(String turnChangeInput, String timeZone) {
+        // figures out the offsetHours from GMT so that it's saved as GMT
+        ZoneId zoneId = ZoneId.of(timeZone);
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(zoneId);
+        ZoneOffset offset = zonedDateTime.getOffset();
+        int offsetHours = offset.getTotalSeconds() / 3600;
 
         StringBuilder builder = new StringBuilder("000000000000000000000000"); // Initialize with 24 zeroes
         if (turnChangeInput == null) {this.turnChange = builder.toString(); return;}
@@ -87,7 +102,7 @@ public class GameSetupEntity {
         }
 
         for (Hours hour : hoursEnumArray) {// Get the index of the hour
-            builder.setCharAt(hour.getTurnChangeIndex(), '1'); // Set the corresponding character to '1'
+            builder.setCharAt(hour.getTurnChangeIndex(offsetHours), '1'); // Set the corresponding character to '1'
         }
 
         this.turnChange = builder.toString();
@@ -111,5 +126,21 @@ public class GameSetupEntity {
 
     public int getPlayerCount() {
         return gamePlayers != null ? gamePlayers.size() : 0;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public boolean isUpdating() {
+        return isUpdating;
+    }
+
+    public void setUpdating(boolean updating) {
+        isUpdating = updating;
     }
 }

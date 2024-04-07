@@ -7,6 +7,7 @@ import com.fredrik.mapProject.gameSetupDomain.repository.GameSetupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,5 +62,17 @@ public class GameSetupService {
         } else {
             System.out.printf("ERROR Game setup with id %s was not deleted properly", gameSetup.getId());
         }
+    }
+
+    public List<GameSetupEntity> findAllByTurnChange(int hour, int min) {
+        return gameSetupRepository.findAllByTurnChange(hour);
+    }
+
+    public void updateGameSetup(GameSetupEntity gameSetup) {
+        gameSetupRepository.save(gameSetup);
+    }
+
+    public void updateAllGameSetups(List<GameSetupEntity> gameSetups) {
+        gameSetupRepository.saveAll(gameSetups);
     }
 }

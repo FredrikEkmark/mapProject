@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -58,6 +59,7 @@ public class GameSetupController {
             BindingResult result, // Ties the object with result
             MapSizes mapSize,
             String turnChange,
+            String timeZone,
             int seed
     ) {
 
@@ -73,7 +75,9 @@ public class GameSetupController {
         gameSetup.setOwner(currentUser);
         gameSetup.setSeed(seed);
         gameSetup.setMapSize(mapSize);
-        gameSetup.setTurnChangeFromInputString(turnChange);
+        gameSetup.setTurnChangeFromInputString(turnChange, timeZone);
+        gameSetup.setTurn(0);
+        gameSetup.setUpdating(false);
 
         gameSetupService.createNewGameSetup(gameSetup);
 

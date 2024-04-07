@@ -44,7 +44,14 @@ public enum Hours {
         return formattedValue;
     }
 
-    public int getTurnChangeIndex() {
-        return turnChangeIndex;
+    public int getTurnChangeIndex(int timeZoneOffset) {
+        int value = turnChangeIndex - timeZoneOffset;
+
+        if (value > 23)
+            value -= 24;
+        else if (value < 0)
+            value += 24;
+
+        return value;
     }
 }

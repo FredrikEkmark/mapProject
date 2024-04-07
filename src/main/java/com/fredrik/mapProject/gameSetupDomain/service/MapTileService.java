@@ -89,4 +89,8 @@ public class MapTileService {
         mapTileRepository.updateMapTileEntities(mapTiles);
 
     }
+
+    public void updateGameMap(List<MapTileEntity> gameMap) {
+        // ToDO add logic here
+    }
 }

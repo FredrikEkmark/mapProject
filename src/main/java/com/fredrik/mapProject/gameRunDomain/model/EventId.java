@@ -1,4 +1,4 @@
-package com.fredrik.mapProject.gamePlayDomain.model;
+package com.fredrik.mapProject.gameRunDomain.model;
 
 import jakarta.persistence.Embeddable;
 
@@ -7,17 +7,18 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Embeddable
-public class PlayerGameId implements Serializable {
+public class EventId implements Serializable {
 
     private UUID gameId;
-    private UUID userId;
 
-    public PlayerGameId() {
+    private UUID eventId;
+
+    public EventId() {
     }
 
-    public PlayerGameId(UUID gameId, UUID userId) {
+    public EventId(UUID gameId, UUID eventId) {
         this.gameId = gameId;
-        this.userId = userId;
+        this.eventId = eventId;
     }
 
     public UUID getGameId() {
@@ -28,24 +29,24 @@ public class PlayerGameId implements Serializable {
         this.gameId = gameId;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getEventId() {
+        return eventId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setEventId(UUID eventId) {
+        this.eventId = eventId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PlayerGameId that = (PlayerGameId) o;
-        return Objects.equals(gameId, that.gameId) && Objects.equals(userId, that.userId);
+        EventId eventId1 = (EventId) o;
+        return Objects.equals(gameId, eventId1.gameId) && Objects.equals(eventId, eventId1.eventId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameId, userId);
+        return Objects.hash(gameId, eventId);
     }
 }
