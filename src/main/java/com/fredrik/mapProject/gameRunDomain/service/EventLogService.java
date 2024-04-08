@@ -2,6 +2,7 @@ package com.fredrik.mapProject.gameRunDomain.service;
 
 import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
 import com.fredrik.mapProject.gameRunDomain.repository.EventLogRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class EventLogService {
     
     private final EventLogRepository eventLogRepository;
 
+    @Autowired
     public EventLogService(EventLogRepository eventLogRepository) {
         this.eventLogRepository = eventLogRepository;
     }
@@ -25,10 +27,13 @@ public class EventLogService {
         for (EventLogEntity event: eventLogList) {
             if (event.getEventId().getGameId() != gameId) {
                 eventLogList.remove(event);
-                System.out.println("Event " + event.getEventId().getGameId() + " was removed");
+                System.out.println("Event " + event.getEventId() + " was removed");
             }
         }
         eventLogRepository.saveAll(eventLogList);
+    }
 
+    public void deleteAllByGameId(UUID gameId) {
+        eventLogRepository.deleteAllByEventIdGameId(gameId);
     }
 }

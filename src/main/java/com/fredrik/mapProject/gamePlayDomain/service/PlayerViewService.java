@@ -7,6 +7,7 @@ import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerView;
+import com.fredrik.mapProject.gameRunDomain.model.BuildEvent;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;

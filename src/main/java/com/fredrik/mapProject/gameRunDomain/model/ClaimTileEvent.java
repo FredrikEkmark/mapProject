@@ -2,8 +2,8 @@ package com.fredrik.mapProject.gameRunDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
 
-public class BuildEvent extends Event {
-    public BuildEvent(EventId eventId, Player playerNr, int turn, EventType eventType, String eventData) {
+public class ClaimTileEvent extends Event {
+    public ClaimTileEvent(EventId eventId, Player playerNr, int turn, EventType eventType, String eventData) {
         super(eventId, playerNr, turn, eventType);
         parseFromEventData(eventData);
     }
