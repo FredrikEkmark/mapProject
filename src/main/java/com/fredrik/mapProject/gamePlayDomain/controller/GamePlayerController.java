@@ -1,23 +1,19 @@
 package com.fredrik.mapProject.gamePlayDomain.controller;
 
-import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
-import com.fredrik.mapProject.userDomain.service.SecurityUtilityService;
 import com.fredrik.mapProject.userDomain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,15 +21,14 @@ import java.util.UUID;
 @Controller
 public class GamePlayerController {
 
-    private final SecurityUtilityService securityUtilityService;
+    // private final SecurityUtilityService securityUtilityService; // toDO do i need security check here?
     private final GamePlayerService gamePlayerService;
     private final GameSetupService gameSetupService;
 
     private final UserService userService;
 
     @Autowired
-    public GamePlayerController(SecurityUtilityService securityUtilityService, GamePlayerService gamePlayerService, GameSetupService gameSetupService, UserService userService) {
-        this.securityUtilityService = securityUtilityService;
+    public GamePlayerController(GamePlayerService gamePlayerService, GameSetupService gameSetupService, UserService userService) {
         this.gamePlayerService = gamePlayerService;
         this.gameSetupService = gameSetupService;
         this.userService = userService;
@@ -55,7 +50,7 @@ public class GamePlayerController {
 
     @PostMapping("/invite-player/{gameId}")
     @PreAuthorize("hasAuthority('POST')")
-    public String inviteNewPlayer(String username,@PathVariable("gameId") UUID gameId, Model model) {
+    public String inviteNewPlayer(String username,@PathVariable("gameId") UUID gameId) {
 
         Optional<UserEntity> user = userService.findByUsername(username);
 

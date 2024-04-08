@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gameRunDomain.service;
 
+import com.fredrik.mapProject.gameRunDomain.model.EventId;
 import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
 import com.fredrik.mapProject.gameRunDomain.repository.EventLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,18 @@ public class EventLogService {
         this.eventLogRepository = eventLogRepository;
     }
 
+    public void save(EventLogEntity eventLogEntity) {
+        eventLogRepository.save(eventLogEntity);
+    }
+
     public List<EventLogEntity> findAllByGameID(UUID gameId) {
-        return eventLogRepository.findAllByEventIdGameId(gameId);
+        return eventLogRepository.findAllByGameId(gameId);
     }
 
     public void resetEventLogAndSavePersistentEvents(List<EventLogEntity> eventLogList, UUID gameId) {
-        eventLogRepository.deleteAllByEventIdGameId(gameId);
+        eventLogRepository.deleteAllByGameId(gameId);
         for (EventLogEntity event: eventLogList) {
-            if (event.getEventId().getGameId() != gameId) {
+            if (event.getGameId() != gameId) {
                 eventLogList.remove(event);
                 System.out.println("Event " + event.getEventId() + " was removed");
             }
@@ -34,6 +39,11 @@ public class EventLogService {
     }
 
     public void deleteAllByGameId(UUID gameId) {
-        eventLogRepository.deleteAllByEventIdGameId(gameId);
+        eventLogRepository.deleteAllByGameId(gameId);
+    }
+
+    public void deleteByEventId(UUID eventId) {
+        eventLogRepository.deleteById(eventId);
+
     }
 }

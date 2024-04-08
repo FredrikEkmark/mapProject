@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RestController
+@RestController()
 public class PlayerViewRestController {
 
     private final SecurityUtilityService securityUtilityService;
@@ -28,8 +28,8 @@ public class PlayerViewRestController {
         this.gameSetupService = gameSetupService;
     }
 
-    @GetMapping("api/test/{gameId}")
-    public PlayerView testApi(@PathVariable("gameId") UUID gameId) throws JsonProcessingException {
+    @GetMapping("/api/playerView/{gameId}")
+    public PlayerView getPlayerViewGame(@PathVariable("gameId") UUID gameId) throws JsonProcessingException {
 
         UserEntity user = new UserEntity(); // toDO replace with = securityUtilityService.getCurrentUser();
 

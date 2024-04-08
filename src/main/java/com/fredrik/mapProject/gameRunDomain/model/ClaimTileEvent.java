@@ -1,10 +1,13 @@
 package com.fredrik.mapProject.gameRunDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
+
+import java.util.UUID;
 
 public class ClaimTileEvent extends Event {
-    public ClaimTileEvent(EventId eventId, Player playerNr, int turn, EventType eventType, String eventData) {
-        super(eventId, playerNr, turn, eventType);
+    public ClaimTileEvent(UUID eventId, Player playerNr, int turn, MapCoordinates primaryTileCoordinates, EventType eventType, String eventData) {
+        super(eventId, playerNr, turn, primaryTileCoordinates, eventType);
         parseFromEventData(eventData);
     }
 

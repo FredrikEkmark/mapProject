@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface EventLogRepository extends JpaRepository<EventLogEntity, EventId> {
+public interface EventLogRepository extends JpaRepository<EventLogEntity, UUID> {
 
-    List<EventLogEntity> findAllByEventIdGameId(UUID gameId);
+    List<EventLogEntity> findAllByGameId(UUID gameId);
 
-    void deleteAllByEventIdGameId(UUID gameId);
+    void deleteAllByGameId(UUID gameId);
 }

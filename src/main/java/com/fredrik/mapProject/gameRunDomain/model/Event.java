@@ -1,31 +1,37 @@
 package com.fredrik.mapProject.gameRunDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
+
+import java.util.UUID;
 
 public abstract class Event {
 
-    private EventId eventId;
+    private UUID eventId;
 
     private Player playerNr;
 
     private int turn;
 
+    private MapCoordinates primaryTileCoordinates;
+
     private final EventType eventType;
 
-    public Event(EventId eventId, Player playerNr, int turn, EventType eventType) {
+    public Event(UUID eventId, Player playerNr, int turn, MapCoordinates primaryTileCoordinates, EventType eventType) {
         this.eventId = eventId;
         this.playerNr = playerNr;
         this.turn = turn;
+        this.primaryTileCoordinates = primaryTileCoordinates;
         this.eventType = eventType;
     }
 
     public abstract String parseToEventData();
 
-    public EventId getEventId() {
+    public UUID getEventId() {
         return eventId;
     }
 
-    public void setEventId(EventId eventId) {
+    public void setEventId(UUID eventId) {
         this.eventId = eventId;
     }
 
@@ -47,5 +53,13 @@ public abstract class Event {
 
     public EventType getEventType() {
         return eventType;
+    }
+
+    public MapCoordinates getPrimaryTileCoordinates() {
+        return primaryTileCoordinates;
+    }
+
+    public void setPrimaryTileCoordinates(MapCoordinates primaryTileCoordinates) {
+        this.primaryTileCoordinates = primaryTileCoordinates;
     }
 }
