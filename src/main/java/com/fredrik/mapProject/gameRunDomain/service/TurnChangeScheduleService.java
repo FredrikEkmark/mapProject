@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +24,6 @@ public class TurnChangeScheduleService {
         ZoneId gmtZoneId = ZoneId.of("GMT");
         ZonedDateTime gmtDateTime = ZonedDateTime.now(gmtZoneId);
         String turnTime = String.format("%02d:%02d", gmtDateTime.getHour(), gmtDateTime.getMinute());
-
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
         ZonedDateTime currentTime = ZonedDateTime.now();

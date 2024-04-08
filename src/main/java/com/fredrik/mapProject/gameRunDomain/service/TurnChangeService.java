@@ -33,7 +33,6 @@ public class TurnChangeService {
 
         for (GameSetupEntity game: gameSetups) {
             game.setUpdating(true);
-            System.out.println(game.getId());
         }
         gameSetupService.updateAllGameSetups(gameSetups);
 

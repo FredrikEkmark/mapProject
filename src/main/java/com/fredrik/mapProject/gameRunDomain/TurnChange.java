@@ -33,25 +33,28 @@ public class TurnChange {
         gameSetup.setTurn(gameSetup.getTurn() + 1); // ticks the turn up one
         updated = true;
         gameSetup.setUpdating(false);
-        System.out.println("Turn has been updated");
+        System.out.printf("""
+                GameId: %s
+                Turn has been updated
+                """, gameSetup.getId()); // toDo write full log for turn update, number of tiles changed, eventLogs remaining...
     }
 
     public GameSetupEntity getGameSetup() {
-        if (updated) {
+        if (!updated) {
             update();
         }
         return gameSetup;
     }
 
     public List<MapTileEntity> getGameMap() {
-        if (updated) {
+        if (!updated) {
             update();
         }
         return gameMap;
     }
 
     public List<EventLogEntity> getEventLogList() {
-        if (updated) {
+        if (!updated) {
             update();
         }
         return eventLogList;
