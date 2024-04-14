@@ -1,8 +1,10 @@
 package com.fredrik.mapProject.gameRunDomain.service;
 
+import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameRunDomain.model.EventId;
 import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
 import com.fredrik.mapProject.gameRunDomain.repository.EventLogRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class EventLogService {
     
     private final EventLogRepository eventLogRepository;
@@ -25,6 +28,10 @@ public class EventLogService {
 
     public List<EventLogEntity> findAllByGameID(UUID gameId) {
         return eventLogRepository.findAllByGameId(gameId);
+    }
+
+    public List<EventLogEntity> findAllByGameIDAndPlayerNr(UUID gameId, Player playerNr) {
+        return eventLogRepository.findAllByGameIdAndAndPlayerNr(gameId, playerNr);
     }
 
     public void resetEventLogAndSavePersistentEvents(List<EventLogEntity> eventLogList, UUID gameId) {

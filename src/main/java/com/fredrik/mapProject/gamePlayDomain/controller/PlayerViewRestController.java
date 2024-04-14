@@ -31,11 +31,7 @@ public class PlayerViewRestController {
     @GetMapping("/api/playerView/{gameId}")
     public PlayerView getPlayerViewGame(@PathVariable("gameId") UUID gameId) throws JsonProcessingException {
 
-        UserEntity user = new UserEntity(); // toDO replace with = securityUtilityService.getCurrentUser();
-
-        String uuidString = "0c14a6e3-d2a7-4656-a8af-92137a786b55"; // toDo delete when auth is ok
-        UUID uuid = UUID.fromString(uuidString); // toDo delete when auth is ok
-        user.setUsername("Test user"); user.setId(uuid);// toDo delete when auth is ok
+        UserEntity user = securityUtilityService.getCurrentUser();
 
         GameSetupEntity gameSetup = gameSetupService.findById(gameId);
 

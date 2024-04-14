@@ -2,7 +2,6 @@ package com.fredrik.mapProject.userDomain.controller;
 
 import com.fredrik.mapProject.config.AppPasswordConfig;
 import com.fredrik.mapProject.config.Roles;
-import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

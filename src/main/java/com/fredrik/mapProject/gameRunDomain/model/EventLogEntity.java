@@ -32,6 +32,8 @@ public class EventLogEntity {
     @Column(nullable = false)
     private String eventData;
 
+
+
     public UUID getEventId() {
         return eventId;
     }
