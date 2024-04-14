@@ -7,6 +7,7 @@ import com.fredrik.mapProject.userDomain.model.UserEntity;
 import jakarta.persistence.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -40,6 +41,9 @@ public class GameSetupEntity {
 
     @Column(nullable = false)
     private boolean isUpdating;
+
+    @Column(nullable = false)
+    private Instant startTime;
 
     @OneToMany(mappedBy = "playerGameId.gameId", cascade = CascadeType.ALL)
     private List<GamePlayerEntity> gamePlayers;
@@ -142,5 +146,13 @@ public class GameSetupEntity {
 
     public void setUpdating(boolean updating) {
         isUpdating = updating;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Instant time) {
+        this.startTime = time;
     }
 }

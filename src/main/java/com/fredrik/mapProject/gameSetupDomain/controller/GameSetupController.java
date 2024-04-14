@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Random;
@@ -78,6 +79,7 @@ public class GameSetupController {
         gameSetup.setTurnChangeFromInputString(turnChange, timeZone);
         gameSetup.setTurn(0);
         gameSetup.setUpdating(false);
+        gameSetup.setStartTime(Instant.now());
 
         gameSetupService.createNewGameSetup(gameSetup);
 

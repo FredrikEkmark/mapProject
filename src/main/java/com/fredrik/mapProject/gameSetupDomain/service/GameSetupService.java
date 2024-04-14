@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.gameSetupDomain.service;
 
 import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
-import com.fredrik.mapProject.gameRunDomain.service.EventLogService;
+import com.fredrik.mapProject.gameRunDomain.service.EventService;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.repository.GameSetupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,17 @@ public class GameSetupService {
 
     private final MapTileService mapTileService;
     private final GamePlayerService gamePlayerService;
-    private final EventLogService eventLogService;
+    private final EventService eventService;
 
     @Autowired
     public GameSetupService(
             GameSetupRepository gameSetupRepository,
             MapTileService mapTileService,
-            GamePlayerService gamePlayerService, EventLogService eventLogService) {
+            GamePlayerService gamePlayerService, EventService eventService) {
         this.gameSetupRepository = gameSetupRepository;
         this.mapTileService = mapTileService;
         this.gamePlayerService = gamePlayerService;
-        this.eventLogService = eventLogService;
+        this.eventService = eventService;
     }
 
     public void createNewGameSetup(GameSetupEntity gameSetup) {
@@ -60,7 +60,7 @@ public class GameSetupService {
 
             mapTileService.deleteGameMap(gameSetup.getId());
             gamePlayerService.deleteAllGamePlayerByGameId(gameSetup.getId());
-            eventLogService.deleteAllByGameId(gameSetup.getId());
+            eventService.deleteAllByGameId(gameSetup.getId());
 
         } else {
             System.out.printf("ERROR Game setup with id %s was not deleted properly", gameSetup.getId());

@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.gameRunDomain.service;
 
 import com.fredrik.mapProject.gameRunDomain.TurnChange;
-import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
+import com.fredrik.mapProject.gameRunDomain.model.EventEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
@@ -15,13 +15,13 @@ import java.util.List;
 public class TurnChangeService {
 
     private final GameSetupService gameSetupService;
-    private final EventLogService eventLogService;
+    private final EventService eventService;
     private final MapTileService mapTileService;
 
     @Autowired
-    public TurnChangeService(GameSetupService gameSetupService, EventLogService eventLogService, MapTileService mapTileService) {
+    public TurnChangeService(GameSetupService gameSetupService, EventService eventService, MapTileService mapTileService) {
         this.gameSetupService = gameSetupService;
-        this.eventLogService = eventLogService;
+        this.eventService = eventService;
         this.mapTileService = mapTileService;
     }
 
@@ -37,14 +37,14 @@ public class TurnChangeService {
         gameSetupService.updateAllGameSetups(gameSetups);
 
         for (GameSetupEntity game: gameSetups) {
-            List<EventLogEntity> eventLogList = eventLogService.findAllByGameID(game.getId());
+            List<EventEntity> eventList = eventService.findAllByGameID(game.getId());
             List<MapTileEntity> gameMap = mapTileService.getGameMap(game.getId());
 
-            TurnChange turnChange = new TurnChange(game, gameMap, eventLogList);
+            TurnChange turnChange = new TurnChange(game, gameMap, eventList);
             turnChange.update();
 
             mapTileService.updateGameMap(turnChange.getGameMap());
-            eventLogService.resetEventLogAndSavePersistentEvents(turnChange.getEventLogList(), game.getId());
+            eventService.resetEventsAndSavePersistentEvents(turnChange.getEventList(), game.getId());
             gameSetupService.updateGameSetup(turnChange.getGameSetup());
         }
     }

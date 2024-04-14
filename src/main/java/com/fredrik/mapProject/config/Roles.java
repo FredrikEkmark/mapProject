@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 
 public enum Roles {
 
-    ADMIN("GET_POST"),
-    HOST("GET_POST"),
-    USER("GET_POST");
+    ADMIN("GET_POST_DELETE"),
+    HOST("GET_POST_DELETE"),
+    USER("GET_POST_DELETE");
 
     private final String permissions;
 

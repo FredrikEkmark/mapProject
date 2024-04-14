@@ -1,9 +1,11 @@
 package com.fredrik.mapProject.gameRunDomain;
 
+import com.fredrik.mapProject.gameRunDomain.model.EventEntity;
 import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TurnChange {
@@ -12,14 +14,18 @@ public class TurnChange {
 
     private List<MapTileEntity> gameMap;
 
-    private List<EventLogEntity> eventLogList;
+    private List<EventEntity> eventList;
+
+    private List<EventLogEntity> eventLog;
+
 
     private boolean updated = false;
 
-    public TurnChange(GameSetupEntity gameSetup, List<MapTileEntity> gameMap, List<EventLogEntity> eventLogList) {
+    public TurnChange(GameSetupEntity gameSetup, List<MapTileEntity> gameMap, List<EventEntity> eventList) {
         this.gameSetup = gameSetup;
         this.gameMap = gameMap;
-        this.eventLogList = eventLogList;
+        this.eventList = eventList;
+        this.eventLog = new ArrayList<EventLogEntity>();
     }
 
     public void update() {
@@ -53,10 +59,17 @@ public class TurnChange {
         return gameMap;
     }
 
-    public List<EventLogEntity> getEventLogList() {
+    public List<EventEntity> getEventList() {
         if (!updated) {
             update();
         }
-        return eventLogList;
+        return eventList;
+    }
+
+    public List<EventLogEntity> getEventLog() {
+        if (!updated) {
+            update();
+        }
+        return eventLog;
     }
 }

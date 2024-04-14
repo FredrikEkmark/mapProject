@@ -18,7 +18,7 @@ public class TurnChangeScheduleService {
         this.turnChangeService = turnChangeService;
     }
 
-    @Scheduled(cron = "5 */10 * * * *") // Run on the hour, every hour // toDO Change back to (cron = "0 0 * * * *")
+    @Scheduled(cron = "5 24 * * * *") // Run on the hour, every hour // toDO Change back to (cron = "0 0 * * * *")
     private void turnChangeScan() {
 
         ZoneId gmtZoneId = ZoneId.of("GMT");

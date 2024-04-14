@@ -24,6 +24,7 @@ import java.util.Date;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 
 import javax.crypto.SecretKey;
 import java.util.concurrent.TimeUnit;
@@ -80,11 +81,11 @@ public class AppSecurityConfig {
                                 "edit-user"
                                 ).hasRole(ADMIN.name()) // Only ADMIN role
                         .anyRequest().authenticated())
-                        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
-                        .successHandler(jwtAuthenticationSuccessHandler()) // Remove this line
+                        .successHandler(jwtAuthenticationSuccessHandler())
                 )
 
                 .logout(logout -> logout
@@ -111,7 +112,6 @@ public class AppSecurityConfig {
                 UserDetails userDetails = (UserDetails) authentication.getPrincipal();
                 String token = generateJwtToken(userDetails.getUsername());
 
-                System.out.println(token);
                 response.sendRedirect(MAP_APP_URL + "/login?token=" + token);
             }
         };
