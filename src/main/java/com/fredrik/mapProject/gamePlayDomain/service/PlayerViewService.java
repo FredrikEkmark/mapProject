@@ -3,12 +3,9 @@ package com.fredrik.mapProject.gamePlayDomain.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.gamePlayDomain.Player;
-import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
-import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
-import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
-import com.fredrik.mapProject.gamePlayDomain.model.PlayerView;
-import com.fredrik.mapProject.gameRunDomain.model.BuildEvent;
-import com.fredrik.mapProject.gameSetupDomain.MapSizes;
+import com.fredrik.mapProject.gamePlayDomain.model.*;
+import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
+import com.fredrik.mapProject.gameRunDomain.service.EventLogService;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.service.MapTileService;
@@ -16,18 +13,20 @@ import com.fredrik.mapProject.userDomain.model.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class PlayerViewService {
 
     private final MapTileService mapTileService;
     private final GamePlayerService gamePlayerService;
+    private final ManaService manaService;
+    private final EventLogService eventLogService;
 
-    public PlayerViewService(MapTileService mapTileService, GamePlayerService gamePlayerService) {
+    public PlayerViewService(MapTileService mapTileService, GamePlayerService gamePlayerService, ManaService manaService, EventLogService eventLogService) {
         this.mapTileService = mapTileService;
         this.gamePlayerService = gamePlayerService;
+        this.manaService = manaService;
+        this.eventLogService = eventLogService;
     }
 
     public PlayerView getPlayerView(GameSetupEntity gameSetup, UserEntity user) throws JsonProcessingException {
@@ -36,6 +35,8 @@ public class PlayerViewService {
         GamePlayerEntity gamePlayer = gamePlayerService.getGamePlayer(playerGameId).get();
         Player playerNr = gamePlayer.getPlayerNr();
         List<MapTileEntity> mapTileEntities = mapTileService.getPlayerGameMap(gameSetup.getId(), playerNr);
+        ManaEntity mana = manaService.findManaById(gamePlayer.getManaId()).get();
+        List<EventLogEntity> eventLog = eventLogService.findPlayerEventLog(gamePlayer.getPlayerNr(), gameSetup.getId());
 
         MapCoordinates startCoordinates = gamePlayer.getStartCoordinates();
 
@@ -46,7 +47,9 @@ public class PlayerViewService {
                 gameSetup.getMapSize(),
                 mapTileEntities,
                 startCoordinates,
-                playerNr
+                playerNr,
+                mana,
+                eventLog
         );
 
         return playerView;

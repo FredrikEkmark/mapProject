@@ -20,6 +20,8 @@ public class GamePlayerEntity {
     @Enumerated(EnumType.STRING)
     private Player playerNr;
 
+    private final UUID manaId = UUID.randomUUID();
+
     @Transient
     private String username; // Transient field to hold username temporarily
 
@@ -28,7 +30,6 @@ public class GamePlayerEntity {
         this.playerNr = playerNr;
         this.startCoordinates = startCoordinates;
     }
-
 
     public GamePlayerEntity() {
     }
@@ -63,5 +64,9 @@ public class GamePlayerEntity {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public UUID getManaId() {
+        return manaId;
     }
 }

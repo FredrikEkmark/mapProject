@@ -18,13 +18,14 @@ import java.util.*;
 public class GamePlayerService {
 
     private final GamePlayerRepository gamePlayerRepository;
-
     private final MapTileService mapTileService;
+    private final ManaService manaService;
 
     @Autowired
-    public GamePlayerService(GamePlayerRepository gamePlayerRepository, MapTileService mapTileService) {
+    public GamePlayerService(GamePlayerRepository gamePlayerRepository, MapTileService mapTileService, ManaService manaService) {
         this.gamePlayerRepository = gamePlayerRepository;
         this.mapTileService = mapTileService;
+        this.manaService = manaService;
     }
 
     public String createNewGamePlayer(GameSetupEntity gameSetup, UUID playerId) {
@@ -64,6 +65,7 @@ public class GamePlayerService {
         mapTileService.updateTileVisibilityForPlayer(mapTileIdList, playerEntity.getPlayerNr());
 
         gamePlayerRepository.save(playerEntity);
+        manaService.createNewMana(playerEntity.getManaId(), playerEntity.getPlayerGameId().getGameId());
 
         return "new Player added";
     }
@@ -83,6 +85,6 @@ public class GamePlayerService {
     @Transactional
     public void deleteAllGamePlayerByGameId(UUID gameId) {
         gamePlayerRepository.deleteAllByGameId(gameId);
-
+        manaService.deleteAllManaByGameID(gameId);
     }
 }

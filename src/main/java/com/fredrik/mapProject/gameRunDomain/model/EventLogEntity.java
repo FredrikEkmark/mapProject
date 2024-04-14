@@ -14,4 +14,32 @@ public class EventLogEntity {
     private EventLogId eventLogId;
 
     private String log;
+
+    public EventLogEntity() {
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public UUID getGameId() {
+        return eventLogId.getGameId();
+    }
+
+
+    public Player getPlayerNr() {
+        return eventLogId.getPlayerNr();
+    }
+
+
+    public int getTurn() {
+        return eventLogId.getTurn();
+    }
+
+
+    public int getLogIndex() {
+        return eventLogId.getLogIndex();
+    }
+
+
 }

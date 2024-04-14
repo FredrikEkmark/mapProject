@@ -2,6 +2,7 @@ package com.fredrik.mapProject.gamePlayDomain.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class PlayerView {
     private MapCoordinates startCoordinates;
     final private Player playerNr;
     private List<MapTile> map;
+    private ManaEntity mana;
+    private List<EventLogEntity> eventLog;
 
     public PlayerView(UUID gameId,
                       UUID playerId,
@@ -26,7 +29,9 @@ public class PlayerView {
                       MapSizes mapSize,
                       List<MapTileEntity> tileList,
                       MapCoordinates startCoordinates,
-                      Player playerNr
+                      Player playerNr,
+                      ManaEntity mana,
+                      List<EventLogEntity> eventLog
     ) throws JsonProcessingException {
         this.gameId = gameId;
         this.playerId = playerId;
@@ -35,6 +40,8 @@ public class PlayerView {
         this.startCoordinates = startCoordinates;
         this.playerNr = playerNr;
         this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
+        this.mana = mana;
+        this.eventLog = eventLog;
     }
 
     private List<MapTile> convertMapTileEntityListToMap(List<MapTileEntity> tileList, MapSizes mapSize, Player playerNr) {
@@ -92,5 +99,13 @@ public class PlayerView {
 
     public void setMap(List<MapTileEntity> tileList) {
         this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
+    }
+
+    public ManaEntity getMana() {
+        return mana;
+    }
+
+    public List<EventLogEntity> getEventLog() {
+        return eventLog;
     }
 }

@@ -1,6 +1,8 @@
 package com.fredrik.mapProject.gameRunDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,6 +12,7 @@ public class EventLogId implements Serializable {
 
     private UUID gameId;
 
+    @Enumerated(EnumType.STRING)
     private Player playerNr;
 
     private int turn;
