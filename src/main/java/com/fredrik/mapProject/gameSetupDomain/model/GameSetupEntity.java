@@ -29,7 +29,7 @@ public class GameSetupEntity {
     @JoinColumn(name = "users_id")
     private UserEntity owner;
 
-    @Column(nullable = false, length = 24)
+    @Column(nullable = false, length = 27)
     private String turnChange;
 
     @Column(nullable = false)
@@ -95,7 +95,7 @@ public class GameSetupEntity {
         ZoneOffset offset = zonedDateTime.getOffset();
         int offsetHours = offset.getTotalSeconds() / 3600;
 
-        StringBuilder builder = new StringBuilder("000000000000000000000000"); // Initialize with 24 zeroes
+        StringBuilder builder = new StringBuilder("000000000000000000000000:00"); // Initialize with 24 zeroes
         if (turnChangeInput == null) {this.turnChange = builder.toString(); return;}
 
         String[] hoursStringArray = turnChangeInput.split(",");

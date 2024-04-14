@@ -18,7 +18,7 @@ public class TurnChangeScheduleService {
         this.turnChangeService = turnChangeService;
     }
 
-    @Scheduled(cron = "5 24 * * * *") // Run on the hour, every hour // toDO Change back to (cron = "0 0 * * * *")
+    @Scheduled(cron = "5 */10 * * * *") // Run on the hour, every hour // toDO Change back to (cron = "5 0 * * * *")
     private void turnChangeScan() {
 
         ZoneId gmtZoneId = ZoneId.of("GMT");
@@ -28,12 +28,12 @@ public class TurnChangeScheduleService {
 
         ZonedDateTime currentTime = ZonedDateTime.now();
         String formattedCurrentTime = formatter.format(currentTime);
-        System.out.printf("%s Turn change process started for %s GMT...%n", formattedCurrentTime, turnTime);
+        System.out.printf("%s   Turn change process started for %s GMT...%n", formattedCurrentTime, turnTime);
 
         turnChangeService.runTurnChange(gmtDateTime.getHour(), gmtDateTime.getMinute());
 
         currentTime = ZonedDateTime.now();
         formattedCurrentTime = formatter.format(currentTime);
-        System.out.printf("%s Turn change process completed for %s GMT.%n",formattedCurrentTime, turnTime );
+        System.out.printf("%s   Turn change process completed for %s GMT.%n",formattedCurrentTime, turnTime );
     }
 }

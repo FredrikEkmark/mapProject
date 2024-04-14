@@ -74,7 +74,8 @@ public class GameSetupService {
     }
 
     public List<GameSetupEntity> findAllByTurnChange(int hour, int min) {
-        return gameSetupRepository.findAllByTurnChange(hour);
+        String minuteString = String.format("%02d", min);
+        return gameSetupRepository.findAllByTurnChange(hour, minuteString);
     }
 
     public void updateGameSetup(GameSetupEntity gameSetup) {

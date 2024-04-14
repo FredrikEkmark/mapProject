@@ -12,6 +12,7 @@ import java.util.UUID;
 @Repository
 public interface GameSetupRepository extends JpaRepository<GameSetupEntity, UUID> {
 
-    @Query("SELECT g FROM GameSetupEntity g WHERE SUBSTRING(g.turnChange, :hour + 1, 1) = '1'")
-    List<GameSetupEntity> findAllByTurnChange(@Param("hour") int hour);
+    @Query("SELECT g FROM GameSetupEntity g WHERE SUBSTRING(g.turnChange, :hour + 1, 1) = '1' AND g.turnChange LIKE CONCAT('%:', :minute)")
+    List<GameSetupEntity> findAllByTurnChange(@Param("hour") int hour, @Param("minute") String minute);
+
 }
