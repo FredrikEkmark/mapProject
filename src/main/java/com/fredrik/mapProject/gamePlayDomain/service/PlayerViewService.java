@@ -1,6 +1,5 @@
 package com.fredrik.mapProject.gamePlayDomain.service;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.model.*;
@@ -48,6 +47,8 @@ public class PlayerViewService {
                 mapTileEntities,
                 startCoordinates,
                 playerNr,
+                gameSetup.getTurn(),
+                gameSetup.getTurnChange(),
                 mana,
                 eventLog
         );

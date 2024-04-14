@@ -16,7 +16,6 @@ import java.util.UUID;
 public class GameSetupService {
 
     private final GameSetupRepository gameSetupRepository;
-
     private final MapTileService mapTileService;
     private final GamePlayerService gamePlayerService;
     private final EventService eventService;
@@ -37,6 +36,7 @@ public class GameSetupService {
     }
 
     public void createNewGameSetup(GameSetupEntity gameSetup) {
+
         gameSetupRepository.save(gameSetup);
 
         if (gameSetupRepository.findById(gameSetup.getId()).isPresent()) {

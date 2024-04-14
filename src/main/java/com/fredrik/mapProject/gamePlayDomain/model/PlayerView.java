@@ -12,13 +12,13 @@ import java.util.UUID;
 public class PlayerView {
 
     final private UUID gameId;
-
     final private UUID playerId;
-
     final private String playerName;
     final private MapSizes mapSize;
     private MapCoordinates startCoordinates;
     final private Player playerNr;
+    private int turn;
+    private String turnChange;
     private List<MapTile> map;
     private ManaEntity mana;
     private List<EventLogEntity> eventLog;
@@ -30,6 +30,8 @@ public class PlayerView {
                       List<MapTileEntity> tileList,
                       MapCoordinates startCoordinates,
                       Player playerNr,
+                      int turn,
+                      String turnChange,
                       ManaEntity mana,
                       List<EventLogEntity> eventLog
     ) throws JsonProcessingException {
@@ -39,6 +41,8 @@ public class PlayerView {
         this.mapSize = mapSize;
         this.startCoordinates = startCoordinates;
         this.playerNr = playerNr;
+        this.turn = turn;
+        this.turnChange = turnChange;
         this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
         this.mana = mana;
         this.eventLog = eventLog;
@@ -107,5 +111,21 @@ public class PlayerView {
 
     public List<EventLogEntity> getEventLog() {
         return eventLog;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public String getTurnChange() {
+        return turnChange;
+    }
+
+    public void setTurnChange(String turnChange) {
+        this.turnChange = turnChange;
     }
 }
