@@ -20,6 +20,8 @@ public class NewEventDTO {
 
     private String eventData;
 
+    private String cost;
+
     public NewEventDTO() {
     }
 
@@ -55,4 +57,6 @@ public class NewEventDTO {
     public String getEventData() {
         return eventData;
     }
+
+    public String getCost() {return cost;}
 }

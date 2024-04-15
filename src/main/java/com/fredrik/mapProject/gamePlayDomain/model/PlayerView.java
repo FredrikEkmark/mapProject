@@ -57,7 +57,12 @@ public class PlayerView {
             int y = tile.getMapTileId().getCoordinates().getY();
             int x = tile.getMapTileId().getCoordinates().getX();
 
-            MapTile rePackagedTile = new MapTile(tile.getMapTileId().getCoordinates(), tile.getTileOwner(), tile.getTileValue(), tile.isVisible(playerNr.number()));
+            MapTile rePackagedTile = new MapTile(
+                    tile.getMapTileId().getCoordinates(),
+                    tile.getTileOwner(),
+                    tile.getTileValue(),
+                    tile.isVisible(playerNr.number()),
+                    tile.getBuilding());
             map.add(rePackagedTile);
         }
             return map;

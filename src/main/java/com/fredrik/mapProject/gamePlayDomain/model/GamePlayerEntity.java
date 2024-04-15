@@ -17,6 +17,7 @@ public class GamePlayerEntity {
     @Embedded
     private MapCoordinates startCoordinates;
 
+    @Column(nullable = false, length = 24)
     @Enumerated(EnumType.STRING)
     private Player playerNr;
 

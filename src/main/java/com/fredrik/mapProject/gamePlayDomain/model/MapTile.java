@@ -9,11 +9,14 @@ public class MapTile {
     private int tileTerrainValue;
     private boolean visible;
 
-    public MapTile(MapCoordinates coordinates, Player tileOwner, int tileTerrainValue, boolean visible) {
+    private String building;
+
+    public MapTile(MapCoordinates coordinates, Player tileOwner, int tileTerrainValue, boolean visible, String building) {
         this.coordinates = coordinates;
         this.tileOwner = tileOwner;
         this.tileTerrainValue = tileTerrainValue;
         this.visible = visible;
+        this.building = building;
     }
 
     public MapCoordinates getCoordinates() {
@@ -46,5 +49,13 @@ public class MapTile {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public String getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
     }
 }

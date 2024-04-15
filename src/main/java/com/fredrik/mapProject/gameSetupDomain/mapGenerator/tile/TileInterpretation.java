@@ -31,6 +31,7 @@ public class TileInterpretation {
         tile.setMapTileId(mapTileId);
         tile.setTileOwner(Player.NONE);
         tile.setVisibility("00000000000000000000000000000000");
+        tile.setBuilding("NONE");
 
         int y = mapTileId.getCoordinates().getY();
         int x = mapTileId.getCoordinates().getX();

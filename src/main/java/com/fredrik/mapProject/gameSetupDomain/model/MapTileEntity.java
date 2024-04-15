@@ -20,6 +20,9 @@ public class MapTileEntity {
     @Column(nullable = false, length = 32)
     private String visibility;
 
+    @Column(nullable = false, length = 32)
+    private String building;
+
     public MapTileEntity() {
     }
 
@@ -84,5 +87,13 @@ public class MapTileEntity {
             builder.setCharAt(playerNumber - 1, visible ? '1' : '0');
             this.visibility = builder.toString();
         }
+    }
+
+    public String getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
     }
 }

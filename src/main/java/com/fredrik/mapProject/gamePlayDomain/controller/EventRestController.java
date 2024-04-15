@@ -51,7 +51,9 @@ public class EventRestController { // toDO add security to this controller
                 newEventDTO.getTurn(),
                 newEventDTO.getPrimaryTileCoordinates(),
                 newEventDTO.getEventType(),
-                newEventDTO.getEventData());
+                newEventDTO.getEventData(),
+                newEventDTO.getCost()
+        );
 
         eventService.save(event);
         return eventService.findAllByGameIDAndPlayerNr(event.getGameId(), event.getPlayerNr());

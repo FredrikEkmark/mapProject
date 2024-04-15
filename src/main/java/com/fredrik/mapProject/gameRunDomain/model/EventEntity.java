@@ -17,6 +17,7 @@ public class EventEntity {
     @Column(nullable = false)
     private UUID gameId;
 
+    @Column(nullable = false, length = 24)
     @Enumerated(EnumType.STRING)
     private Player playerNr;
 
@@ -28,16 +29,19 @@ public class EventEntity {
     private MapCoordinates primaryTileCoordinates;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 24)
     private EventType eventType;
 
     @Column(nullable = false)
     private String eventData;
 
+    @Column(nullable = false)
+    private String cost;
+
     public EventEntity() {
     }
 
-    public EventEntity(UUID gameId, Player playerNr, int turn, MapCoordinates primaryTileCoordinates, EventType eventType, String eventData) {
+    public EventEntity(UUID gameId, Player playerNr, int turn, MapCoordinates primaryTileCoordinates, EventType eventType, String eventData, String cost) {
         this.eventId = UUID.randomUUID();
         this.gameId = gameId;
         this.playerNr = playerNr;
@@ -45,6 +49,7 @@ public class EventEntity {
         this.primaryTileCoordinates = primaryTileCoordinates;
         this.eventType = eventType;
         this.eventData = eventData;
+        this.cost = cost;
     }
 
     public UUID getEventId() {
@@ -101,6 +106,14 @@ public class EventEntity {
 
     public void setEventData(String eventData) {
         this.eventData = eventData;
+    }
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
     }
 
     public Event getEvent() {
