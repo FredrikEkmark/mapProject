@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.gameSetupDomain.mapGenerator;
 
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
-import com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile.TileInterpretation;
+import com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile.TileGenerator;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
 
@@ -16,16 +16,15 @@ public class MapGenerator
     private static Random random = new Random();
     public static MapTileEntity[][] generateMap(UUID gameId, int seed, int height, int width) {
 
-        TileInterpretation tileInterpretation = new TileInterpretation(seed, width, height);
+        TileGenerator tileGenerator = new TileGenerator(seed, width, height);
 
         MapTileEntity[][] map = new MapTileEntity[width][height];
 
-        for (int y = 0; y < width; y++)
-        {
+        for (int y = 0; y < width; y++) {
             for (int x = 0; x < height; x++) {
 
                 MapTileId mapTileId = new MapTileId(gameId, x, y);
-                MapTileEntity tile = tileInterpretation.tileValue(mapTileId);
+                MapTileEntity tile = tileGenerator.tileValue(mapTileId);
                 map[y][x] = tile; // switched them
             }
         }

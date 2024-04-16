@@ -6,7 +6,7 @@ import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
 
 
-public class TileInterpretation {
+public class TileGenerator {
 
     private final int seed;
     private final int width;
@@ -15,7 +15,7 @@ public class TileInterpretation {
     private final int heightPart;
     private final int waterPath;
 
-    public TileInterpretation(int seed, int width, int height) {
+    public TileGenerator(int seed, int width, int height) {
 
         this.seed = seed;
         this.height = height;
@@ -32,6 +32,7 @@ public class TileInterpretation {
         tile.setTileOwner(Player.NONE);
         tile.setVisibility("00000000000000000000000000000000");
         tile.setBuilding("{\"type\": \"NONE\", \"progress\": 0}");
+        tile.setUnit("{}");
 
         int y = mapTileId.getCoordinates().getY();
         int x = mapTileId.getCoordinates().getX();

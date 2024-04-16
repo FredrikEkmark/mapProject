@@ -20,8 +20,11 @@ public class MapTileEntity {
     @Column(nullable = false, length = 32)
     private String visibility;
 
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 128)
     private String building;
+
+    @Column(nullable = false, length = 128)
+    private String unit;
 
     public MapTileEntity() {
     }
@@ -95,5 +98,13 @@ public class MapTileEntity {
 
     public void setBuilding(String building) {
         this.building = building;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }
