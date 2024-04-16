@@ -31,7 +31,7 @@ public class TileInterpretation {
         tile.setMapTileId(mapTileId);
         tile.setTileOwner(Player.NONE);
         tile.setVisibility("00000000000000000000000000000000");
-        tile.setBuilding("NONE");
+        tile.setBuilding("{\"type\": \"NONE\", \"progress\": 0}");
 
         int y = mapTileId.getCoordinates().getY();
         int x = mapTileId.getCoordinates().getX();

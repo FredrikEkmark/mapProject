@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "event")
+@Table(name = "event_data")
 public class EventEntity {
 
     @Id
