@@ -5,7 +5,7 @@ import com.fredrik.mapProject.gameRunDomain.Terrain;
 
 public class Farm extends Building {
 
-    private final int baseFoodProduction = 5;
+    private final int baseFoodProduction = 3;
 
     public Farm(BuildingType type, int progress) {
         super(type, progress);

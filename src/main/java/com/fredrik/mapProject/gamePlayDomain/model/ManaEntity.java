@@ -231,7 +231,7 @@ public class ManaEntity {
 
     public int foodSpoilage() {
         int perishableFood = Math.max(food - protectedFood, 0);
-        int spoiledFood = (int) (Math.floor(perishableFood * 0.1));
+        int spoiledFood = (int) (Math.floor(perishableFood * 0.2));
         food -= spoiledFood;
         System.out.println("Spoiled Food: " + spoiledFood);
         System.out.println("Food: " + food);

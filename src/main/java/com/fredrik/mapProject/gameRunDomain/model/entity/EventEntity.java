@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "event_data")
-public class EventEntity {
+public class EventEntity implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -165,5 +165,15 @@ public class EventEntity {
         this.turn = event.getTurn();
         this.primaryTileCoordinates = event.getPrimaryTileCoordinates();
         this.playerNr = event.getPlayerNr();
+    }
+
+    @Override
+    public EventEntity clone() {
+        try {
+            return (EventEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // Handle the exception appropriately
+            return null;
+        }
     }
 }

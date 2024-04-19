@@ -28,6 +28,10 @@ public abstract class Building {
         this.progress = progress;
     }
 
+    public void addProgress(int added) {
+        progress += added;
+    }
+
     public boolean isCompleted() {
         return progress >= type.getCompleteAtProgress();
     }

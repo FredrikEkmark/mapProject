@@ -5,6 +5,7 @@ import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gamePlayDomain.repository.GamePlayerRepository;
+import com.fredrik.mapProject.gameRunDomain.model.building.BuildingType;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
@@ -65,7 +66,7 @@ public class GamePlayerService {
 
         mapTileService.updateTileVisibilityForPlayer(mapTileIdList, playerEntity.getPlayerNr());
         MapTileEntity startTile = mapTileService.findGameTile(new MapTileId(gameSetup.getId(), startCoordinate.getX(), startCoordinate.getY()));
-        startTile.setBuildingJsonString("{\"type\": \"VILLAGE\", \"progress\": 0}");
+        startTile.setBuildingJsonString("{\"type\": \"VILLAGE\", \"progress\": " + BuildingType.VILLAGE.getCompleteAtProgress() + "}");
         mapTileService.updateGameTile(startTile);
 
         gamePlayerRepository.save(playerEntity);

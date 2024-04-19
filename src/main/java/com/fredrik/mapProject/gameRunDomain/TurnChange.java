@@ -1,11 +1,15 @@
 package com.fredrik.mapProject.gameRunDomain;
 
+import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
+import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gameRunDomain.model.building.Building;
+import com.fredrik.mapProject.gameRunDomain.model.building.BuildingType;
 import com.fredrik.mapProject.gameRunDomain.model.event.Event;
 import com.fredrik.mapProject.gameRunDomain.model.entity.EventEntity;
 import com.fredrik.mapProject.gameRunDomain.model.entity.EventLogEntity;
 import com.fredrik.mapProject.gameRunDomain.model.GameMapManager;
+import com.fredrik.mapProject.gameRunDomain.model.event.EventType;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 
@@ -93,7 +97,7 @@ public class TurnChange {
 
             if (event.isPersistent()) {
                 eventEntity.setTurn(eventEntity.getTurn() + 1);
-                updatedEventEntityList.add(eventEntity);
+                updatedEventEntityList.add(eventEntity.clone());
             }
         }
     }
@@ -108,10 +112,11 @@ public class TurnChange {
     private void processPlayerMana(ManaEntity mana, List<String> playerEventLogEntries) {
 
         List<MapTileEntity> playerMap = gameMap.getTilesWithPlayer(mana.getPlayerNr());
+
         // use the unused manpower from last turn for food production
         System.out.println("Manpower: " + mana.getManpower());
         int excessManpowerFromTurn = mana.withdrawAllManpower();
-        mana.depositFood((int) Math.floor((double) excessManpowerFromTurn / 20));
+        System.out.println("Wasted Manpower: " + excessManpowerFromTurn);
 
         // reset the manpower for next turn
         mana.depositManpower(mana.getPopulation());
@@ -124,12 +129,16 @@ public class TurnChange {
 
         // Run all the players tiles for building processProduction and modifiers
         for (MapTileEntity tile: playerMap) {
+            System.out.println("Running tile process in Process player mana");
 
             Building building = tile.getBuilding();
             mana.raisePopulationMax(tilePopulationMaxBonus);
 
-            if (building.isCompleted()) {
+            System.out.println("Building is complete: " + (building.isCompleted() && building.getType() != BuildingType.NONE));
+
+            if (building.isCompleted() && building.getType() != BuildingType.NONE) {
                 boolean buildingProcessed = building.processProduction(mana, tile.getTerrain());
+                System.out.println("Building processed: " + buildingProcessed);
             }
         }
 
@@ -178,7 +187,7 @@ public class TurnChange {
 
         System.out.println("Population: " + mana.getPopulation());
 
-        final int CONSUMPTION = mana.getPopulation()/100;
+        final int CONSUMPTION = (int) Math.ceil((double) mana.getPopulation() / 100);
         System.out.println("Consumption: " + CONSUMPTION
         );
         boolean populationFoodPayed = mana.withdrawFood(CONSUMPTION);
@@ -187,10 +196,12 @@ public class TurnChange {
         if (populationFoodPayed) {
             // this can result in a lowering if population is over populationMax
             int possiblePopulationIncrease = mana.getPopulationMax() - mana.getPopulation();
-            int populationIncrease = (int) (possiblePopulationIncrease * 0.1) + (int) (mana.getPopulation() * 0.05);
+            int populationIncrease = (int) Math.min(possiblePopulationIncrease * 0.1, mana.getPopulation() * 0.1);
             System.out.println("Possible Population increase: " + possiblePopulationIncrease);
             System.out.println("Population increase: " + populationIncrease);
             mana.raisePopulation(populationIncrease);
+            int populationIncreaseFoodCost = (int) (double) (populationIncrease / 10);
+            mana.withdrawFood(populationIncreaseFoodCost);
         } else {
             int populationDecrease = mana.getPopulation() - (mana.withdrawAllFood() * 100);
             System.out.println("Population decrease: " + populationDecrease);

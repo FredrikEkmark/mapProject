@@ -39,13 +39,11 @@ public class EventService {
     }
 
     public void resetEventsAndSavePersistentEvents(List<EventEntity> eventList, UUID gameId) {
+        System.out.println(eventList.size());
         eventRepository.deleteAllByGameId(gameId);
-        for (EventEntity event: eventList) {
-            if (!event.getGameId().equals(gameId)) {
-                System.out.println("Event " + event.getEventId() + " should be removed");
-            } // toDO this logic makes no sense it should be fixed
-        }
+        if (eventList.size() > 0) {
         eventRepository.saveAll(eventList);
+        }
     }
 
     public void deleteAllByGameId(UUID gameId) {

@@ -83,9 +83,16 @@ public class BuildEvent extends Event {
             int progressToComplete =
                     alreadyExistingBuilding.getType().getCompleteAtProgress() - alreadyExistingBuilding.getProgress();
 
-            manpowerPaid = mana.withdrawManpower((Math.min(progressToComplete, manpowerCost)));
+            int manpowerPayableCost = Math.min(progressToComplete, manpowerCost);
+            manpowerPaid = mana.withdrawManpower(manpowerPayableCost);
 
             if (manpowerPaid) {
+                alreadyExistingBuilding.addProgress(manpowerPayableCost);
+                mapTile.setBuilding(alreadyExistingBuilding);
+                gameMap.addTileToUpdatedTiles(mapTile);
+                if (alreadyExistingBuilding.isCompleted()) {
+                    setPersistent(false);
+                }
                 return true;
             }
         }
@@ -100,6 +107,10 @@ public class BuildEvent extends Event {
         Building newBuilding = getNewBuilding();
 
         mapTile.setBuilding(newBuilding);
+
+        if (mapTile.getBuilding().isCompleted()) {
+            setPersistent(false);
+        }
 
         gameMap.addTileToUpdatedTiles(mapTile);
 

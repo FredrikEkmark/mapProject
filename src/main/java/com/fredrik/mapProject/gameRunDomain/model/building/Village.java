@@ -5,7 +5,7 @@ import com.fredrik.mapProject.gameRunDomain.Terrain;
 
 public class Village extends Building {
 
-    private int baseFoodProduction = 8;
+    private int baseFoodProduction = 6;
 
     public Village(BuildingType type, int progress) {
         super(type, progress);
@@ -18,8 +18,9 @@ public class Village extends Building {
 
         boolean manPowerWithdrawn = mana.withdrawManpower(getType().getManpowerUpkeep());
 
-        if (manPowerWithdrawn)
+        if (manPowerWithdrawn) {
             mana.depositFood((int) (baseFoodProduction * terrainModifier(terrain)));
+        }
 
         return manPowerWithdrawn;
     }
