@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.gameRunDomain.service;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
-import com.fredrik.mapProject.gameRunDomain.model.EventEntity;
+import com.fredrik.mapProject.gameRunDomain.model.entity.EventEntity;
 import com.fredrik.mapProject.gameRunDomain.repository.EventRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

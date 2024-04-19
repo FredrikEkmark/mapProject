@@ -6,7 +6,7 @@ import com.fredrik.mapProject.gamePlayDomain.model.NewEventDTO;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gamePlayDomain.service.PlayerViewService;
-import com.fredrik.mapProject.gameRunDomain.model.EventEntity;
+import com.fredrik.mapProject.gameRunDomain.model.entity.EventEntity;
 import com.fredrik.mapProject.gameRunDomain.service.EventService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.SecurityUtilityService;

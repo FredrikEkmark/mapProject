@@ -1,8 +1,7 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
-import com.fredrik.mapProject.gameRunDomain.model.EventType;
-import jakarta.persistence.Embedded;
+import com.fredrik.mapProject.gameRunDomain.model.event.EventType;
 
 import java.util.UUID;
 

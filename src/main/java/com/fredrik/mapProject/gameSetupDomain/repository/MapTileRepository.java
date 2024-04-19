@@ -3,8 +3,6 @@ package com.fredrik.mapProject.gameSetupDomain.repository;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,6 +26,8 @@ public interface MapTileRepository extends JpaRepository<MapTileEntity, MapTileI
     @Query("SELECT m FROM MapTileEntity m WHERE m.id.gameId = :gameId")
     List<MapTileEntity> findByGameId(UUID gameId);
 
+    Optional<MapTileEntity> findByMapTileId(MapTileId mapTileId);
+
     @Query("SELECT m FROM MapTileEntity m WHERE m.mapTileId.gameId = :gameId AND SUBSTRING(m.visibility, :playerNumber, 1) = '1'")
     List<MapTileEntity> findByGameIdAndPlayerVisibility(@Param("gameId") UUID gameId, @Param("playerNumber") int playerNumber);
 
@@ -36,21 +36,26 @@ public interface MapTileRepository extends JpaRepository<MapTileEntity, MapTileI
 
     @Transactional
     @Modifying
-    @Query("UPDATE MapTileEntity m SET m.tileValue = :tileValue, m.tileOwner = :tileOwner, m.visibility = :visibility WHERE m.mapTileId = :mapTileId")
-    void updateMapTileEntitiesByMapTileId(@Param("mapTileId") MapTileId mapTileId,
-                                          @Param("tileValue") int tileValue,
-                                          @Param("tileOwner") Player tileOwner,
-                                          @Param("visibility") String visibility);
+    @Query("UPDATE MapTileEntity m SET m.tileValue = :tileValue, m.tileOwner = :tileOwner, m.visibility = :visibility, m.building = :building, m.unit = :unit WHERE m.mapTileId = :mapTileId")
+    void updateMapTileEntityByMapTileId(@Param("mapTileId") MapTileId mapTileId,
+                                        @Param("tileValue") int tileValue,
+                                        @Param("tileOwner") Player tileOwner,
+                                        @Param("visibility") String visibility,
+                                        @Param("building") String building,
+                                        @Param("unit") String unit);
 
     @Transactional
     @Modifying
     default void updateMapTileEntities(List<MapTileEntity> mapTileEntities) {
+        saveAll(mapTileEntities); /*
         for (MapTileEntity mapTileEntity : mapTileEntities) {
-            updateMapTileEntitiesByMapTileId(mapTileEntity.getMapTileId(),
+            updateMapTileEntityByMapTileId(mapTileEntity.getMapTileId(),
                     mapTileEntity.getTileValue(),
                     mapTileEntity.getTileOwner(),
-                    mapTileEntity.getVisibility());
-        }
+                    mapTileEntity.getVisibility(),
+                    mapTileEntity.getBuildingJsonString(),
+                    mapTileEntity.getUnit());
+        }*/
     }
 
 }

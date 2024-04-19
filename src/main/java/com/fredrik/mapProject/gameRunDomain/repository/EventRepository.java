@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.gameRunDomain.repository;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
-import com.fredrik.mapProject.gameRunDomain.model.EventEntity;
+import com.fredrik.mapProject.gameRunDomain.model.entity.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

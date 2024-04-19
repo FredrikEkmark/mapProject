@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
+import com.fredrik.mapProject.gamePlayDomain.Player;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -13,6 +14,10 @@ public class ManaEntity {
 
     @Column(nullable = false)
     private UUID gameId;
+
+    @Column(nullable = false, length = 24)
+    @Enumerated(EnumType.STRING)
+    private Player playerNr;
 
     // Resources:
     @Column(nullable = false)
@@ -37,13 +42,202 @@ public class ManaEntity {
     @Column(nullable = false)
     private int simpleClothes;
 
-    public ManaEntity(UUID id, UUID gameId) {
+    @Transient
+    private int protectedFood;
+
+    public ManaEntity(UUID id, UUID gameId, Player playerNr) {
         this.id = id;
         this.gameId = gameId;
+        this.population = 500;
+        this.manpower = 200;
+        this.playerNr = playerNr;
     }
 
     public ManaEntity() {
     }
+
+    public Player getPlayerNr() {
+        return playerNr;
+    }
+
+    public void setPopulation(int population) {
+        this.population = population;
+    }
+
+    public void setPopulationMax(int populationMax) {
+        this.populationMax = populationMax;
+    }
+
+    public void setManpower(int manpower) {
+        this.manpower = manpower;
+    }
+
+    // adjustment methods
+
+    public void lowerPopulation(int less) {
+        population -= less;
+    }
+
+    public void raisePopulation(int more) {
+        population += more;
+    }
+
+    public void lowerPopulationMax(int less) {
+        populationMax -= less;
+    }
+
+    public void raisePopulationMax(int more) {
+        populationMax += more;
+    }
+
+    public void lowerProtectedFood(int less) {
+        protectedFood -= less;
+    }
+
+    public void raiseProtectedFood(int more) {
+        protectedFood += more;
+    }
+
+
+    // transaction methods
+
+    public boolean withdrawManpower(int withdrawal) {
+        if (this.manpower < withdrawal) {
+            return false;
+        }
+        this.manpower -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllManpower() {
+        int withdrawal = manpower;
+        manpower = 0;
+        return withdrawal;
+    }
+
+    public void depositManpower(int deposit) {
+        manpower += deposit;
+    }
+
+    public boolean withdrawFood(int withdrawal) {
+        if (this.food < withdrawal) {
+            return false;
+        }
+        this.food -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllFood() {
+        int withdrawal = food;
+        food  = 0;
+        return withdrawal;
+    }
+
+    public void depositFood(int deposit) {
+        food += deposit;
+    }
+
+    public boolean withdrawWood(int withdrawal) {
+        if (this.wood < withdrawal) {
+            return false;
+        }
+        this.wood -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllWood() {
+        int withdrawal = wood;
+        wood  = 0;
+        return withdrawal;
+    }
+
+    public void depositWood(int deposit) {
+        wood += deposit;
+    }
+
+    public boolean withdrawStone(int withdrawal) {
+        if (this.stone < withdrawal) {
+            return false;
+        }
+        this.stone -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllStone() {
+        int withdrawal = stone;
+        stone  = 0;
+        return withdrawal;
+    }
+
+    public void depositStone(int deposit) {
+        stone += deposit;
+    }
+
+    public boolean withdrawLeather(int withdrawal) {
+        if (this.leather < withdrawal) {
+            return false;
+        }
+        this.leather -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllLeather() {
+        int withdrawal = leather;
+        leather  = 0;
+        return withdrawal;
+    }
+
+    public void depositLeather(int deposit) {
+        leather += deposit;
+    }
+
+    public boolean withdrawFurniture(int withdrawal) {
+        if (this.furniture < withdrawal) {
+            return false;
+        }
+        this.furniture -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllFurniture() {
+        int withdrawal = furniture;
+        furniture  = 0;
+        return withdrawal;
+    }
+
+    public void depositFurniture(int deposit) {
+        furniture += deposit;
+    }
+
+    public boolean withdrawSimpleClothes(int withdrawal) {
+        if (this.simpleClothes < withdrawal) {
+            return false;
+        }
+        this.simpleClothes -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllSimpleClothes() {
+        int withdrawal = simpleClothes;
+        simpleClothes  = 0;
+        return withdrawal;
+    }
+
+    public void depositSimpleClothes(int deposit) {
+        simpleClothes += deposit;
+    }
+
+    // Progression functions
+
+    public int foodSpoilage() {
+        int perishableFood = Math.max(food - protectedFood, 0);
+        int spoiledFood = (int) (Math.floor(perishableFood * 0.1));
+        food -= spoiledFood;
+        System.out.println("Spoiled Food: " + spoiledFood);
+        System.out.println("Food: " + food);
+        return spoiledFood;
+    }
+
 
 
 
@@ -83,5 +277,11 @@ public class ManaEntity {
 
     public int getSimpleClothes() {
         return simpleClothes;
+    }
+
+    public int getProtectedFood() {return protectedFood;}
+
+    public void setProtectedFood(int protectedFood) {
+        this.protectedFood = protectedFood;
     }
 }

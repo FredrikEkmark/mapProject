@@ -77,7 +77,7 @@ public class GameSetupController {
         gameSetup.setSeed(seed);
         gameSetup.setMapSize(mapSize);
         gameSetup.setTurnChangeFromInputString(turnChange, timeZone);
-        gameSetup.setTurn(0);
+        gameSetup.setTurn(1);
         gameSetup.setUpdating(false);
         gameSetup.setStartTime(Instant.now());
 

@@ -1,4 +1,4 @@
-package com.fredrik.mapProject.gameRunDomain.model;
+package com.fredrik.mapProject.gameRunDomain.model.entity;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import jakarta.persistence.EnumType;

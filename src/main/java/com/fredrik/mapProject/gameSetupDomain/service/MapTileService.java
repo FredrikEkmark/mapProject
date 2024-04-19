@@ -90,7 +90,21 @@ public class MapTileService {
 
     }
 
+    public MapTileEntity findGameTile(MapTileId id) {
+        return mapTileRepository.findByMapTileId(id).get();
+    }
+
+    public void updateGameTile(MapTileEntity tile) {
+        mapTileRepository.updateMapTileEntityByMapTileId(
+                tile.getMapTileId(),
+                tile.getTileValue(),
+                tile.getTileOwner(),
+                tile.getVisibility(),
+                tile.getBuildingJsonString(),
+                tile.getUnit());
+    }
+
     public void updateGameMap(List<MapTileEntity> gameMap) {
-        // ToDO add logic here
+        mapTileRepository.updateMapTileEntities(gameMap);
     }
 }

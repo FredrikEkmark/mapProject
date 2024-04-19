@@ -1,5 +1,7 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
+import java.util.Objects;
+
 public class MapCoordinates {
 
     private int longitude; // X
@@ -28,5 +30,22 @@ public class MapCoordinates {
 
     public void setY(int y) {
         this.latitude = y;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        MapCoordinates other = (MapCoordinates) obj;
+        return longitude == other.longitude && latitude == other.latitude;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(longitude, latitude);
     }
 }

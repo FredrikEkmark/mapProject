@@ -1,6 +1,10 @@
 package com.fredrik.mapProject.gameSetupDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gameRunDomain.Terrain;
+import com.fredrik.mapProject.gameRunDomain.model.building.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.persistence.*;
 
 @Entity
@@ -92,12 +96,49 @@ public class MapTileEntity {
         }
     }
 
-    public String getBuilding() {
+    public String getBuildingJsonString() {
         return building;
     }
 
-    public void setBuilding(String building) {
+    public Building getBuilding() {
+
+        JsonObject jsonObject;
+        BuildingType type = BuildingType.NONE;
+        int progress = 0;
+
+        try {
+            jsonObject = JsonParser.parseString(building).getAsJsonObject();
+            type = BuildingType.valueOf(jsonObject.get("type").getAsString());
+            progress = jsonObject.get("progress").getAsInt();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e);
+        }
+
+        return switch (type) {
+            case NONE -> new NoBuilding(BuildingType.NONE, progress);
+            case FARM -> new Farm(type, progress);
+            case GRANARY -> new Granary(type, progress);
+            case QUARRY -> new Quarry(type, progress);
+            case LUMBER_CAMP -> new LumberCamp(type, progress);
+            case CARPENTRY -> new Carpentry(type, progress);
+            case RANCH -> new Ranch(type, progress);
+            case LEATHER_WORKER -> new LeatherWorker(type, progress);
+            case FISHERY -> new Fishery(type, progress);
+            case VILLAGE -> new Village(type, progress);
+            case TOWN -> new Town(type, progress);
+            case CITY -> new City(type, progress);
+        };
+    }
+
+    public void setBuildingJsonString(String building) {
         this.building = building;
+    }
+
+    public void setBuilding(Building building) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("type", building.getType().name());
+        jsonObject.addProperty("progress", building.getProgress());
+        this.building = jsonObject.toString();
     }
 
     public String getUnit() {
@@ -106,5 +147,34 @@ public class MapTileEntity {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public Terrain getTerrain() {
+        switch (tileValue) {
+            case 111, 112, 113, 211, 212, 213, 311, 312, 313 -> {return Terrain.GLACIER;}  // Glacier
+            case 123,  133, 143, 153 -> {return Terrain.DEEP_WATER;}  // Deep Water
+            case 223, 233, 243, 253 -> {return Terrain.COASTAL_WATER;}  // Coastal Water
+            case 322, 323 -> {return Terrain.LOWLAND_TUNDRA;} // Lowland Tundra
+            case 422, 423 -> {return Terrain.HIGHLANDS_TUNDRA;} // Highlands Tundra
+            case 321 -> {return Terrain.COLD_DESERT;} // Cold Desert
+            case 421 -> {return Terrain.COLD_DESERT_HILLS;} // Cold Desert Hills
+            case 331 -> {return Terrain.TEMPERATE_LOWLANDS_PLAINS;}  // Temperate Lowlands Plains
+            case 332 -> {return Terrain.TEMPERATE_FOREST;}  // Temperate Forest
+            case 431 -> {return Terrain.HIGHLAND_HILLS;}  // Highland Hills
+            case 432 -> {return Terrain.TEMPERATE_HIGHLAND_FOREST;}  // Temperate Highland Forest
+            case 333 -> {return Terrain.TEMPERATE_RAINFOREST;}  // Temperate Rainforest
+            case 433 -> {return Terrain.TEMPERATE_HIGHLAND_RAINFOREST;}  // Temperate Highland Rainforest
+            case 341 -> {return Terrain.HOT_DESERT;} // Hot Desert
+            case 441 -> {return Terrain.HOT_DESERT_HILLS;} // Hot Desert Hills
+            case 342 -> {return Terrain.HOT_STEPPE;} // Hot Steppe
+            case 442 -> {return Terrain.HOT_STEPPE_HILLS;} // Hot Steppe hills
+            case 351, 352, 343 -> {return Terrain.TROPICAL_SAVANNA;} // Tropical Savanna
+            case 451, 452, 443 -> {return Terrain.TROPICAL_SAVANNA_HILLS;} // Tropical Savanna Hills
+            case 353 -> {return Terrain.TROPICAL_RAINFOREST;} // Tropical Rainforest
+            case 453 -> {return Terrain.TROPICAL_RAINFOREST_HILLS;} // Tropical Rainforest Hills
+            case 411, 412, 413 -> {return Terrain.GLACIAL_HEIGHTS;} // Glacial Heights
+            case 511, 521, 531, 541, 551 -> {return Terrain.MOUNTAINS;} // Frozen Mountains
+            default -> {return null;}
+        }
     }
 }

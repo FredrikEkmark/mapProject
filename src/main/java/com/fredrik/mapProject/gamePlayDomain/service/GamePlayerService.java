@@ -6,6 +6,7 @@ import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gamePlayDomain.repository.GamePlayerRepository;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
+import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
 import com.fredrik.mapProject.gameSetupDomain.service.MapTileService;
 import jakarta.transaction.Transactional;
@@ -63,9 +64,14 @@ public class GamePlayerService {
         }
 
         mapTileService.updateTileVisibilityForPlayer(mapTileIdList, playerEntity.getPlayerNr());
+        MapTileEntity startTile = mapTileService.findGameTile(new MapTileId(gameSetup.getId(), startCoordinate.getX(), startCoordinate.getY()));
+        startTile.setBuildingJsonString("{\"type\": \"VILLAGE\", \"progress\": 0}");
+        mapTileService.updateGameTile(startTile);
 
         gamePlayerRepository.save(playerEntity);
-        manaService.createNewMana(playerEntity.getManaId(), playerEntity.getPlayerGameId().getGameId());
+        manaService.createNewMana(playerEntity.getManaId(),
+                playerEntity.getPlayerGameId().getGameId(),
+                playerEntity.getPlayerNr());
 
         return "new Player added";
     }
