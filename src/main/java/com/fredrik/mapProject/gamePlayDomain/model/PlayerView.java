@@ -2,7 +2,7 @@ package com.fredrik.mapProject.gamePlayDomain.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.gamePlayDomain.Player;
-import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
+import com.fredrik.mapProject.gameRunDomain.model.entity.EventLogEntity;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import java.util.ArrayList;
@@ -54,15 +54,13 @@ public class PlayerView {
         List<MapTile> map = new ArrayList<>(initialCapacity);
 
         for (MapTileEntity tile : tileList) {
-            int y = tile.getMapTileId().getCoordinates().getY();
-            int x = tile.getMapTileId().getCoordinates().getX();
 
             MapTile rePackagedTile = new MapTile(
                     tile.getMapTileId().getCoordinates(),
                     tile.getTileOwner(),
                     tile.getTileValue(),
                     tile.isVisible(playerNr.number()),
-                    tile.getBuilding());
+                    tile.getBuildingJsonString());
             map.add(rePackagedTile);
         }
             return map;

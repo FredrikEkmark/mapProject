@@ -1,5 +1,7 @@
 package com.fredrik.mapProject.gamePlayDomain;
 
+import java.util.Objects;
+
 public enum Player {
 
     PLAYER_ONE(1, "red", "#ff0000"),
@@ -36,4 +38,5 @@ public enum Player {
     public int number() {
         return number;
     }
+
 }

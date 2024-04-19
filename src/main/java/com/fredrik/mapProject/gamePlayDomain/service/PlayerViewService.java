@@ -3,7 +3,7 @@ package com.fredrik.mapProject.gamePlayDomain.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.model.*;
-import com.fredrik.mapProject.gameRunDomain.model.EventLogEntity;
+import com.fredrik.mapProject.gameRunDomain.model.entity.EventLogEntity;
 import com.fredrik.mapProject.gameRunDomain.service.EventLogService;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
