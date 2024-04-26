@@ -8,6 +8,7 @@ import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ClaimTileEvent extends Event {
@@ -45,15 +46,35 @@ public class ClaimTileEvent extends Event {
 
         boolean tileIsVisible = mapTile.isVisible(getPlayerNr().number());
 
+        List<MapTileEntity> playerTiles = gameMap.getTilesWithPlayer(getPlayerNr());
+
+        boolean canClaimMoreTiles = ((mana.getPopulation() / 100) > playerTiles.size());
+
+        System.out.println(mana.getPopulation() / 100);
+        System.out.println(gameMap.getTilesWithPlayer(getPlayerNr()).size());
+
+        if (!canClaimMoreTiles) {
+            setEventLogEntry(String.format("Could not claim tile %d:%d because insufficient population;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
+            return false;
+        }
+
+
         if (!tileIsVisible) {
-            System.out.println("Tile is visible");
+            setEventLogEntry(String.format("Could not claim tile %d:%d because not visible;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
         boolean tileIsUnOwned = mapTile.getTileOwner() == Player.NONE;
 
         if (!tileIsUnOwned) {
-            System.out.println("Tile is owned");
+            setEventLogEntry(String.format("Could not claim tile %d:%d because already claimed by player %d;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY(),
+                    gameMap.getTileFromCoordinates(getPrimaryTileCoordinates()).getTileOwner().number()));
             return false;
         }
 
@@ -61,20 +82,30 @@ public class ClaimTileEvent extends Event {
                 getPlayerNr());
 
         if (!tileIsAdjacentOwned) {
-            System.out.println("Tile is not adjacent");
+            setEventLogEntry(String.format("Could not claim tile %d:%d because no adjacent owned tile;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
         boolean manpowerPaid = mana.withdrawManpower(manpowerCost);
 
         if (!manpowerPaid) {
-            System.out.println("Manpower Not paid");
+            setEventLogEntry(String.format("Not enough manpower to claim tile %d:%d;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
         mapTile.setTileOwner(getPlayerNr());
 
         gameMap.addTileToUpdatedTiles(mapTile);
+        playerTiles.add(mapTile);
+
+        setEventLogEntry(String.format("Tile %d:%d claimed;",
+                getPrimaryTileCoordinates().getX(),
+                getPrimaryTileCoordinates().getY(),
+                getPlayerNr().number()));
 
         return true;
     }

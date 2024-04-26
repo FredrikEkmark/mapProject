@@ -2,18 +2,18 @@ package com.fredrik.mapProject.gameRunDomain.model.building;
 
 public enum BuildingType {
 
-    NONE(0,0, 0),
-    FARM(50, 100, 400),
-    GRANARY(0, 50, 500),
-    QUARRY(0, 100, 500),
-    LUMBER_CAMP(50, 100, 400),
-    CARPENTRY(0, 50, 500),
-    RANCH(50, 100, 500),
-    LEATHER_WORKER(0, 50, 500),
-    FISHERY(50, 100, 400),
-    VILLAGE(500, 300, 800),
-    TOWN(2000, 600, 2000),
-    CITY(5000, 1000, 5000);
+    NONE("none",0,0, 0),
+    FARM("Farm",50, 100, 400),
+    GRANARY("Granary",0, 50, 500),
+    QUARRY("Quarry",0, 100, 500),
+    LUMBER_CAMP("Lumber camp",50, 100, 400),
+    CARPENTRY("Carpentry",0, 50, 500),
+    RANCH("Ranch",50, 100, 500),
+    LEATHER_WORKER("Leather worker",0, 50, 500),
+    FISHERY("Fishery",50, 100, 400),
+    VILLAGE("Village",500, 300, 800),
+    TOWN("Town",2000, 600, 2000),
+    CITY("City",5000, 1000, 5000);
 
     private final int populationMaxBonus;
 
@@ -21,7 +21,10 @@ public enum BuildingType {
 
     private final int completeAtProgress;
 
-    BuildingType(int populationMaxBonus, int manpowerUpkeep, int completeAtProgress) {
+    private final String building;
+
+    BuildingType(String building, int populationMaxBonus, int manpowerUpkeep, int completeAtProgress) {
+        this.building = building;
         this.populationMaxBonus = populationMaxBonus;
         this.manpowerUpkeep = manpowerUpkeep;
         this.completeAtProgress = completeAtProgress;
@@ -38,4 +41,6 @@ public enum BuildingType {
     public int getCompleteAtProgress() {
         return completeAtProgress;
     }
+
+    public String getBuilding() {return building;}
 }

@@ -106,6 +106,34 @@ public class TurnChange {
 
         for (ManaEntity mana: manaList) {
             processPlayerMana(mana, eventLogEntries.get(mana.getPlayerNr().name()));
+
+            StringBuilder eventLogText = new StringBuilder("");
+            int eventLogIndex = 0;
+
+            for (String eventLogEntry: eventLogEntries.get(mana.getPlayerNr().name())) {
+                if (eventLogEntry != null && eventLogText.length() + eventLogEntry.length() > 255) {
+                    eventLog.add(new EventLogEntity(
+                            eventLogText.toString(),
+                            gameSetup.getId(),
+                            mana.getPlayerNr(),
+                            gameSetup.getTurn(),
+                            eventLogIndex
+                            ));
+
+                    eventLogIndex++;
+                    eventLogText = new StringBuilder("");
+                }
+
+                eventLogText.append(eventLogEntry);
+            }
+
+            eventLog.add(new EventLogEntity(
+                    eventLogText.toString(),
+                    gameSetup.getId(),
+                    mana.getPlayerNr(),
+                    gameSetup.getTurn(),
+                    eventLogIndex
+            ));
         }
     }
 
@@ -114,14 +142,10 @@ public class TurnChange {
         List<MapTileEntity> playerMap = gameMap.getTilesWithPlayer(mana.getPlayerNr());
 
         // use the unused manpower from last turn for food production
-        System.out.println("Manpower: " + mana.getManpower());
         int excessManpowerFromTurn = mana.withdrawAllManpower();
-        System.out.println("Wasted Manpower: " + excessManpowerFromTurn);
 
         // reset the manpower for next turn
         mana.depositManpower(mana.getPopulation());
-        System.out.println("Population: " + mana.getPopulation());
-        System.out.println("Manpower: " + mana.getManpower());
 
         mana.setPopulationMax(0);
         mana.setProtectedFood(0);
@@ -129,16 +153,19 @@ public class TurnChange {
 
         // Run all the players tiles for building processProduction and modifiers
         for (MapTileEntity tile: playerMap) {
-            System.out.println("Running tile process in Process player mana");
 
             Building building = tile.getBuilding();
             mana.raisePopulationMax(tilePopulationMaxBonus);
 
-            System.out.println("Building is complete: " + (building.isCompleted() && building.getType() != BuildingType.NONE));
-
             if (building.isCompleted() && building.getType() != BuildingType.NONE) {
-                boolean buildingProcessed = building.processProduction(mana, tile.getTerrain());
-                System.out.println("Building processed: " + buildingProcessed);
+                boolean buildingProcessed = building.processProduction(mana, tile.getTerrain(), tile.getMapTileId().getCoordinates());
+
+                if (!buildingProcessed) {
+                    int buildingDamage = 20;
+                    building.damage(buildingDamage);
+                }
+                String buildingLogEntry = building.getEventLogEntry();
+                playerEventLogEntries.add(buildingLogEntry);
             }
         }
 
@@ -149,11 +176,13 @@ public class TurnChange {
         calculatePopulationChange(mana, playerEventLogEntries);
 
         // calculate food spoilage
+        int foodBeforeSpoilage = mana.getFood();
         int spoiledFood = mana.foodSpoilage();
-
-        System.out.println("Population: " + mana.getPopulation());
-        System.out.println("PopulationMax: " + mana.getPopulationMax());
-        System.out.println("Manpower: " + mana.getManpower());
+        playerEventLogEntries.add(String.format(
+                "Out of %s Food, %s was stored properly and %s Food was lost to spoilage;",
+                foodBeforeSpoilage,
+                mana.getProtectedFood(),
+                spoiledFood));
     }
 
     public void calculateLuxuryResourceEffect(ManaEntity mana, List<String> eventLogEntries) {
@@ -185,29 +214,35 @@ public class TurnChange {
 
     public void calculatePopulationChange(ManaEntity mana, List<String> eventLogEntries) {
 
-        System.out.println("Population: " + mana.getPopulation());
-
         final int CONSUMPTION = (int) Math.ceil((double) mana.getPopulation() / 100);
-        System.out.println("Consumption: " + CONSUMPTION
-        );
         boolean populationFoodPayed = mana.withdrawFood(CONSUMPTION);
-        System.out.println(populationFoodPayed);
+
+        eventLogEntries.add(String.format(
+                "Population: %d, Food consumption: %d, Enough food for population: %b;",
+                mana.getPopulation(), CONSUMPTION, populationFoodPayed
+        ));
 
         if (populationFoodPayed) {
             // this can result in a lowering if population is over populationMax
             int possiblePopulationIncrease = mana.getPopulationMax() - mana.getPopulation();
             int populationIncrease = (int) Math.min(possiblePopulationIncrease * 0.1, mana.getPopulation() * 0.1);
-            System.out.println("Possible Population increase: " + possiblePopulationIncrease);
-            System.out.println("Population increase: " + populationIncrease);
             mana.raisePopulation(populationIncrease);
             int populationIncreaseFoodCost = (int) (double) (populationIncrease / 10);
             mana.withdrawFood(populationIncreaseFoodCost);
+
+            eventLogEntries.add(String.format(
+                    "Possible Population increase: %d, Population increase: %d, Population Increase Food Cost: %d;",
+                    possiblePopulationIncrease, populationIncrease, populationIncreaseFoodCost
+            ));
         } else {
             int populationDecrease = mana.getPopulation() - (mana.withdrawAllFood() * 100);
-            System.out.println("Population decrease: " + populationDecrease);
             mana.lowerPopulation(populationDecrease);
+
+            eventLogEntries.add(String.format(
+                    "Population decrease: %d;",
+                    populationDecrease
+            ));
         }
-        System.out.println("Population: " + mana.getPopulation());
     }
 
     // Getters

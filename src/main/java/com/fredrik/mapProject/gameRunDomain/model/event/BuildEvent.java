@@ -63,7 +63,9 @@ public class BuildEvent extends Event {
         boolean tileOwnedByPlayer = mapTile.getTileOwner() == getPlayerNr();
 
         if (!tileOwnedByPlayer) {
-            System.out.println("Tile isn't owned by player");
+            setEventLogEntry(String.format("Could not build on tile %d:%d because not owned by player;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
@@ -71,7 +73,9 @@ public class BuildEvent extends Event {
         boolean buildingAlreadyComplete =  (alreadyExistingBuilding.isCompleted() && alreadyExistingBuilding.getType() != BuildingType.NONE);
 
         if (buildingAlreadyComplete) {
-            System.out.println("Building already complete on tile");
+            setEventLogEntry(String.format("Could not build on tile %d:%d because building already complete;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
@@ -93,6 +97,13 @@ public class BuildEvent extends Event {
                 if (alreadyExistingBuilding.isCompleted()) {
                     setPersistent(false);
                 }
+                setEventLogEntry(String.format("%d progress was added to %s on tile %d:%d, Progress is %d/%d;",
+                        manpowerPayableCost,
+                        alreadyExistingBuilding.getType().getBuilding(),
+                        getPrimaryTileCoordinates().getX(),
+                        getPrimaryTileCoordinates().getY(),
+                        alreadyExistingBuilding.getProgress(),
+                        alreadyExistingBuilding.getType().getCompleteAtProgress()));
                 return true;
             }
         }
@@ -100,7 +111,9 @@ public class BuildEvent extends Event {
         manpowerPaid = mana.withdrawManpower(manpowerCost);
 
         if (!manpowerPaid) {
-            System.out.println("Manpower not paid");
+            setEventLogEntry(String.format("Not enough manpower to build on tile %d:%d;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
@@ -113,6 +126,14 @@ public class BuildEvent extends Event {
         }
 
         gameMap.addTileToUpdatedTiles(mapTile);
+
+        setEventLogEntry(String.format("%d progress was added to %s on tile %d:%d, Progress is %d/%d;",
+                manpowerCost,
+                mapTile.getBuilding().getType().getBuilding(),
+                getPrimaryTileCoordinates().getX(),
+                getPrimaryTileCoordinates().getY(),
+                mapTile.getBuilding().getProgress(),
+                mapTile.getBuilding().getType().getCompleteAtProgress()));
 
         return true;
     }

@@ -49,18 +49,27 @@ public class ExploreEvent extends Event {
 
         boolean tileIsVisible = mapTile.isVisible(getPlayerNr().number());
         if (tileIsVisible) {
+            setEventLogEntry(String.format("Could not explore tile %d:%d because already visible;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
         boolean tileAdjacentVisible = gameMap.isTileVisibleAdjacentToPlayer(getPrimaryTileCoordinates(), getPlayerNr());
 
         if (!tileAdjacentVisible) {
+            setEventLogEntry(String.format("Could not explore tile %d:%d because no adjacent visible tile;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
         boolean manpowerPaid = mana.withdrawManpower(manpowerCost);
 
         if (!manpowerPaid) {
+            setEventLogEntry(String.format("Not enough manpower to explore tile %d:%d;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
             return false;
         }
 
@@ -68,6 +77,10 @@ public class ExploreEvent extends Event {
         mapTile.setPlayerVisibility(true, getPlayerNr().number());
 
         gameMap.addTileToUpdatedTiles(mapTile);
+
+        setEventLogEntry(String.format("Tile %d:%d explored and is now visible;",
+                getPrimaryTileCoordinates().getX(),
+                getPrimaryTileCoordinates().getY()));
 
         return true;
     }

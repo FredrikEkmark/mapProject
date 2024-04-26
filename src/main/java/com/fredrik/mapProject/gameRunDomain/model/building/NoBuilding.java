@@ -1,6 +1,7 @@
 package com.fredrik.mapProject.gameRunDomain.model.building;
 
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
+import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gameRunDomain.Terrain;
 
 public class NoBuilding extends Building {
@@ -10,7 +11,7 @@ public class NoBuilding extends Building {
     }
 
     @Override
-    public boolean processProduction(ManaEntity mana, Terrain terrain) {
+    public boolean processProduction(ManaEntity mana, Terrain terrain, MapCoordinates coordinates) {
         return false;
     }
 

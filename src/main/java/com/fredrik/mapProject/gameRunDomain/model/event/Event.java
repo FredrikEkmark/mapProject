@@ -30,6 +30,7 @@ public abstract class Event {
         this.primaryTileCoordinates = primaryTileCoordinates;
         this.eventType = eventType;
         this.persistent = persistent;
+        this.eventLogEntry = "";
     }
 
     // Setup functions for child classes

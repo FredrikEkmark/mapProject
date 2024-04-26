@@ -20,13 +20,15 @@ public class TurnChangeService {
     private final EventService eventService;
     private final MapTileService mapTileService;
     private final ManaService manaService;
+    private final EventLogService eventLogService;
 
     @Autowired
-    public TurnChangeService(GameSetupService gameSetupService, EventService eventService, MapTileService mapTileService, ManaService manaService) {
+    public TurnChangeService(GameSetupService gameSetupService, EventService eventService, MapTileService mapTileService, ManaService manaService, EventLogService eventLogService) {
         this.gameSetupService = gameSetupService;
         this.eventService = eventService;
         this.mapTileService = mapTileService;
         this.manaService = manaService;
+        this.eventLogService = eventLogService;
     }
 
     public void runTurnChange(int hour, int min) {
@@ -52,6 +54,7 @@ public class TurnChangeService {
             eventService.resetEventsAndSavePersistentEvents(turnChange.getEventEntityList(), game.getId());
             gameSetupService.updateGameSetup(turnChange.getGameSetup());
             manaService.updateAll(turnChange.getManaList());
+            eventLogService.save(turnChange.getEventLog());
         }
     }
 }

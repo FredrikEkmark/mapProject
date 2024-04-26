@@ -18,6 +18,11 @@ public class EventLogEntity {
     public EventLogEntity() {
     }
 
+    public EventLogEntity(String log, UUID gameId, Player playerNr, int turn, int logIndex) {
+        this.eventLogId = new EventLogId(gameId, playerNr, turn, logIndex);
+        this.log = log;
+    }
+
     public String getLog() {
         return log;
     }
