@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.gameSetupDomain.mapGenerator;
 
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
-import com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile.TileGenerator;
+import com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile.TileGenerator2;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
 
@@ -16,7 +16,7 @@ public class MapGenerator
     private static Random random = new Random();
     public static MapTileEntity[][] generateMap(UUID gameId, int seed, int height, int width) {
 
-        TileGenerator tileGenerator = new TileGenerator(seed, width, height);
+        TileGenerator2 tileGenerator = new TileGenerator2(seed, width, height);
 
         MapTileEntity[][] map = new MapTileEntity[width][height];
 
