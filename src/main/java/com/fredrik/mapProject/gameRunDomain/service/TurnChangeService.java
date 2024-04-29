@@ -44,7 +44,7 @@ public class TurnChangeService {
 
         for (GameSetupEntity game: gameSetups) {
             List<EventEntity> eventList = eventService.findAllByGameID(game.getId());
-            GameMapManager gameMap = new GameMapManager(mapTileService.getGameMap(game.getId()));
+            GameMapManager gameMap = new GameMapManager(mapTileService.getGameMap(game.getId()), game);
             List<ManaEntity> manaList = manaService.findAllManaByGameId(game.getId());
 
             TurnChange turnChange = new TurnChange(game, gameMap, eventList, manaList);

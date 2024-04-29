@@ -4,7 +4,9 @@ import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
+import com.fredrik.mapProject.gamePlayDomain.model.PlayerStartPositionDTO;
 import com.fredrik.mapProject.gamePlayDomain.repository.GamePlayerRepository;
+import com.fredrik.mapProject.gameRunDomain.model.GameMapManager;
 import com.fredrik.mapProject.gameRunDomain.model.building.BuildingType;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
@@ -32,43 +34,19 @@ public class GamePlayerService {
 
     public String createNewGamePlayer(GameSetupEntity gameSetup, UUID playerId) {
 
-        List<Player> allPlayerNumbers = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(Player.values(), 0, gameSetup.getMapSize().getMaxPlayers())));
+        List<MapTileEntity> gameMap = mapTileService.getGameMap(gameSetup.getId());
 
-        List<GamePlayerEntity> gamePlayers = getAllGamePlayersByGame(gameSetup.getId());
+        GameMapManager gameMapManager = new GameMapManager(gameMap, gameSetup);
 
-        if (gamePlayers.size() >= gameSetup.getMapSize().getMaxPlayers()) {
-            return "To many players";
-        }
+        PlayerStartPositionDTO playerStartPosition = gameMapManager.createNewStartPosition();
 
-        for (GamePlayerEntity gamePlayer: gamePlayers) {
-            allPlayerNumbers.remove(gamePlayer.getPlayerNr());
-        }
+        GamePlayerEntity playerEntity = new GamePlayerEntity(
+                gameSetup.getId(),
+                playerId,
+                playerStartPosition.getStartPosition(),
+                playerStartPosition.getPlayer());
 
-        Player player = allPlayerNumbers.get(0);
-
-        MapCoordinates startCoordinate = mapTileService.getPlayerStartPosition(player, gameSetup.getId());
-
-        GamePlayerEntity playerEntity = new GamePlayerEntity(gameSetup.getId(), playerId, startCoordinate, player);
-
-        List<MapTileId> mapTileIdList = new ArrayList<MapTileId>();
-
-        int[] xOffsets = {-1, -1, 0, 0, 0, 1, 1};
-        int[] yOffsets = {0, 1, -1, 1, 0, 0, 1};
-
-        if (startCoordinate.getX() % 2 == 0) {
-            yOffsets[1] = -1;
-            yOffsets[6] = -1;
-        }
-
-        for (int i = 0; i < xOffsets.length; i++) {
-            mapTileIdList.add(new MapTileId(gameSetup.getId(), startCoordinate.getX() + xOffsets[i], startCoordinate.getY() + yOffsets[i]));
-        }
-
-        mapTileService.updateTileVisibilityForPlayer(mapTileIdList, playerEntity.getPlayerNr());
-        MapTileEntity startTile = mapTileService.findGameTile(new MapTileId(gameSetup.getId(), startCoordinate.getX(), startCoordinate.getY()));
-        startTile.setBuildingJsonString("{\"type\": \"VILLAGE\", \"progress\": " + BuildingType.VILLAGE.getCompleteAtProgress() + "}");
-        mapTileService.updateGameTile(startTile);
-
+        mapTileService.updateGameMap(playerStartPosition.getStartTiles());
         gamePlayerRepository.save(playerEntity);
         manaService.createNewMana(playerEntity.getManaId(),
                 playerEntity.getPlayerGameId().getGameId(),
@@ -93,5 +71,11 @@ public class GamePlayerService {
     public void deleteAllGamePlayerByGameId(UUID gameId) {
         gamePlayerRepository.deleteAllByGameId(gameId);
         manaService.deleteAllManaByGameID(gameId);
+    }
+
+    public void deleteGamePlayerById(GamePlayerEntity gamePlayer) {
+        gamePlayerRepository.deleteById(gamePlayer.getPlayerGameId());
+        manaService.deleteManaById(gamePlayer.getManaId());
+        mapTileService.removePlayerInfluenceFromAllTiles(gamePlayer);
     }
 }

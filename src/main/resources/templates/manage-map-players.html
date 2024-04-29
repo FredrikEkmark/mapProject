@@ -20,7 +20,7 @@
         <td th:style="'background-color: ' + ${player.getPlayerNr().getColorHex()}" th:text="${player.getPlayerNr().number()}"></td>
         <td th:text="${player.getUsername()}"></td>
         <td>
-            <a th:href="@{/delete-game-player/{gameid}/{id}(id=${player.getPlayerGameId().getUserId()})}">Remove</a>
+            <a th:href="@{/delete-game-player/{gameId}/{id}(gameId=${gameId},id=${player.getPlayerGameId().getUserId()})}">Remove</a>
         </td>
     </tr>
     </tbody>

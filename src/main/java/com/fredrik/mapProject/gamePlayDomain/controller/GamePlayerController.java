@@ -1,10 +1,12 @@
 package com.fredrik.mapProject.gamePlayDomain.controller;
 
 import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
+import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
+import com.fredrik.mapProject.userDomain.service.SecurityUtilityService;
 import com.fredrik.mapProject.userDomain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,14 +23,18 @@ import java.util.UUID;
 @Controller
 public class GamePlayerController {
 
-    // private final SecurityUtilityService securityUtilityService; // toDO do i need security check here?
+    private final SecurityUtilityService securityUtilityService; // toDO do i need security check here?
     private final GamePlayerService gamePlayerService;
     private final GameSetupService gameSetupService;
 
     private final UserService userService;
 
     @Autowired
-    public GamePlayerController(GamePlayerService gamePlayerService, GameSetupService gameSetupService, UserService userService) {
+    public GamePlayerController(SecurityUtilityService securityUtilityService,
+                                GamePlayerService gamePlayerService,
+                                GameSetupService gameSetupService,
+                                UserService userService) {
+        this.securityUtilityService = securityUtilityService;
         this.gamePlayerService = gamePlayerService;
         this.gameSetupService = gameSetupService;
         this.userService = userService;
@@ -62,6 +68,26 @@ public class GamePlayerController {
         GameSetupEntity gameSetup = gameSetupService.findById(gameId);
 
         gamePlayerService.createNewGamePlayer(gameSetup, user.get().getId());
+
+        return "redirect:/manage-map-players/" + gameId;
+    }
+
+    @GetMapping("/delete-game-player/{gameId}/{playerId}")
+    @PreAuthorize("hasAuthority('GET')")
+    public String deletePlayer(@PathVariable("gameId") UUID gameId, @PathVariable("playerId") UUID playerId ) {
+
+        UserEntity user = securityUtilityService.getCurrentUser();
+        GameSetupEntity gameSetup = gameSetupService.findById(gameId);
+
+        Optional<GamePlayerEntity> gamePlayer = Optional.empty();
+
+        if (user.getId().equals(gameSetup.getOwner().getId())) {
+            gamePlayer = gamePlayerService.getGamePlayer(new PlayerGameId(gameId, playerId));
+        }
+
+        if (gamePlayer.isPresent()) {
+            gamePlayerService.deleteGamePlayerById(gamePlayer.get());
+        }
 
         return "redirect:/manage-map-players/" + gameId;
     }

@@ -1,9 +1,10 @@
 package com.fredrik.mapProject.gameSetupDomain.service;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
+import com.fredrik.mapProject.gamePlayDomain.model.PlayerGameId;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
-import com.fredrik.mapProject.gameSetupDomain.mapGenerator.MapGenerator;
 import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
@@ -26,34 +27,6 @@ public class MapTileService {
         this.mapTileRepository = mapTileRepository;
     }
 
-    public void createNewGameMap(GameSetupEntity gameSetup) {
-        MapSizes mapSize = gameSetup.getMapSize();
-
-        MapTileEntity[][] map = MapGenerator.generateMap(
-                gameSetup.getId(),
-                gameSetup.getSeed(),
-                mapSize.getHeight(),
-                mapSize.getWidth()
-        );
-
-        List<MapCoordinates> startLocations = MapGenerator.generateStartLocations(map);
-
-        for (int i = 0; i < startLocations.size(); i++) {
-            map[startLocations.get(i).getY()][startLocations.get(i).getX()].setTileOwner(Player.values()[i]);
-        }
-
-        List<MapTileEntity> flatList = new ArrayList<>();
-        for (MapTileEntity[] row : map) {
-            for (MapTileEntity tile : row) {
-                if (tile != null) {
-                    flatList.addLast(tile);
-                }
-            }
-        }
-
-        mapTileRepository.saveAll(flatList);
-    }
-
     public void deleteGameMap(UUID gameId) {
         mapTileRepository.deleteByGameId(gameId);
     }
@@ -73,23 +46,6 @@ public class MapTileService {
         return fullMap;
     }
 
-    public MapCoordinates getPlayerStartPosition(Player player, UUID gameId) {
-        Optional<MapTileEntity> startTile = mapTileRepository.findFirstByTileOwnerAndGameId(player, gameId);
-        if (startTile.isEmpty())
-            return null;
-
-        return startTile.get().getMapTileId().getCoordinates();
-    }
-
-    public void updateTileVisibilityForPlayer(List<MapTileId> mapTileIds, Player player) {
-        List<MapTileEntity> mapTiles = mapTileRepository.findAllById(mapTileIds);
-        for (MapTileEntity tile: mapTiles) {
-            tile.setPlayerVisibility(true, player.number());
-        }
-        mapTileRepository.updateMapTileEntities(mapTiles);
-
-    }
-
     public MapTileEntity findGameTile(MapTileId id) {
         return mapTileRepository.findByMapTileId(id).get();
     }
@@ -106,5 +62,19 @@ public class MapTileService {
 
     public void updateGameMap(List<MapTileEntity> gameMap) {
         mapTileRepository.updateMapTileEntities(gameMap);
+    }
+
+    public void removePlayerInfluenceFromAllTiles(GamePlayerEntity gamePlayer) {
+        List<MapTileEntity> gameMap = mapTileRepository.findByGameId(gamePlayer.getPlayerGameId().getGameId());
+
+        List<MapTileEntity> updatedList = new ArrayList<>();
+
+        for (MapTileEntity tile: gameMap) {
+            if (tile.getTileOwner() == gamePlayer.getPlayerNr()) {
+                tile.setTileOwner(Player.NONE);
+                updatedList.add(tile);
+            }
+        }
+        mapTileRepository.saveAll(updatedList);
     }
 }

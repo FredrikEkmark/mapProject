@@ -41,7 +41,6 @@ public class GameSetupService {
 
         if (gameSetupRepository.findById(gameSetup.getId()).isPresent()) {
 
-            mapTileService.createNewGameMap(gameSetup);
             gamePlayerService.createNewGamePlayer(gameSetup, gameSetup.getOwner().getId());
 
         } else {
