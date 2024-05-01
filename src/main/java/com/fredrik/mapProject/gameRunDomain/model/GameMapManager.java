@@ -220,9 +220,6 @@ public class GameMapManager {
         int xBounds = gameSetup.getMapSize().getHeight();
         int yBounds = gameSetup.getMapSize().getWidth();
 
-        System.out.println(xBounds);
-        System.out.println(yBounds);
-
         MapCoordinates startPosition = new MapCoordinates();
 
         int[] xOffsets = {-1, -1, 0, 0, 1, 1};
@@ -233,10 +230,8 @@ public class GameMapManager {
         MapTileEntity startTile;
 
         while (notValidStart) {
-            System.out.println("ran While Loop");
-            startPosition.setX(random.nextInt(0, xBounds));
-            startPosition.setY(random.nextInt(20, yBounds - 20));
-            System.out.println(startPosition.getX() + " " + startPosition.getY());
+            startPosition.setX(random.nextInt(6, xBounds - 7));
+            startPosition.setY(random.nextInt(0, yBounds));
 
             if (startPosition.getX() % 2 == 0) {
                 yOffsets[1] = -1;
