@@ -60,6 +60,16 @@ public class BuildEvent extends Event {
 
         MapTileEntity mapTile = gameMap.getTileFromCoordinates(getPrimaryTileCoordinates());
 
+        boolean buildableElevation = buildingType.getBuildableElevation().contains(mapTile.getTerrain().getElevation());
+
+        if (!buildableElevation) {
+            setEventLogEntry(String.format("Could not build on tile %d:%d because not an acceptable terrain;",
+                    getPrimaryTileCoordinates().getX(),
+                    getPrimaryTileCoordinates().getY()));
+            setPersistent(false);
+            return false;
+        }
+
         boolean tileOwnedByPlayer = mapTile.getTileOwner() == getPlayerNr();
 
         if (!tileOwnedByPlayer) {

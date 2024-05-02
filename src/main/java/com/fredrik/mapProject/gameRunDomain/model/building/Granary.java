@@ -2,14 +2,18 @@ package com.fredrik.mapProject.gameRunDomain.model.building;
 
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
-import com.fredrik.mapProject.gameRunDomain.Terrain;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Elevation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Granary extends Building {
 
     private int baseProtectedFood = 5;
 
     public Granary(BuildingType type, int progress) {
-        super(type, progress);
+        super(
+                type,
+                progress
+        );
     }
 
     @Override

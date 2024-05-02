@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.gameSetupDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
-import com.fredrik.mapProject.gameRunDomain.Terrain;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 import com.fredrik.mapProject.gameRunDomain.model.building.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

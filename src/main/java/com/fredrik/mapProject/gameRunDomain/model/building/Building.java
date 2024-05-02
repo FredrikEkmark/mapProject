@@ -2,7 +2,11 @@ package com.fredrik.mapProject.gameRunDomain.model.building;
 
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
-import com.fredrik.mapProject.gameRunDomain.Terrain;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Elevation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
+
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class Building {
 
@@ -51,4 +55,5 @@ public abstract class Building {
     public void setEventLogEntry(String eventLogEntry) {
         this.eventLogEntry = eventLogEntry;
     }
+
 }

@@ -138,7 +138,7 @@ public class TileGenerator {
             value = 30;
         } else if (adjustedLatitude > maxHeightPart*6.5) {
             latitudeLine = (int) (maxHeightPart*6.5);
-            value = 30; //
+            value = 30;
         } else if (adjustedLatitude < maxHeightPart*4.5) {
             latitudeLine = (int) (maxHeightPart*4.5);
             value = 40;

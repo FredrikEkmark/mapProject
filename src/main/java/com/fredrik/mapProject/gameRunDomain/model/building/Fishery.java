@@ -2,14 +2,18 @@ package com.fredrik.mapProject.gameRunDomain.model.building;
 
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
-import com.fredrik.mapProject.gameRunDomain.Terrain;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Elevation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Fishery extends Building {
 
     private int baseFoodProduction = 5;
 
     public Fishery(BuildingType type, int progress) {
-        super(type, progress);
+        super(
+                type,
+                progress
+        );
     }
 
     @Override
