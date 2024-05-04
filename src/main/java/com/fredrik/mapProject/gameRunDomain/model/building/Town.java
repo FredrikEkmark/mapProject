@@ -7,7 +7,7 @@ import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Town extends Building {
 
-    private int baseFoodProduction = 8;
+    private int baseFoodProduction = 10;
 
     public Town(BuildingType type, int progress) {
         super(
