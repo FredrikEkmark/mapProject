@@ -3,6 +3,8 @@ package com.fredrik.mapProject.gameRunDomain.model.building;
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gameRunDomain.model.terrain.Elevation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Precipitation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Temperature;
 import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Granary extends Building {
@@ -52,6 +54,32 @@ public class Granary extends Building {
 
     @Override
     protected double terrainModifier(Terrain terrain) {
-        return 1;
+
+        double terrainModifier = 1;
+
+        // Temperature modifier
+        if (terrain.getTemperature() == Temperature.ARCTIC) {
+            terrainModifier += 0.2;
+        } else if (terrain.getTemperature() == Temperature.SUBTROPICAL) {
+            terrainModifier -= 0.2;
+        } else if (terrain.getTemperature() == Temperature.TROPICAL) {
+            terrainModifier -= 0.4;
+        }
+
+        // Precipitation modifier
+        if (terrain.getPrecipitation() == Precipitation.NONE) {
+            terrainModifier += 0.4;
+        } else if (terrain.getPrecipitation() == Precipitation.LOW) {
+            terrainModifier += 0.2;
+        } else if (terrain.getPrecipitation() == Precipitation.HIGH) {
+            terrainModifier -= 0.4;
+        }
+
+        if (terrainModifier < 0) {
+            terrainModifier = 0;
+        }
+
+        return terrainModifier;
+
     }
 }

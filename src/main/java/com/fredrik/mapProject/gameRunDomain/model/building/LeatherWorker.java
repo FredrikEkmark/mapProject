@@ -3,6 +3,8 @@ package com.fredrik.mapProject.gameRunDomain.model.building;
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gameRunDomain.model.terrain.Elevation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Precipitation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Temperature;
 import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class LeatherWorker extends Building {
@@ -76,6 +78,26 @@ public class LeatherWorker extends Building {
 
     @Override
     protected double terrainModifier(Terrain terrain) {
-        return 1;
+
+        double terrainModifier = 1;
+
+        // Elevation modifier
+        if (terrain.getElevation() == Elevation.HIGHLANDS) {
+            terrainModifier -= 0.2;
+        }
+
+        // Precipitation modifier
+        if (terrain.getPrecipitation() == Precipitation.LOW) {
+            terrainModifier += 0.2;
+        } else if (terrain.getPrecipitation() == Precipitation.HIGH) {
+            terrainModifier -= 0.2;
+        }
+
+        if (terrainModifier < 0) {
+            terrainModifier = 0;
+        }
+
+        return terrainModifier;
+
     }
 }
