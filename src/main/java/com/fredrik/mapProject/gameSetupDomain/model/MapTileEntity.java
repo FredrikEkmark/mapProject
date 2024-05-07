@@ -1,10 +1,11 @@
 package com.fredrik.mapProject.gameSetupDomain.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 import com.fredrik.mapProject.gameRunDomain.model.building.*;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import jakarta.persistence.*;
 
 @Entity
@@ -102,15 +103,25 @@ public class MapTileEntity {
 
     public Building getBuilding() {
 
-        JsonObject jsonObject;
+        ObjectMapper objectMapper = new ObjectMapper();
+
         BuildingType type = BuildingType.NONE;
         int progress = 0;
 
         try {
-            jsonObject = JsonParser.parseString(building).getAsJsonObject();
-            type = BuildingType.valueOf(jsonObject.get("type").getAsString());
-            progress = jsonObject.get("progress").getAsInt();
-        } catch (IllegalArgumentException e) {
+            JsonNode rootNode = objectMapper.readTree(building);
+
+            JsonNode typeNode = rootNode.get("type");
+            JsonNode progressNode = rootNode.get("progress");
+
+            if (typeNode != null) {
+                type = BuildingType.valueOf(typeNode.asText());
+            }
+
+            if (progressNode != null && progressNode.isInt()) {
+                progress = progressNode.asInt();
+            }
+        } catch (RuntimeException | JsonProcessingException e) {
             System.out.println(e);
         }
 
@@ -135,10 +146,17 @@ public class MapTileEntity {
     }
 
     public void setBuilding(Building building) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", building.getType().name());
-        jsonObject.addProperty("progress", building.getProgress());
-        this.building = jsonObject.toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            BuildingJson buildingJson = new BuildingJson();
+            buildingJson.setType(building.getType());
+            buildingJson.setProgress(building.getProgress());
+
+            this.building = objectMapper.writeValueAsString(buildingJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getUnit() {

@@ -38,7 +38,7 @@ public class LumberCamp extends Building {
 
         int woodProduction = (int) (baseWoodProduction * terrainModifier(terrain));
 
-        mana.depositFood(woodProduction);
+        mana.depositWood(woodProduction);
 
         setEventLogEntry(String.format(
                 "Tile %d:%d %s manpower upkeep %d, produced %d Wood;",

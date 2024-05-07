@@ -1,6 +1,7 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gameRunDomain.model.event.EventManaCost;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -50,6 +51,8 @@ public class ManaEntity {
         this.gameId = gameId;
         this.population = 500;
         this.manpower = 200;
+        this.food = 10;
+        this.wood = 100;
         this.playerNr = playerNr;
     }
 
@@ -238,9 +241,6 @@ public class ManaEntity {
         return spoiledFood;
     }
 
-
-
-
     // getters, only for playerView
 
     public int getPopulation() {
@@ -283,5 +283,54 @@ public class ManaEntity {
 
     public void setProtectedFood(int protectedFood) {
         this.protectedFood = protectedFood;
+    }
+
+    public boolean payInFull(EventManaCost eventManaCost) {
+
+        System.out.println(eventManaCost.getManpower() > this.manpower);
+        System.out.println((eventManaCost.getFood() > this.food));
+        System.out.println((eventManaCost.getWood() > this.wood));
+        System.out.println((eventManaCost.getStone() > this.stone));
+        System.out.println((eventManaCost.getLeather() > this.leather));
+        System.out.println((eventManaCost.getFurniture() > this.furniture));
+        System.out.println((eventManaCost.getSimpleClothes() > this.simpleClothes));
+
+        if (eventManaCost.getManpower() > this.manpower) {
+            return false;
+        }
+
+        if (eventManaCost.getFood() > this.food) {
+            return false;
+        }
+
+        if (eventManaCost.getWood() > this.wood) {
+            return false;
+        }
+
+        if (eventManaCost.getStone() > this.stone) {
+            return false;
+        }
+
+        if (eventManaCost.getLeather() > this.leather) {
+            return false;
+        }
+
+        if (eventManaCost.getFurniture() > this.furniture) {
+            return false;
+        }
+
+        if (eventManaCost.getSimpleClothes() > this.simpleClothes) {
+            return false;
+        }
+
+        withdrawManpower(eventManaCost.getManpower());
+        withdrawWood(eventManaCost.payWood());
+        withdrawFood(eventManaCost.payFood());
+        withdrawLeather(eventManaCost.payLeather());
+        withdrawStone(eventManaCost.payStone());
+        withdrawFurniture(eventManaCost.payFurniture());
+        withdrawSimpleClothes(eventManaCost.paySimpleClothes());
+
+        return true;
     }
 }
