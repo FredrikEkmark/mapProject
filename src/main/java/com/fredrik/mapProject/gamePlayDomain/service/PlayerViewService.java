@@ -39,7 +39,8 @@ public class PlayerViewService {
                     gameSetup,
                     user.getId(),
                     user.getUsername(),
-                    playerNr
+                    playerNr,
+                    user.getRole()
             );
 
             return playerView;
@@ -59,6 +60,7 @@ public class PlayerViewService {
                 mapTileEntities,
                 startCoordinates,
                 playerNr,
+                user.getRole(),
                 gameSetup.getTurn(),
                 gameSetup.getTurnChange(),
                 mana,
