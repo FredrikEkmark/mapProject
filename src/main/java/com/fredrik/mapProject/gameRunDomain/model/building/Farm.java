@@ -9,7 +9,7 @@ import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Farm extends Building {
 
-    private final int baseFoodProduction = 3;
+    private final int baseFoodProduction = 5;
 
     public Farm(BuildingType type, int progress) {
         super(
@@ -83,6 +83,8 @@ public class Farm extends Building {
         if (terrainModifier < 0) {
             terrainModifier = 0;
         }
+
+        System.out.println("terrain modifier: " + terrainModifier);
 
         return terrainModifier;
     }
