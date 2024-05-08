@@ -9,7 +9,7 @@ import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Granary extends Building {
 
-    private int baseProtectedFood = 5;
+    private int baseProtectedFood = 10;
 
     public Granary(BuildingType type, int progress) {
         super(

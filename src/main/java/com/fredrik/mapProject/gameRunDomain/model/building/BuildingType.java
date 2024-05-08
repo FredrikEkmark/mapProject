@@ -13,7 +13,7 @@ public enum BuildingType {
     QUARRY("Quarry",0, 100, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS, Elevation.MOUNTAIN}),
     LUMBER_CAMP("Lumber camp",50, 100, 400, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
     CARPENTRY("Carpentry",0, 50, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
-    RANCH("Ranch",50, 100, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS, Elevation.MOUNTAIN}),
+    RANCH("Ranch",50, 150, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS, Elevation.MOUNTAIN}),
     LEATHER_WORKER("Leather worker",0, 50, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
     FISHERY("Fishery",50, 100, 400, new Elevation[] {Elevation.SHALLOW, Elevation.DEEP}),
     VILLAGE("Village",500, 300, 800, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),

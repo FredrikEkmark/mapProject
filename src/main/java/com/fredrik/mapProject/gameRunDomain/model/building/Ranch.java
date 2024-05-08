@@ -9,8 +9,8 @@ import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Ranch extends Building {
 
-    private int baseFoodProduction = 3;
-    private int baseLeatherProduction = 3;
+    private int baseFoodProduction = 5;
+    private int baseLeatherProduction = 5;
 
     public Ranch(BuildingType type, int progress) {
         super(
