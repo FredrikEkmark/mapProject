@@ -66,6 +66,7 @@ public class GameMapManager {
 
         if (tile == null) {
             tile = tileGenerator.generateTile(new MapTileId(gameSetup.getId(), mapCoordinates.getX(), mapCoordinates.getY()));
+            gameMap.put(tile.getMapTileId().getCoordinates(), tile);
         }
         return tile;
     }

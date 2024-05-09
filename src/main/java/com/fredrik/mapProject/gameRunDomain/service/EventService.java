@@ -1,12 +1,19 @@
 package com.fredrik.mapProject.gameRunDomain.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameRunDomain.model.entity.EventEntity;
+import com.fredrik.mapProject.gameRunDomain.model.event.Event;
+import com.fredrik.mapProject.gameRunDomain.model.event.EventType;
 import com.fredrik.mapProject.gameRunDomain.repository.EventRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,7 +30,9 @@ public class EventService {
     }
 
     public void save(EventEntity eventEntity) {
-        eventRepository.save(eventEntity);
+        if (validateEventEntity(eventEntity)) {
+            eventRepository.save(eventEntity);
+        }
     }
 
     public Optional<EventEntity> findByEventId(UUID eventId) {
@@ -53,5 +62,49 @@ public class EventService {
     public void deleteByEventId(UUID eventId) {
         eventRepository.deleteById(eventId);
 
+    }
+
+    private boolean validateEventEntity(EventEntity eventEntity) {
+        Event event = eventEntity.getEvent();
+        EventType eventType = event.getEventType();
+
+        boolean validEventType = Arrays.stream(EventType.values()).toList().contains(eventType);
+
+        boolean validCost = validateEventManpowerCost(eventType, eventEntity);
+
+        return (validEventType && validCost);
+    }
+
+    private boolean validateEventManpowerCost(EventType eventType, EventEntity eventEntity)  {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = objectMapper.readTree(eventEntity.getCost());
+            JsonNode manpowerNode = rootNode.get("manpower");
+
+            switch (eventType) {
+                case EXPLORE_EVENT -> {
+                    if (manpowerNode.asInt() == 50) {
+                        return true;
+                    }
+                }
+                case CLAIM_TILE_EVENT -> {
+                    if (manpowerNode.asInt() == 100) {
+                        return true;
+                    }
+                }
+                case BUILD_EVENT -> {
+                    if (manpowerNode.asInt() <= 200) {
+                        return true;
+                    }
+                }
+                default -> {
+                    return false;
+                }
+            }
+
+        }  catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 }
