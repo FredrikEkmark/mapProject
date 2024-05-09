@@ -38,7 +38,7 @@ public class Quarry extends Building {
 
         int stoneProduction = (int) (baseStoneProduction * terrainModifier(terrain));
 
-        mana.depositFood(stoneProduction);
+        mana.depositStone(stoneProduction);
 
         setEventLogEntry(String.format(
                 "Tile %d:%d %s manpower upkeep %d, produced %d Stone;",
