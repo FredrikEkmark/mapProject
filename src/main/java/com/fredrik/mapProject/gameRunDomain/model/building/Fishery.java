@@ -2,14 +2,20 @@ package com.fredrik.mapProject.gameRunDomain.model.building;
 
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
-import com.fredrik.mapProject.gameRunDomain.Terrain;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Elevation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Precipitation;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Temperature;
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Terrain;
 
 public class Fishery extends Building {
 
     private int baseFoodProduction = 5;
 
     public Fishery(BuildingType type, int progress) {
-        super(type, progress);
+        super(
+                type,
+                progress
+        );
     }
 
     @Override
@@ -48,6 +54,19 @@ public class Fishery extends Building {
 
     @Override
     protected double terrainModifier(Terrain terrain) {
-        return 1;
+
+        double terrainModifier = 1;
+
+        // Elevation modifier
+        if (terrain.getElevation() == Elevation.DEEP) {
+            terrainModifier += 0.2;
+        }
+
+        if (terrainModifier < 0) {
+            terrainModifier = 0;
+        }
+
+        return terrainModifier;
+
     }
 }

@@ -1,9 +1,11 @@
 package com.fredrik.mapProject.gamePlayDomain.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fredrik.mapProject.config.Roles;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gameRunDomain.model.entity.EventLogEntity;
 import com.fredrik.mapProject.gameSetupDomain.MapSizes;
+import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,30 @@ public class PlayerView {
     private List<MapTile> map;
     private ManaEntity mana;
     private List<EventLogEntity> eventLog;
+    private final boolean isUpdating;
+    private final boolean isAdmin;
+
+    public PlayerView(
+            GameSetupEntity gameSetup,
+            UUID playerId,
+            String playerName,
+            Player playerNr,
+            Roles userRole
+    ) {
+        this.gameId = gameSetup.getId();
+        this.playerId = playerId;
+        this.playerName = playerName;
+        this.mapSize = gameSetup.getMapSize();
+        this.startCoordinates = new MapCoordinates(20, 20);
+        this.playerNr = playerNr;
+        this.turn = gameSetup.getTurn();
+        this.turnChange = "";
+        this.map = new ArrayList<>();
+        this.mana = new ManaEntity();
+        this.eventLog = new ArrayList<>();
+        this.isUpdating = gameSetup.isUpdating();
+        this.isAdmin = (userRole == Roles.ADMIN);
+    }
 
     public PlayerView(UUID gameId,
                       UUID playerId,
@@ -30,10 +56,12 @@ public class PlayerView {
                       List<MapTileEntity> tileList,
                       MapCoordinates startCoordinates,
                       Player playerNr,
+                      Roles userRole,
                       int turn,
                       String turnChange,
                       ManaEntity mana,
-                      List<EventLogEntity> eventLog
+                      List<EventLogEntity> eventLog,
+                      boolean isUpdating
     ) throws JsonProcessingException {
         this.gameId = gameId;
         this.playerId = playerId;
@@ -46,6 +74,8 @@ public class PlayerView {
         this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
         this.mana = mana;
         this.eventLog = eventLog;
+        this.isUpdating = isUpdating;
+        this.isAdmin = (userRole == Roles.ADMIN);
     }
 
     private List<MapTile> convertMapTileEntityListToMap(List<MapTileEntity> tileList, MapSizes mapSize, Player playerNr) {
@@ -131,4 +161,10 @@ public class PlayerView {
     public void setTurnChange(String turnChange) {
         this.turnChange = turnChange;
     }
+
+    public boolean isUpdating() {
+        return isUpdating;
+    }
+
+    public boolean isAdmin() {return isAdmin;}
 }

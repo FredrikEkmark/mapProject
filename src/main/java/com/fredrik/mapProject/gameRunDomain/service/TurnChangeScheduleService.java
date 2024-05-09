@@ -30,7 +30,7 @@ public class TurnChangeScheduleService {
         String formattedCurrentTime = formatter.format(currentTime);
         System.out.printf("%s   Turn change process started for %s GMT...%n", formattedCurrentTime, turnTime);
 
-        turnChangeService.runTurnChange(gmtDateTime.getHour(), 00);
+        turnChangeService.runTurnChangeByTime(gmtDateTime.getHour(), 00);
 
         currentTime = ZonedDateTime.now();
         formattedCurrentTime = formatter.format(currentTime);

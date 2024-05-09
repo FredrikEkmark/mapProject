@@ -47,15 +47,7 @@ public interface MapTileRepository extends JpaRepository<MapTileEntity, MapTileI
     @Transactional
     @Modifying
     default void updateMapTileEntities(List<MapTileEntity> mapTileEntities) {
-        saveAll(mapTileEntities); /*
-        for (MapTileEntity mapTileEntity : mapTileEntities) {
-            updateMapTileEntityByMapTileId(mapTileEntity.getMapTileId(),
-                    mapTileEntity.getTileValue(),
-                    mapTileEntity.getTileOwner(),
-                    mapTileEntity.getVisibility(),
-                    mapTileEntity.getBuildingJsonString(),
-                    mapTileEntity.getUnit());
-        }*/
+        saveAll(mapTileEntities);
     }
 
 }

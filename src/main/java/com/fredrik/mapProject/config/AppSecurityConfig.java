@@ -71,11 +71,11 @@ public class AppSecurityConfig {
                                 "/").permitAll()
                         .requestMatchers(
                                 "/api/**",
-                                "/my-maps").hasAnyRole(USER.name(), HOST.name()) // Allow USER and HOST roles
+                                "/my-maps").hasAnyRole(USER.name(), HOST.name(), ADMIN.name())
                         .requestMatchers(
                                 "/new-map",
                                 "/manage-map-players/**",
-                                "/delete-map/**").hasRole(HOST.name()) // Only HOST role
+                                "/delete-map/**").hasAnyRole(HOST.name(), ADMIN.name())
                         .requestMatchers(
                                 "admin-page",
                                 "edit-user"

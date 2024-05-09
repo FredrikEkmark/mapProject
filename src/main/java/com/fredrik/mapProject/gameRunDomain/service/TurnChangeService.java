@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TurnChangeService {
@@ -31,7 +32,7 @@ public class TurnChangeService {
         this.eventLogService = eventLogService;
     }
 
-    public void runTurnChange(int hour, int min) {
+    public void runTurnChangeByTime(int hour, int min) {
         if (hour < 0 || hour > 23) {
             throw new IllegalArgumentException("Hour must be between 0 and 23.");
         }
@@ -43,18 +44,34 @@ public class TurnChangeService {
         gameSetupService.updateAllGameSetups(gameSetups);
 
         for (GameSetupEntity game: gameSetups) {
-            List<EventEntity> eventList = eventService.findAllByGameID(game.getId());
-            GameMapManager gameMap = new GameMapManager(mapTileService.getGameMap(game.getId()));
-            List<ManaEntity> manaList = manaService.findAllManaByGameId(game.getId());
-
-            TurnChange turnChange = new TurnChange(game, gameMap, eventList, manaList);
-            turnChange.update();
-
-            mapTileService.updateGameMap(turnChange.getGameMap().getUpdatedTiles());
-            eventService.resetEventsAndSavePersistentEvents(turnChange.getEventEntityList(), game.getId());
-            gameSetupService.updateGameSetup(turnChange.getGameSetup());
-            manaService.updateAll(turnChange.getManaList());
-            eventLogService.save(turnChange.getEventLog());
+            runTurnChange(game);
         }
+    }
+
+    public void runTurnChangeByGameId(UUID gameID) {
+
+        GameSetupEntity gameSetup = gameSetupService.findById(gameID);
+
+        gameSetup.setUpdating(true);
+
+        gameSetupService.updateGameSetup(gameSetup);
+
+        runTurnChange(gameSetup);
+
+    }
+
+    private void runTurnChange(GameSetupEntity game) {
+        List<EventEntity> eventList = eventService.findAllByGameID(game.getId());
+        GameMapManager gameMap = new GameMapManager(mapTileService.getGameMap(game.getId()), game);
+        List<ManaEntity> manaList = manaService.findAllManaByGameId(game.getId());
+
+        TurnChange turnChange = new TurnChange(game, gameMap, eventList, manaList);
+        turnChange.update();
+
+        mapTileService.updateGameMap(turnChange.getGameMap().getUpdatedTiles());
+        eventService.resetEventsAndSavePersistentEvents(turnChange.getEventEntityList(), game.getId());
+        gameSetupService.updateGameSetup(turnChange.getGameSetup());
+        manaService.updateAll(turnChange.getManaList());
+        eventLogService.save(turnChange.getEventLog());
     }
 }

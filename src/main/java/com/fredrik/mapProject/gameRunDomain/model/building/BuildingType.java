@@ -1,19 +1,24 @@
 package com.fredrik.mapProject.gameRunDomain.model.building;
 
+import com.fredrik.mapProject.gameRunDomain.model.terrain.Elevation;
+
+import java.util.Arrays;
+import java.util.List;
+
 public enum BuildingType {
 
-    NONE("none",0,0, 0),
-    FARM("Farm",50, 100, 400),
-    GRANARY("Granary",0, 50, 500),
-    QUARRY("Quarry",0, 100, 500),
-    LUMBER_CAMP("Lumber camp",50, 100, 400),
-    CARPENTRY("Carpentry",0, 50, 500),
-    RANCH("Ranch",50, 100, 500),
-    LEATHER_WORKER("Leather worker",0, 50, 500),
-    FISHERY("Fishery",50, 100, 400),
-    VILLAGE("Village",500, 300, 800),
-    TOWN("Town",2000, 600, 2000),
-    CITY("City",5000, 1000, 5000);
+    NONE("none",0,0, 0, new Elevation[] {}),
+    FARM("Farm",50, 100, 400, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
+    GRANARY("Granary",0, 50, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
+    QUARRY("Quarry",0, 100, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS, Elevation.MOUNTAIN}),
+    LUMBER_CAMP("Lumber camp",50, 100, 400, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
+    CARPENTRY("Carpentry",0, 50, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
+    RANCH("Ranch",50, 150, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS, Elevation.MOUNTAIN}),
+    LEATHER_WORKER("Leather worker",0, 50, 500, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
+    FISHERY("Fishery",50, 100, 400, new Elevation[] {Elevation.SHALLOW, Elevation.DEEP}),
+    VILLAGE("Village",500, 300, 800, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
+    TOWN("Town",2000, 600, 2000, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS}),
+    CITY("City",5000, 1000, 5000, new Elevation[] {Elevation.LOWLANDS, Elevation.HIGHLANDS});
 
     private final int populationMaxBonus;
 
@@ -23,11 +28,18 @@ public enum BuildingType {
 
     private final String building;
 
-    BuildingType(String building, int populationMaxBonus, int manpowerUpkeep, int completeAtProgress) {
+    private List<Elevation> buildableElevation;
+
+    BuildingType(String building,
+                 int populationMaxBonus,
+                 int manpowerUpkeep,
+                 int completeAtProgress,
+                 Elevation[] buildableElevation) {
         this.building = building;
         this.populationMaxBonus = populationMaxBonus;
         this.manpowerUpkeep = manpowerUpkeep;
         this.completeAtProgress = completeAtProgress;
+        this.buildableElevation = Arrays.stream(buildableElevation).toList();
     }
 
     public int getPopulationMaxBonus() {
@@ -43,4 +55,8 @@ public enum BuildingType {
     }
 
     public String getBuilding() {return building;}
+
+    public List<Elevation> getBuildableElevation() {
+        return buildableElevation;
+    }
 }

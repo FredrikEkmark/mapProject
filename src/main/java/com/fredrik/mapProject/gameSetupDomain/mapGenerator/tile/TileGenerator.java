@@ -1,6 +1,7 @@
 package com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gameSetupDomain.MapSizes;
 import com.fredrik.mapProject.gameSetupDomain.mapGenerator.PerlinNoise.OpenSimplex;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
@@ -13,7 +14,6 @@ public class TileGenerator {
     private final int widthPart;
     private final int height;
     private final int heightPart;
-    private final int waterPath;
 
     public TileGenerator(int seed, int width, int height) {
 
@@ -22,10 +22,9 @@ public class TileGenerator {
         this.heightPart = height/10;
         this.width = width;
         this.widthPart = width/10;
-        this.waterPath = spinSeed(seed);
     }
 
-    public MapTileEntity tileValue(MapTileId mapTileId) {
+    public MapTileEntity generateTile(MapTileId mapTileId) {
 
         MapTileEntity tile = new MapTileEntity();
         tile.setMapTileId(mapTileId);
@@ -37,22 +36,21 @@ public class TileGenerator {
         int y = mapTileId.getCoordinates().getY();
         int x = mapTileId.getCoordinates().getX();
 
-        double frequency1 = 1 / 36.0;
-        double frequency2 = 1 / 120.0;
-        double frequency3 = 1 / 340.0;
+        double frequency1 = 1 / 36;
+        double frequency2 = 1 / 120;
+        double frequency3 = 1 / 360;
         double frequency4 = 1 / 24.0;
-        double frequency5 = 1 / 6.0;
+        double frequency5 = 1 / 3.0;
 
         double terrainNoiseValue = threeFrequencyNoise(y, x, frequency1, frequency2, frequency3);
-        terrainNoiseValue = waterPath( x, terrainNoiseValue);
 
         double difNoiseValue = twoFrequencyNoise(y, x, frequency4, frequency5);
-        double precipitationNoiseValue = singleFrequencyNoise(y, x, frequency2) + (difNoiseValue * 0.05);
+        double precipitationNoiseValue = singleFrequencyNoise(y, x, frequency2) + (difNoiseValue * 0.15);
 
         int terrainValue = terrain(terrainNoiseValue, difNoiseValue , y, x);
 
-        int temperatureValue = temperature(x, (terrainNoiseValue + difNoiseValue - 0.8)/3);
-        int precipitationValue = precipitation(precipitationNoiseValue, terrainValue, difNoiseValue, terrainNoiseValue);
+        int temperatureValue = temperature(x, difNoiseValue);
+        int precipitationValue = precipitation(precipitationNoiseValue, terrainValue);
 
         tile.setTileValue(terrainValue + temperatureValue + precipitationValue);
         return tile;
@@ -79,70 +77,30 @@ public class TileGenerator {
 
     private int terrain(Double valuesCombined, double difValue, int x, int y) {
 
-        if (y < 100) {
-            Double gradiant100 = y * 0.01;
-            double gradiant0 = 1 - gradiant100;
-            valuesCombined = ((valuesCombined * gradiant100) + (0.01 * gradiant0)/2);
-        } else if (y > height - 100) {
-            int gradiant = height - y;
-            Double gradiant100 = gradiant * 0.01;
-            double gradiant0 = 1 - gradiant100;
-            valuesCombined = ((valuesCombined * gradiant100) + (0.01 * gradiant0)/2);
-        }
 
         return getTerrainResult(valuesCombined, difValue, x);
     }
 
     private int getTerrainResult(Double valuesCombined, double difValue, int x) {
-        int terrainResult;
 
-        if (x <= widthPart) {
-            float test = ((1.f/widthPart)* x);
-            double test2 = 1 - test;
-            Double value = ((valuesCombined * test) + (test2 * 1/2));
-            terrainResult =  terrainMapping(value, difValue);
-        } else if (x >= width - widthPart) {
-            float test = ((1.f/widthPart) * (width - x));
-            double test2 = 1 - test;
-            Double value = ((valuesCombined * test) + (test2 * 1/2)) ;
-            terrainResult = terrainMapping(value, difValue);
-        } else {
-            terrainResult = terrainMapping(valuesCombined, difValue);
-        }
-        return terrainResult;
+        return terrainMapping(valuesCombined, difValue);
     }
 
-    private double waterPath(int y, double value) {
+    private int terrainMapping(Double terrainNoise, double difValue) {
 
-        if (waterPath <= y + 100 && waterPath >= y - 100) {
-            int gradiant = y - waterPath;
-            if (gradiant < 0) {
-                gradiant = gradiant * -1;
-            }
-            double gradiant100 = gradiant * 0.01;
-            double gradiant0 = 1 - gradiant100;
-            if (value * gradiant100 < 0.5 * gradiant0) {
-                value = ((value * gradiant100) + (0.3 * gradiant0)/2);
-            }
-        }
-        return value;
-    }
+        terrainNoise = terrainNoise * -1 + (difValue*0.05);
 
-    private int terrainMapping(Double terrain, double difValue) {
-
-        terrain = terrain * -1 + (difValue*0.05);
-
-        if (terrain < -0.1) {
+        if (terrainNoise < -0.03) {
             return 100;
-        } else if (terrain < 0) {
+        } else if (terrainNoise < 0) {
             if (difValue > 1.1) {
                 return 300;}
             return 200;
-        } else if (terrain < 0.15) {
+        } else if (terrainNoise < 0.025) {
             if (difValue > -1.4) {
                 return 300;}
             return 300;
-        } else if (terrain < 0.4) {
+        } else if (terrainNoise < 0.045) {
             return 400;
         } else {
             return 500;
@@ -151,32 +109,41 @@ public class TileGenerator {
 
     private int temperature(int latitude, double difValue) {
 
+        int adjustedLatitude = adjustLatitude(latitude);
+
+        int maxHeight = MapSizes.XLARGE.getHeight();
+
+        int maxHeightPart = maxHeight/10;
+
+        System.out.println("latitude: " + latitude + " adjustedLatitude: " + adjustedLatitude);
+        System.out.println(height);
+
         int value;
         int latitudeLine = -1;
 
-        if (latitude < heightPart/2) {
-            latitudeLine = heightPart/2;
+        if (adjustedLatitude < maxHeightPart/4) {
+            latitudeLine = maxHeightPart/2;
             value = 10;
-        } else if (latitude > (heightPart/2)*19) {
-            latitudeLine = (heightPart/2)*19;
+        } else if (adjustedLatitude > (maxHeightPart/4)*39) {
+            latitudeLine = (maxHeightPart/4)*39;
             value = 10;
-        } else if (latitude < heightPart*2 ) {
-            latitudeLine = (heightPart*2);
+        } else if (adjustedLatitude < maxHeightPart*2 ) {
+            latitudeLine = (maxHeightPart*2);
             value = 20;
-        } else if (latitude > heightPart*8) {
-            latitudeLine = (heightPart*8);
+        } else if (adjustedLatitude > maxHeightPart*8) {
+            latitudeLine = (maxHeightPart*8);
             value = 20;
-        } else if (latitude < heightPart*3.5) {
-            latitudeLine = (int) (heightPart*3.5);
+        } else if (adjustedLatitude < maxHeightPart*3.5) {
+            latitudeLine = (int) (maxHeightPart*3.5);
             value = 30;
-        } else if (latitude > heightPart*6.5) {
-            latitudeLine = (int) (heightPart*6.5);
-            value = 30; //
-        } else if (latitude < heightPart*4.5) {
-            latitudeLine = (int) (heightPart*4.5);
+        } else if (adjustedLatitude > maxHeightPart*6.5) {
+            latitudeLine = (int) (maxHeightPart*6.5);
+            value = 30;
+        } else if (adjustedLatitude < maxHeightPart*4.5) {
+            latitudeLine = (int) (maxHeightPart*4.5);
             value = 40;
-        } else if (latitude > heightPart*5.5) {
-            latitudeLine = (int) (heightPart*5.5);
+        } else if (adjustedLatitude > maxHeightPart*5.5) {
+            latitudeLine = (int) (maxHeightPart*5.5);
             value = 40;
         } else {
             value = 50;
@@ -186,10 +153,10 @@ public class TileGenerator {
 
         if (latitudeLine == -1) {
             difPos = 100.0;
-        } else if (latitude < height/2) {
-            difPos = (latitudeLine - latitude);
+        } else if (adjustedLatitude < maxHeight/2) {
+            difPos = (latitudeLine - adjustedLatitude);
         } else {
-            difPos = (latitude - latitudeLine);
+            difPos = (adjustedLatitude - latitudeLine);
         }
 
         difPos = (difPos) * 0.1;
@@ -200,46 +167,42 @@ public class TileGenerator {
         return value;
     }
 
-    public int precipitation(double perNoise, int terrain, double difValue, double terrainNoiseValue) {
+    private int adjustLatitude(int latitude) {
+
+        int maxHeight = MapSizes.XLARGE.getHeight();
+
+        int heightDif = maxHeight - height;
+
+        if (heightDif == 0)
+            return latitude;
+
+        int adjustedLatitude = latitude + (seed % heightDif);
+
+        return adjustedLatitude;
+    }
+
+    public int precipitation(double precipitationNoise, int terrain) {
         if (terrain == 500) {
             return 1;
-        } else if (terrain < 201) {
-            return 3;
-        }
-
-        terrainNoiseValue = (terrainNoiseValue * -1) + (difValue * 0.03);
-        perNoise = perNoise + (difValue * 0.2);
-
-        if (terrainNoiseValue > 0.25) {
-            if (perNoise > -0.2) {
+        } else if (terrain == 400) {
+            if (precipitationNoise > 0.12) {
                 return 1;
-            } else if (perNoise > -0.6) {
+            } else if (precipitationNoise > 0.09) {
+                return 2;
+            } else {
+                return 3;
+            }
+        } else if (terrain == 300) {
+            if (precipitationNoise > 0.03) {
+                return 1;
+            } else if (precipitationNoise > 0.007) {
                 return 2;
             } else {
                 return 3;
             }
         } else {
-            if (perNoise > 0.7) {
-                return 1;
-            } else if (perNoise > 0) {
-                return 2;
-            } else {
-                return 3;
-            }
+            return 3;
         }
-    }
-
-    private int spinSeed(int latitude) {
-
-        while (latitude > height - heightPart) {
-            latitude -= (height - heightPart*2);
-        }
-
-        if (latitude < heightPart) {
-            latitude += (height - heightPart*2);
-        }
-
-        return latitude;
     }
 
     public static int TEMP_PAINTER(int value) {
@@ -272,6 +235,4 @@ public class TileGenerator {
         System.out.println("Error not valid value: " + value);
         return 0x010101;
     }
-
-
 }

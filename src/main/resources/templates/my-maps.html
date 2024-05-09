@@ -57,7 +57,7 @@
             </table>
         </div>
 
-        <div th:if="${userRole == 'HOST'}">
+        <div th:if="${userRole == 'HOST' || userRole == 'ADMIN'}">
             <a th:href="@{/new-map}">Create new Map</a>
         </div>
         <a th:href="@{/}">Home</a>

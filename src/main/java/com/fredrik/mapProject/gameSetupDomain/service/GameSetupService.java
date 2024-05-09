@@ -41,7 +41,6 @@ public class GameSetupService {
 
         if (gameSetupRepository.findById(gameSetup.getId()).isPresent()) {
 
-            mapTileService.createNewGameMap(gameSetup);
             gamePlayerService.createNewGamePlayer(gameSetup, gameSetup.getOwner().getId());
 
         } else {
@@ -84,5 +83,13 @@ public class GameSetupService {
 
     public void updateAllGameSetups(List<GameSetupEntity> gameSetups) {
         gameSetupRepository.saveAll(gameSetups);
+    }
+
+    public boolean isUpdatingById(UUID gameId) {
+        Optional<GameSetupEntity> gameSetup = gameSetupRepository.findById(gameId);
+        if (gameSetup.isEmpty()) {
+            return true;
+        }
+        return gameSetup.get().isUpdating();
     }
 }

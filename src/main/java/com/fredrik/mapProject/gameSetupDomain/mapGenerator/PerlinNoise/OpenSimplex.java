@@ -1,7 +1,5 @@
 package com.fredrik.mapProject.gameSetupDomain.mapGenerator.PerlinNoise;
 
-// ToDo - Figure out where the fuck i got this code from, if you read this Krille please don't fail me for not sourcing it I was planing to do so.
-
 public class OpenSimplex {
 
     private static final long PRIME_X = 0x5205402B9270C86FL;

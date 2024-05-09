@@ -41,6 +41,8 @@ public abstract class Event {
 
     public abstract void parseFromCost(String cost);
 
+    public abstract String stringifyCost();
+
     // Event Processing functions
 
     public abstract boolean processEvent(ManaEntity mana, GameMapManager gameMap);

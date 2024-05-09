@@ -1,12 +1,13 @@
 package com.fredrik.mapProject.gameRunDomain.model.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fredrik.mapProject.gamePlayDomain.Player;
 import com.fredrik.mapProject.gamePlayDomain.model.ManaEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
 import com.fredrik.mapProject.gameRunDomain.model.GameMapManager;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,12 +33,27 @@ public class ClaimTileEvent extends Event {
 
     @Override
     public void parseFromCost(String cost) {
-        JsonObject jsonObject = JsonParser.parseString(cost).getAsJsonObject();
-        this.manpowerCost = jsonObject.get("manpower").getAsInt();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = objectMapper.readTree(cost);
+
+            JsonNode manpowerNode = rootNode.get("manpower");
+
+            if (manpowerNode != null && manpowerNode.isInt()) {
+                manpowerCost = manpowerNode.asInt();
+            }
+        } catch (RuntimeException | JsonProcessingException e) {
+            System.out.println(e);
+        }
     }
 
     @Override
     public String stringifyEventData() {return "{}";}
+
+    @Override
+    public String stringifyCost() {
+        return String.format("{\"manpower\":%s}", manpowerCost) ;
+    }
 
     @Override
     public boolean processEvent(ManaEntity mana, GameMapManager gameMap) {

@@ -33,7 +33,20 @@ public class PlayerViewService {
         PlayerGameId playerGameId = new PlayerGameId(gameSetup.getId(), user.getId());
         GamePlayerEntity gamePlayer = gamePlayerService.getGamePlayer(playerGameId).get();
         Player playerNr = gamePlayer.getPlayerNr();
-        List<MapTileEntity> mapTileEntities = mapTileService.getGameMap(gameSetup.getId());  // mapTileService.getPlayerGameMap(gameSetup.getId(), playerNr);
+
+        if (gameSetup.isUpdating()) {
+            PlayerView playerView = new PlayerView(
+                    gameSetup,
+                    user.getId(),
+                    user.getUsername(),
+                    playerNr,
+                    user.getRole()
+            );
+
+            return playerView;
+        }
+
+        List<MapTileEntity> mapTileEntities = mapTileService.getPlayerGameMap(gameSetup.getId(), playerNr);
         ManaEntity mana = manaService.findManaById(gamePlayer.getManaId()).get();
         List<EventLogEntity> eventLog = eventLogService.findPlayerEventLog(gamePlayer.getPlayerNr(), gameSetup.getId());
 
@@ -47,10 +60,12 @@ public class PlayerViewService {
                 mapTileEntities,
                 startCoordinates,
                 playerNr,
+                user.getRole(),
                 gameSetup.getTurn(),
                 gameSetup.getTurnChange(),
                 mana,
-                eventLog
+                eventLog,
+                gameSetup.isUpdating()
         );
 
         return playerView;

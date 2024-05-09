@@ -1,8 +1,15 @@
 package com.fredrik.mapProject.gameRunDomain.model;
 
 import com.fredrik.mapProject.gamePlayDomain.Player;
+import com.fredrik.mapProject.gamePlayDomain.model.GamePlayerEntity;
 import com.fredrik.mapProject.gamePlayDomain.model.MapCoordinates;
+import com.fredrik.mapProject.gamePlayDomain.model.PlayerStartPositionDTO;
+import com.fredrik.mapProject.gameRunDomain.model.building.BuildingType;
+import com.fredrik.mapProject.gameSetupDomain.MapSizes;
+import com.fredrik.mapProject.gameSetupDomain.mapGenerator.tile.TileGenerator;
+import com.fredrik.mapProject.gameSetupDomain.model.GameSetupEntity;
 import com.fredrik.mapProject.gameSetupDomain.model.MapTileEntity;
+import com.fredrik.mapProject.gameSetupDomain.model.MapTileId;
 
 import java.util.*;
 
@@ -11,11 +18,17 @@ public class GameMapManager {
     private Map<MapCoordinates, MapTileEntity> gameMap;
     private Map<String, List<MapTileEntity>> playerMap;
 
+    private GameSetupEntity gameSetup;
+
+    private TileGenerator tileGenerator;
+
     private List<MapTileEntity> updatedTiles;
 
-    public GameMapManager(List<MapTileEntity> mapTileEntityList) {
+    public GameMapManager(List<MapTileEntity> mapTileEntityList, GameSetupEntity game) {
         this.gameMap = new HashMap<>();
         this.playerMap = new HashMap<>();
+        this.gameSetup = game;
+        this.tileGenerator = new TileGenerator(game.getSeed(), game.getMapSize().getWidth(), game.getMapSize().getHeight());
         populateMap(mapTileEntityList);
         this.updatedTiles = new ArrayList<>(playerMap.size() * 100);
     }
@@ -49,7 +62,13 @@ public class GameMapManager {
     // Utility functions
 
     public MapTileEntity getTileFromCoordinates(MapCoordinates mapCoordinates) {
-        return gameMap.get(mapCoordinates);
+        MapTileEntity tile = gameMap.get(mapCoordinates);
+
+        if (tile == null) {
+            tile = tileGenerator.generateTile(new MapTileId(gameSetup.getId(), mapCoordinates.getX(), mapCoordinates.getY()));
+            gameMap.put(tile.getMapTileId().getCoordinates(), tile);
+        }
+        return tile;
     }
 
 
@@ -178,5 +197,86 @@ public class GameMapManager {
             }
         }
         return adjacentMapCoordinates;
+    }
+
+    public PlayerStartPositionDTO createNewStartPosition() {
+
+        List<Player> allPlayerNumbers = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(Player.values(), 0, gameSetup.getMapSize().getMaxPlayers())));
+
+        Player player = Player.NONE;
+
+        for (Player playerFromList: allPlayerNumbers) {
+            if (playerMap.get(playerFromList.name()) == null) {
+                player = playerFromList;
+                break;
+            }
+        }
+
+        if (player == Player.NONE) {
+            return new PlayerStartPositionDTO(player , new MapCoordinates() , new ArrayList<>(7));
+        }
+
+        Random random = new Random();
+
+        int xBounds = gameSetup.getMapSize().getHeight();
+        int yBounds = gameSetup.getMapSize().getWidth();
+
+        MapCoordinates startPosition = new MapCoordinates();
+
+        int[] xOffsets = {-1, -1, 0, 0, 1, 1};
+        int[] yOffsets = {0, 1, -1, 1, 0, 1};
+
+        boolean notValidStart = true;
+
+        MapTileEntity startTile;
+
+        while (notValidStart) {
+            startPosition.setX(random.nextInt(6, xBounds - 7));
+            startPosition.setY(random.nextInt(0, yBounds));
+
+            if (startPosition.getX() % 2 == 0) {
+                yOffsets[1] = -1;
+                yOffsets[5] = -1;
+            } else {
+                yOffsets[1] = 1;
+                yOffsets[5] = 1;
+            }
+
+            startTile = getTileFromCoordinates(startPosition);
+
+            if (startTile.getTileOwner() == Player.NONE) {
+                if (startTile.getTileValue() >= 300 && startTile.getTileValue() < 500 ) {
+                    notValidStart = false;
+                    for (int i = 0; i < xOffsets.length; i++) {
+                        MapTileEntity tile = getTileFromCoordinates(new MapCoordinates(
+                                startPosition.getX() + xOffsets[i],
+                                startPosition.getY() + yOffsets[i]));
+                        if (tile.getTileOwner() != Player.NONE) {
+                            notValidStart = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        startTile = getTileFromCoordinates(startPosition);
+
+        startTile.setPlayerVisibility(true, player.number());
+        startTile.setTileOwner(player);
+        startTile.setBuildingJsonString("{\"type\": \"VILLAGE\", \"progress\": " + BuildingType.VILLAGE.getCompleteAtProgress() + "}");
+
+        List<MapTileEntity> startTiles = new ArrayList<>(7);
+
+        startTiles.add(startTile);
+
+        for (int i = 0; i < xOffsets.length; i++) {
+            MapTileEntity tile = getTileFromCoordinates(new MapCoordinates(
+                    startPosition.getX() + xOffsets[i],
+                    startPosition.getY() + yOffsets[i]));
+            tile.setPlayerVisibility(true, player.number());
+            startTiles.add(tile);
+        }
+
+        return new PlayerStartPositionDTO(player , startPosition , startTiles);
     }
 }

@@ -96,6 +96,7 @@ public class TurnChange {
             }
 
             if (event.isPersistent()) {
+                eventEntity.setCost(event.stringifyCost());
                 eventEntity.setTurn(eventEntity.getTurn() + 1);
                 updatedEventEntityList.add(eventEntity.clone());
             }

@@ -8,11 +8,13 @@ import com.fredrik.mapProject.gamePlayDomain.service.GamePlayerService;
 import com.fredrik.mapProject.gamePlayDomain.service.PlayerViewService;
 import com.fredrik.mapProject.gameRunDomain.model.entity.EventEntity;
 import com.fredrik.mapProject.gameRunDomain.service.EventService;
+import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.SecurityUtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,16 +25,24 @@ public class EventRestController { // toDO add security to this controller
     private final EventService eventService;
     private final GamePlayerService gamePlayerService;
     private final SecurityUtilityService securityUtilityService;
+    private final GameSetupService gameSetupService;
 
     @Autowired
-    public EventRestController(EventService eventService, SecurityUtilityService securityUtilityService, PlayerViewService playerViewService, GamePlayerService gamePlayerService, SecurityUtilityService securityUtilityService1) {
+    public EventRestController(EventService eventService, SecurityUtilityService securityUtilityService, PlayerViewService playerViewService, GamePlayerService gamePlayerService, SecurityUtilityService securityUtilityService1, GameSetupService gameSetupService) {
         this.eventService = eventService;
         this.gamePlayerService = gamePlayerService;
         this.securityUtilityService = securityUtilityService1;
+        this.gameSetupService = gameSetupService;
     }
 
     @PostMapping("/api/event")
     public List<EventEntity> postNewEvent(@RequestBody NewEventDTO newEventDTO) {
+
+        boolean isUpdating = gameSetupService.isUpdatingById(newEventDTO.getGameId());
+
+        if (isUpdating) { // toDo maybe change all of these to Response entity and structure data differently
+            return new ArrayList<>();
+        }
 
         UserEntity user = securityUtilityService.getCurrentUser();
 
@@ -62,6 +72,12 @@ public class EventRestController { // toDO add security to this controller
     @GetMapping("/api/event/{gameId}/{player}")
     public List<EventEntity> getAllEventByGameIdAndPlayerNr(@PathVariable("gameId") UUID gameId, @PathVariable("player") Player playerNr) {
 
+        boolean isUpdating = gameSetupService.isUpdatingById(gameId);
+
+        if (isUpdating) {
+            return new ArrayList<>();
+        }
+
         UserEntity user = securityUtilityService.getCurrentUser();
 
         Optional<GamePlayerEntity> gamePlayer = gamePlayerService.getGamePlayer(new PlayerGameId(gameId, user.getId()));
@@ -77,6 +93,12 @@ public class EventRestController { // toDO add security to this controller
 
     @DeleteMapping("/api/event/{gameId}/{eventId}")
     public List<EventEntity> deleteEvent(@PathVariable("gameId") UUID gameId, @PathVariable("eventId") UUID eventId) {
+
+        boolean isUpdating = gameSetupService.isUpdatingById(gameId);
+
+        if (isUpdating) {
+            return new ArrayList<>();
+        }
 
         UserEntity user = securityUtilityService.getCurrentUser();
 
