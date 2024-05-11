@@ -1,11 +1,9 @@
 package com.fredrik.mapProject.controller.restController;
 
-import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.databaseEntity.GamePlayerEntity;
 import com.fredrik.mapProject.model.event.NewEventDTO;
 import com.fredrik.mapProject.model.id.PlayerGameId;
 import com.fredrik.mapProject.service.GamePlayerService;
-import com.fredrik.mapProject.service.PlayerViewService;
 import com.fredrik.mapProject.model.databaseEntity.EventEntity;
 import com.fredrik.mapProject.service.EventService;
 import com.fredrik.mapProject.service.GameSetupService;
@@ -30,10 +28,13 @@ public class EventRestController {
     private final GameSetupService gameSetupService;
 
     @Autowired
-    public EventRestController(EventService eventService, SecurityUtilityService securityUtilityService, PlayerViewService playerViewService, GamePlayerService gamePlayerService, SecurityUtilityService securityUtilityService1, GameSetupService gameSetupService) {
+    public EventRestController(EventService eventService,
+                               SecurityUtilityService securityUtilityService,
+                               GamePlayerService gamePlayerService,
+                               GameSetupService gameSetupService) {
         this.eventService = eventService;
         this.gamePlayerService = gamePlayerService;
-        this.securityUtilityService = securityUtilityService1;
+        this.securityUtilityService = securityUtilityService;
         this.gameSetupService = gameSetupService;
     }
 
@@ -67,8 +68,8 @@ public class EventRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(eventList);
     }
 
-    @GetMapping("/api/event/{gameId}/{player}")
-    public ResponseEntity<List<EventEntity>> getAllEventByGameIdAndPlayerNr(@PathVariable("gameId") UUID gameId, @PathVariable("player") Player playerNr) {
+    @GetMapping("/api/event/{gameId}")
+    public ResponseEntity<List<EventEntity>> getAllEventByGameIdAndPlayerNr(@PathVariable("gameId") UUID gameId) {
 
         GamePlayerEntity gamePlayer = getValidatedPlayerEntity(gameId);
 
@@ -98,9 +99,11 @@ public class EventRestController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
         }
 
-        Optional<EventEntity> event = eventService.findByEventId(eventId);
+        boolean eventValid = validateEvent(eventId, gamePlayer);
 
-        eventService.deleteByEventId(eventId);
+        if (eventValid) {
+            eventService.deleteByEventId(eventId);
+        }
 
         List<EventEntity> eventList =  eventService.findAllByGameIDAndPlayerNr(gameId, gamePlayer.getPlayerNr());
 
@@ -124,6 +127,18 @@ public class EventRestController {
         }
 
         return gamePlayer.get();
+    }
+
+    private boolean validateEvent(UUID eventId, GamePlayerEntity gamePlayer) {
+        Optional<EventEntity> event = eventService.findByEventId(eventId);
+
+        if (event.isEmpty()) {
+            return false;
+        }
+
+        boolean playerNrMatch = event.get().getPlayerNr().equals(gamePlayer.getPlayerNr());
+        boolean gameIdMatch = event.get().getGameId().equals(gamePlayer.getPlayerGameId().getGameId());
+        return  playerNrMatch && gameIdMatch;
     }
 }
 

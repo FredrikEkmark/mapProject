@@ -1,15 +1,24 @@
 package com.fredrik.mapProject.model.map;
 
+import com.fredrik.mapProject.config.GameConfig;
+
 public enum MapSizes {
 
-    SMALL(50, 25, 4),
-    MEDIUM(100, 51, 6),
-    LARGE(200, 101, 8),
-    XLARGE(400, 201, 12);
+    SMALL(GameConfig.getMapSizeWidth("SMALL"),
+            GameConfig.getMapSizeHeight("SMALL"),
+            GameConfig.getMapSizeMaxPlayers("SMALL")),
+    MEDIUM(GameConfig.getMapSizeWidth("MEDIUM"),
+            GameConfig.getMapSizeHeight("MEDIUM"),
+            GameConfig.getMapSizeMaxPlayers("MEDIUM")),
+    LARGE(GameConfig.getMapSizeWidth("LARGE"),
+            GameConfig.getMapSizeHeight("LARGE"),
+            GameConfig.getMapSizeMaxPlayers("LARGE")),
+    XLARGE(GameConfig.getMapSizeWidth("XLARGE"),
+            GameConfig.getMapSizeHeight("XLARGE"),
+            GameConfig.getMapSizeMaxPlayers("XLARGE"));
 
     private final int width;
     private final int height;
-
     private final int maxPlayers;
 
     MapSizes(int width, int height, int maxPlayers) {

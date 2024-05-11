@@ -1,14 +1,16 @@
 package com.fredrik.mapProject.model.building;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
+import com.fredrik.mapProject.model.mana.StorableManaTypes;
 import com.fredrik.mapProject.model.map.MapCoordinates;
-import com.fredrik.mapProject.model.map.terrain.Elevation;
 import com.fredrik.mapProject.model.map.terrain.Terrain;
 
 public class Carpentry extends Building {
 
-    private int baseFurnitureProduction = 5;
-    private int woodCost = 10;
+    private final int baseWoodInput = GameConfig.getBuildingBaseInput(getType(), StorableManaTypes.WOOD);
+
+    private final int baseFurnitureOutput = GameConfig.getBuildingBaseOutput(getType(), StorableManaTypes.FURNITURE);
 
     public Carpentry(BuildingType type, int progress) {
         super(
@@ -35,12 +37,13 @@ public class Carpentry extends Building {
 
         mana.raisePopulationMax(getType().getPopulationMaxBonus());
 
-        boolean woodWithdrawn = mana.withdrawWood(woodCost);
+
+        boolean woodWithdrawn = mana.withdrawWood(baseWoodInput);
 
         if (!woodWithdrawn) {
             int woodPayed = mana.withdrawAllWood();
-            double woodPercentagePayed = woodPayed / woodCost;
-            int furnitureProduction = (int) Math.floor((woodPercentagePayed * baseFurnitureProduction)  * terrainModifier(terrain));
+            double woodPercentagePayed = (double) woodPayed / baseWoodInput;
+            int furnitureProduction = (int) Math.floor((woodPercentagePayed * baseFurnitureOutput)  * terrainModifier(terrain));
 
             mana.depositFurniture(furnitureProduction);
 
@@ -50,14 +53,14 @@ public class Carpentry extends Building {
                     coordinates.getY(),
                     getType().getBuilding(),
                     getType().getManpowerUpkeep(),
-                    woodCost,
+                    baseWoodInput,
                     furnitureProduction
             ));
 
             return true;
         }
 
-        int furnitureProduction = (int) (baseFurnitureProduction * terrainModifier(terrain));
+        int furnitureProduction = (int) (baseFurnitureOutput * terrainModifier(terrain));
 
         mana.depositFurniture(furnitureProduction);
 
@@ -67,27 +70,10 @@ public class Carpentry extends Building {
                 coordinates.getY(),
                 getType().getBuilding(),
                 getType().getManpowerUpkeep(),
-                woodCost,
+                baseWoodInput,
                 furnitureProduction
         ));
 
         return true;
-    }
-
-    @Override
-    protected double terrainModifier(Terrain terrain) {
-        double terrainModifier = 1;
-
-        // Elevation modifier
-        if (terrain.getElevation() == Elevation.HIGHLANDS) {
-            terrainModifier -= 0.2;
-        }
-
-        if (terrainModifier < 0) {
-            terrainModifier = 0;
-        }
-
-        return terrainModifier;
-
     }
 }

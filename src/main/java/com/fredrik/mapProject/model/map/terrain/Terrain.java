@@ -26,11 +26,11 @@ public enum Terrain {
     GLACIAL_HEIGHTS(Precipitation.IRRELEVANT, Temperature.ARCTIC, Elevation.HIGHLANDS),
     MOUNTAINS(Precipitation.IRRELEVANT, Temperature.IRRELEVANT, Elevation.MOUNTAIN);
 
-    private Precipitation precipitation;
+    private final Precipitation precipitation;
 
-    private Temperature temperature;
+    private final Temperature temperature;
 
-    private Elevation elevation;
+    private final Elevation elevation;
 
     Terrain(Precipitation precipitation, Temperature temperature, Elevation elevation) {
         this.precipitation = precipitation;

@@ -3,6 +3,7 @@ package com.fredrik.mapProject.model.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fredrik.mapProject.model.mana.EventManaCost;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
 import com.fredrik.mapProject.model.map.MapCoordinates;
@@ -189,8 +190,6 @@ public class BuildEvent extends Event {
         }
 
         boolean eventManaCostPayed = mana.payInFull(eventManaCost);
-
-        System.out.println(eventManaCostPayed);
 
         if (!eventManaCostPayed) {
             setEventLogEntry(String.format("Not enough resources to build on tile %d:%d;",

@@ -27,7 +27,7 @@ public class GamePlayerService {
         this.manaService = manaService;
     }
 
-    public String createNewGamePlayer(GameSetupEntity gameSetup, UUID playerId) {
+    public void createNewGamePlayer(GameSetupEntity gameSetup, UUID playerId) {
 
         List<MapTileEntity> gameMap = mapTileService.getGameMap(gameSetup.getId());
 
@@ -47,7 +47,6 @@ public class GamePlayerService {
                 playerEntity.getPlayerGameId().getGameId(),
                 playerEntity.getPlayerNr());
 
-        return "new Player added";
     }
 
     public Optional<GamePlayerEntity> getGamePlayer(PlayerGameId playerGameId) {

@@ -6,6 +6,6 @@ public enum Precipitation {
     MODERATE,
     LOW,
     NONE,
-    IRRELEVANT;
+    IRRELEVANT
 
 }

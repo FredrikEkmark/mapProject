@@ -1,6 +1,5 @@
 package com.fredrik.mapProject.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.model.databaseEntity.*;
 import com.fredrik.mapProject.model.databaseEntity.UserEntity;
 import com.fredrik.mapProject.model.id.PlayerGameId;
@@ -27,7 +26,7 @@ public class PlayerViewService {
         this.eventLogService = eventLogService;
     }
 
-    public Optional<PlayerView> getPlayerView(GameSetupEntity gameSetup, UserEntity user) throws JsonProcessingException {
+    public Optional<PlayerView> getPlayerView(GameSetupEntity gameSetup, UserEntity user) {
 
         PlayerGameId playerGameId = new PlayerGameId(gameSetup.getId(), user.getId());
         GamePlayerEntity gamePlayer;
@@ -38,14 +37,17 @@ public class PlayerViewService {
         MapCoordinates startCoordinates;
 
         try {
-            gamePlayer = gamePlayerService.getGamePlayer(playerGameId).get();
+            Optional<GamePlayerEntity> optionalGamePlayerEntity = gamePlayerService.getGamePlayer(playerGameId);
+            if (optionalGamePlayerEntity.isEmpty()) {return Optional.empty();}
+            gamePlayer = optionalGamePlayerEntity.get();
             playerNr = gamePlayer.getPlayerNr();
             mapTileEntities = mapTileService.getPlayerGameMap(gameSetup.getId(), playerNr);
-            mana = manaService.findManaById(gamePlayer.getManaId()).get();
+            Optional<ManaEntity> optionalManaEntity = manaService.findManaById(gamePlayer.getManaId());
+            if (optionalManaEntity.isEmpty()) {return Optional.empty();}
+            mana = optionalManaEntity.get();
             eventLog = eventLogService.findPlayerEventLog(gamePlayer.getPlayerNr(), gameSetup.getId());
             startCoordinates = gamePlayer.getStartCoordinates();
         } catch (Exception e) {
-            System.out.println(e);
             return Optional.empty();
         }
 

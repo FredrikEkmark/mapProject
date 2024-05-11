@@ -1,16 +1,15 @@
 package com.fredrik.mapProject.model.building;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
+import com.fredrik.mapProject.model.mana.StorableManaTypes;
 import com.fredrik.mapProject.model.map.MapCoordinates;
-import com.fredrik.mapProject.model.map.terrain.Elevation;
-import com.fredrik.mapProject.model.map.terrain.Precipitation;
-import com.fredrik.mapProject.model.map.terrain.Temperature;
 import com.fredrik.mapProject.model.map.terrain.Terrain;
 
 public class Ranch extends Building {
 
-    private int baseFoodProduction = 5;
-    private int baseLeatherProduction = 5;
+    private final int baseFoodOutput = GameConfig.getBuildingBaseOutput(getType(), StorableManaTypes.FOOD);
+    private final int baseLeatherOutput = GameConfig.getBuildingBaseOutput(getType(), StorableManaTypes.LEATHER);
 
     public Ranch(BuildingType type, int progress) {
         super(
@@ -38,8 +37,8 @@ public class Ranch extends Building {
 
         mana.raisePopulationMax(getType().getPopulationMaxBonus());
 
-        int foodProduction = (int) (baseFoodProduction * terrainModifier(terrain));
-        int leatherProduction = (int) (baseLeatherProduction * terrainModifier(terrain));
+        int foodProduction = (int) (baseFoodOutput * terrainModifier(terrain));
+        int leatherProduction = (int) (baseLeatherOutput * terrainModifier(terrain));
 
         mana.depositFood(foodProduction);
         mana.depositLeather(leatherProduction);
@@ -55,36 +54,5 @@ public class Ranch extends Building {
         ));
 
         return true;
-    }
-
-    @Override
-    protected double terrainModifier(Terrain terrain) {
-
-        double terrainModifier = 1;
-
-        // Elevation modifier
-        if (terrain.getElevation() == Elevation.HIGHLANDS) {
-            terrainModifier += 0.2;
-        } else if (terrain.getElevation() == Elevation.MOUNTAIN) {
-            terrainModifier -= 0.2;
-        }
-
-        // Temperature modifier
-        if (terrain.getTemperature() == Temperature.ARCTIC) {
-            terrainModifier -= 0.4;
-        }
-
-        // Precipitation modifier
-        if (terrain.getPrecipitation() == Precipitation.NONE) {
-            terrainModifier -= 0.4;
-        } else if (terrain.getPrecipitation() == Precipitation.HIGH) {
-            terrainModifier -= 0.2;
-        }
-
-        if (terrainModifier < 0) {
-            terrainModifier = 0;
-        }
-
-        return terrainModifier;
     }
 }

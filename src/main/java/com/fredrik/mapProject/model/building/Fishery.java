@@ -1,13 +1,14 @@
 package com.fredrik.mapProject.model.building;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
+import com.fredrik.mapProject.model.mana.StorableManaTypes;
 import com.fredrik.mapProject.model.map.MapCoordinates;
-import com.fredrik.mapProject.model.map.terrain.Elevation;
 import com.fredrik.mapProject.model.map.terrain.Terrain;
 
 public class Fishery extends Building {
 
-    private int baseFoodProduction = 5;
+    private final int baseFoodOutput = GameConfig.getBuildingBaseOutput(getType(), StorableManaTypes.FOOD);
 
     public Fishery(BuildingType type, int progress) {
         super(
@@ -34,7 +35,7 @@ public class Fishery extends Building {
 
         mana.raisePopulationMax(getType().getPopulationMaxBonus());
 
-        int foodProduction = (int) (baseFoodProduction * terrainModifier(terrain));
+        int foodProduction = (int) (baseFoodOutput * terrainModifier(terrain));
 
         mana.depositFood(foodProduction);
 
@@ -48,23 +49,5 @@ public class Fishery extends Building {
         ));
 
         return true;
-    }
-
-    @Override
-    protected double terrainModifier(Terrain terrain) {
-
-        double terrainModifier = 1;
-
-        // Elevation modifier
-        if (terrain.getElevation() == Elevation.DEEP) {
-            terrainModifier += 0.2;
-        }
-
-        if (terrainModifier < 0) {
-            terrainModifier = 0;
-        }
-
-        return terrainModifier;
-
     }
 }

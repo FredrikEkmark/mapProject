@@ -1,7 +1,5 @@
 package com.fredrik.mapProject.service.user;
 
-
-import com.fredrik.mapProject.config.AppPasswordConfig;
 import com.fredrik.mapProject.model.databaseEntity.UserEntity;
 import com.fredrik.mapProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, AppPasswordConfig appPasswordConfig) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.model.turnChange;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.map.GameMapManager;
 import com.fredrik.mapProject.model.building.Building;
 import com.fredrik.mapProject.model.building.BuildingType;
@@ -10,15 +11,15 @@ import java.util.*;
 
 public class TurnChange {
 
-    private GameSetupEntity gameSetup;
+    private final GameSetupEntity gameSetup;
 
-    private GameMapManager gameMap;
+    private final GameMapManager gameMap;
 
     private List<EventEntity> eventEntityList;
 
-    private List<ManaEntity> manaList;
+    private final List<ManaEntity> manaList;
 
-    private List<EventLogEntity> eventLog;
+    private final List<EventLogEntity> eventLog;
 
     private boolean updated = false;
 
@@ -27,7 +28,7 @@ public class TurnChange {
         this.gameMap = gameMap;
         this.eventEntityList = eventEntityList;
         this.manaList = manaList;
-        this.eventLog = new ArrayList<EventLogEntity>();
+        this.eventLog = new ArrayList<>();
     }
 
     public void update() {
@@ -35,6 +36,8 @@ public class TurnChange {
             System.out.println("Turn already updated");
             return;
         }
+
+        System.out.println(GameConfig.getGameConfigStringify());
 
         // new list with only the persistent events
         List<EventEntity> updatedEventEntityList = new ArrayList<>(eventEntityList.size());
@@ -73,7 +76,7 @@ public class TurnChange {
             Event event = eventEntity.getEvent();
 
             ManaEntity mana = manaList.stream()
-                    .filter(m -> m.getPlayerNr().name() == eventEntity.getPlayerNr().name())
+                    .filter(m -> m.getPlayerNr().name().equals(eventEntity.getPlayerNr().name()))
                     .findFirst()
                     .orElse(null);
 
@@ -101,7 +104,7 @@ public class TurnChange {
         for (ManaEntity mana: manaList) {
             processPlayerMana(mana, eventLogEntries.get(mana.getPlayerNr().name()));
 
-            StringBuilder eventLogText = new StringBuilder("");
+            StringBuilder eventLogText = new StringBuilder();
             int eventLogIndex = 0;
 
             for (String eventLogEntry: eventLogEntries.get(mana.getPlayerNr().name())) {
@@ -115,7 +118,7 @@ public class TurnChange {
                             ));
 
                     eventLogIndex++;
-                    eventLogText = new StringBuilder("");
+                    eventLogText = new StringBuilder();
                 }
 
                 eventLogText.append(eventLogEntry);

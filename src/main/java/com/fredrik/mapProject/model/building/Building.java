@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.model.building;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
 import com.fredrik.mapProject.model.map.MapCoordinates;
 import com.fredrik.mapProject.model.map.terrain.Terrain;
@@ -20,7 +21,16 @@ public abstract class Building {
 
     public abstract boolean processProduction(ManaEntity mana, Terrain terrain, MapCoordinates coordinates);
 
-    protected abstract double terrainModifier(Terrain terrain);
+    protected double terrainModifier(Terrain terrain) {
+
+        double terrainModifier = 1.0;
+
+        terrainModifier += GameConfig.getBuildingElevationModifier(getType(), terrain.getElevation());
+        terrainModifier += GameConfig.getBuildingTemperatureModifier(getType(), terrain.getTemperature());
+        terrainModifier += GameConfig.getBuildingPrecipitationModifier(getType(), terrain.getPrecipitation());
+
+        return terrainModifier;
+    }
 
     public BuildingType getType() {
         return type;

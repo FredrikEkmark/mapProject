@@ -3,7 +3,6 @@ package com.fredrik.mapProject.service;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.databaseEntity.GamePlayerEntity;
 import com.fredrik.mapProject.model.databaseEntity.MapTileEntity;
-import com.fredrik.mapProject.model.id.MapTileId;
 import com.fredrik.mapProject.repository.MapTileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,28 +30,7 @@ public class MapTileService {
     }
 
     public List<MapTileEntity> getPlayerGameMap(UUID gameId, Player player) {
-        List<MapTileEntity> fullMap = mapTileRepository.findByGameIdAndPlayerVisibility(gameId, player.number());
-        List<MapTileEntity> playerMap = new ArrayList<MapTileEntity>();
-
-        for (MapTileEntity tile: fullMap) {
-            if (tile.isVisible(player.number()))
-            playerMap.add(tile);
-        }
-        return fullMap;
-    }
-
-    public MapTileEntity findGameTile(MapTileId id) {
-        return mapTileRepository.findByMapTileId(id).get();
-    }
-
-    public void updateGameTile(MapTileEntity tile) {
-        mapTileRepository.updateMapTileEntityByMapTileId(
-                tile.getMapTileId(),
-                tile.getTileValue(),
-                tile.getTileOwner(),
-                tile.getVisibility(),
-                tile.getBuildingJsonString(),
-                tile.getUnit());
+        return mapTileRepository.findByGameIdAndPlayerVisibility(gameId, player.number());
     }
 
     public void updateGameMap(List<MapTileEntity> gameMap) {

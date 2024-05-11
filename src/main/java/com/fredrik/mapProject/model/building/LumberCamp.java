@@ -1,14 +1,14 @@
 package com.fredrik.mapProject.model.building;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
+import com.fredrik.mapProject.model.mana.StorableManaTypes;
 import com.fredrik.mapProject.model.map.MapCoordinates;
-import com.fredrik.mapProject.model.map.terrain.Precipitation;
-import com.fredrik.mapProject.model.map.terrain.Temperature;
 import com.fredrik.mapProject.model.map.terrain.Terrain;
 
 public class LumberCamp extends Building {
 
-    private int baseWoodProduction = 5;
+    private final int baseWoodOutput = GameConfig.getBuildingBaseOutput(getType(), StorableManaTypes.WOOD);
 
     public LumberCamp(BuildingType type, int progress) {
         super(
@@ -35,7 +35,7 @@ public class LumberCamp extends Building {
 
         mana.raisePopulationMax(getType().getPopulationMaxBonus());
 
-        int woodProduction = (int) (baseWoodProduction * terrainModifier(terrain));
+        int woodProduction = (int) (baseWoodOutput * terrainModifier(terrain));
 
         mana.depositWood(woodProduction);
 
@@ -49,31 +49,5 @@ public class LumberCamp extends Building {
         ));
 
         return true;
-    }
-
-    @Override
-    protected double terrainModifier(Terrain terrain) {
-
-        double terrainModifier = 1;
-
-        // Temperature modifier
-        if (terrain.getTemperature() == Temperature.ARCTIC) {
-            terrainModifier -= 0.6;
-        }
-
-        // Precipitation modifier
-        if (terrain.getPrecipitation() == Precipitation.NONE) {
-            terrainModifier -= 0.8;
-        } else if (terrain.getPrecipitation() == Precipitation.HIGH) {
-            terrainModifier += 0.4;
-        } else if (terrain.getPrecipitation() == Precipitation.MODERATE) {
-            terrainModifier += 0.2;
-        }
-
-        if (terrainModifier < 0) {
-            terrainModifier = 0;
-        }
-
-        return terrainModifier;
     }
 }

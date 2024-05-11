@@ -6,7 +6,7 @@ public enum Elevation {
     HIGHLANDS,
     LOWLANDS,
     SHALLOW,
-    DEEP;
+    DEEP
 
 
 }

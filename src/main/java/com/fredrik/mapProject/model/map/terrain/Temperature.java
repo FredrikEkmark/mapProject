@@ -7,7 +7,7 @@ public enum Temperature {
     TEMPERATE,
     SUBTROPICAL,
     TROPICAL,
-    IRRELEVANT;
+    IRRELEVANT
 
 
 }

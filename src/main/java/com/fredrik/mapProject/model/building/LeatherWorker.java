@@ -1,15 +1,15 @@
 package com.fredrik.mapProject.model.building;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
+import com.fredrik.mapProject.model.mana.StorableManaTypes;
 import com.fredrik.mapProject.model.map.MapCoordinates;
-import com.fredrik.mapProject.model.map.terrain.Elevation;
-import com.fredrik.mapProject.model.map.terrain.Precipitation;
 import com.fredrik.mapProject.model.map.terrain.Terrain;
 
 public class LeatherWorker extends Building {
 
-    private int baseSimpleClothesProduction = 5;
-    private int leatherCost = 10;
+    private final int baseSimpleClothesOutput = GameConfig.getBuildingBaseOutput(getType(), StorableManaTypes.SIMPLE_CLOTHES);
+    private final int baseLeatherInput = GameConfig.getBuildingBaseInput(getType(), StorableManaTypes.LEATHER);
 
     public LeatherWorker(BuildingType type, int progress) {
         super(
@@ -36,12 +36,12 @@ public class LeatherWorker extends Building {
 
         mana.raisePopulationMax(getType().getPopulationMaxBonus());
 
-        boolean leatherWithdrawn = mana.withdrawLeather(leatherCost);
+        boolean leatherWithdrawn = mana.withdrawLeather(baseLeatherInput);
 
         if (!leatherWithdrawn) {
             int leatherPayed = mana.withdrawAllLeather();
-            double leatherPercentagePayed = leatherPayed / leatherCost;
-            int simpleClothesProduction = (int) Math.floor((leatherPercentagePayed * baseSimpleClothesProduction)  * terrainModifier(terrain));
+            double leatherPercentagePayed = (double) leatherPayed / baseLeatherInput;
+            int simpleClothesProduction = (int) Math.floor((leatherPercentagePayed * baseSimpleClothesOutput)  * terrainModifier(terrain));
 
             mana.depositSimpleClothes(simpleClothesProduction);
 
@@ -51,14 +51,14 @@ public class LeatherWorker extends Building {
                     coordinates.getY(),
                     getType().getBuilding(),
                     getType().getManpowerUpkeep(),
-                    leatherCost,
+                    baseLeatherInput,
                     simpleClothesProduction
             ));
 
             return true;
         }
 
-        int simpleClothesProduction = (int) (baseSimpleClothesProduction * terrainModifier(terrain));
+        int simpleClothesProduction = (int) (baseSimpleClothesOutput * terrainModifier(terrain));
 
         mana.depositSimpleClothes(simpleClothesProduction);
 
@@ -68,35 +68,10 @@ public class LeatherWorker extends Building {
                 coordinates.getY(),
                 getType().getBuilding(),
                 getType().getManpowerUpkeep(),
-                leatherCost,
+                baseLeatherInput,
                 simpleClothesProduction
         ));
 
         return true;
-    }
-
-    @Override
-    protected double terrainModifier(Terrain terrain) {
-
-        double terrainModifier = 1;
-
-        // Elevation modifier
-        if (terrain.getElevation() == Elevation.HIGHLANDS) {
-            terrainModifier -= 0.2;
-        }
-
-        // Precipitation modifier
-        if (terrain.getPrecipitation() == Precipitation.LOW) {
-            terrainModifier += 0.2;
-        } else if (terrain.getPrecipitation() == Precipitation.HIGH) {
-            terrainModifier -= 0.2;
-        }
-
-        if (terrainModifier < 0) {
-            terrainModifier = 0;
-        }
-
-        return terrainModifier;
-
     }
 }

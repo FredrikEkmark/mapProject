@@ -1,6 +1,5 @@
 package com.fredrik.mapProject.model.player;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fredrik.mapProject.config.Roles;
 import com.fredrik.mapProject.model.map.MapCoordinates;
 import com.fredrik.mapProject.model.map.MapSizes;
@@ -24,8 +23,8 @@ public class PlayerView {
     private int turn;
     private String turnChange;
     private List<MapTile> map;
-    private ManaEntity mana;
-    private List<EventLogEntity> eventLog;
+    private final ManaEntity mana;
+    private final List<EventLogEntity> eventLog;
     private final boolean isUpdating;
     private final boolean isAdmin;
 
@@ -42,7 +41,7 @@ public class PlayerView {
                       ManaEntity mana,
                       List<EventLogEntity> eventLog,
                       boolean isUpdating
-    ) throws JsonProcessingException {
+    ) {
         this.gameId = gameId;
         this.playerId = playerId;
         this.playerName = playerName;

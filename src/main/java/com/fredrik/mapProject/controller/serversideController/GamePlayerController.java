@@ -85,9 +85,7 @@ public class GamePlayerController {
             gamePlayer = gamePlayerService.getGamePlayer(new PlayerGameId(gameId, playerId));
         }
 
-        if (gamePlayer.isPresent()) {
-            gamePlayerService.deleteGamePlayerById(gamePlayer.get());
-        }
+        gamePlayer.ifPresent(gamePlayerService::deleteGamePlayerById);
 
         return "redirect:/manage-map-players/" + gameId;
     }

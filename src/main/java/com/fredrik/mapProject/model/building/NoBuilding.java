@@ -18,8 +18,4 @@ public class NoBuilding extends Building {
         return false;
     }
 
-    @Override
-    protected double terrainModifier(Terrain terrain) {
-        return 1;
-    }
 }

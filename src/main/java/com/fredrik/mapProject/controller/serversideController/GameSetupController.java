@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -29,11 +30,14 @@ public class GameSetupController {
     private final UserService userService;
     private final GamePlayerService gamePlayerService;
 
+
     @Autowired
-    public GameSetupController(GameSetupService gameSetupService, UserService userService, GamePlayerService gamePlayerSerive) {
+    public GameSetupController(GameSetupService gameSetupService,
+                               UserService userService,
+                               GamePlayerService gamePlayerService) {
         this.gameSetupService = gameSetupService;
         this.userService = userService;
-        this.gamePlayerService = gamePlayerSerive;
+        this.gamePlayerService = gamePlayerService;
     }
 
     @GetMapping("/new-map")
@@ -70,9 +74,14 @@ public class GameSetupController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
-        UserEntity currentUser = userService.findByUsername(username).get();
 
-        gameSetup.setOwner(currentUser);
+        Optional<UserEntity> currentUser = userService.findByUsername(username);
+
+        if (currentUser.isEmpty()){
+            return "redirect:/error-page";
+        }
+
+        gameSetup.setOwner(currentUser.get());
         gameSetup.setSeed(seed);
         gameSetup.setMapSize(mapSize);
         gameSetup.setTurnChangeFromInputString(turnChange, timeZone);
@@ -91,12 +100,16 @@ public class GameSetupController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        UserEntity currentUser = userService.findByUsername(username).get();
-        List<GameSetupEntity> hostedMaps = currentUser.getGameSetups();
-        List<GamePlayerEntity> gamePlayers = gamePlayerService.getAllGamePlayersByPlayer(currentUser.getId());
+        Optional<UserEntity> currentUser = userService.findByUsername(username);
+
+        if (currentUser.isEmpty()){
+            return "redirect:/error-page";
+        }
+        List<GameSetupEntity> hostedMaps = currentUser.get().getGameSetups();
+        List<GamePlayerEntity> gamePlayers = gamePlayerService.getAllGamePlayersByPlayer(currentUser.get().getId());
 
         model.addAttribute("userMaps", gamePlayers);
-        model.addAttribute("userRole", currentUser.getRole().name());
+        model.addAttribute("userRole", currentUser.get().getRole().name());
         model.addAttribute("hostedMaps", hostedMaps);
 
         return "my-maps";

@@ -47,9 +47,8 @@ public class EventService {
     }
 
     public void resetEventsAndSavePersistentEvents(List<EventEntity> eventList, UUID gameId) {
-        System.out.println(eventList.size());
         eventRepository.deleteAllByGameId(gameId);
-        if (eventList.size() > 0) {
+        if (!eventList.isEmpty()) {
         eventRepository.saveAll(eventList);
         }
     }

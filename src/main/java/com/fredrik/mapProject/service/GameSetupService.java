@@ -47,11 +47,8 @@ public class GameSetupService {
 
     public GameSetupEntity findById(UUID id) {
         Optional<GameSetupEntity> gameSetup = gameSetupRepository.findById(id);
-        if (gameSetup.isEmpty()) {
-            return null;
-        }
+        return gameSetup.orElse(null);
 
-        return gameSetup.get();
     }
 
     public void delete(GameSetupEntity gameSetup) {
@@ -84,9 +81,6 @@ public class GameSetupService {
 
     public boolean isUpdatingById(UUID gameId) {
         Optional<GameSetupEntity> gameSetup = gameSetupRepository.findById(gameId);
-        if (gameSetup.isEmpty()) {
-            return true;
-        }
-        return gameSetup.get().isUpdating();
+        return gameSetup.map(GameSetupEntity::isUpdating).orElse(true);
     }
 }

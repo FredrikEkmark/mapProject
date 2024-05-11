@@ -12,14 +12,14 @@ import java.util.*;
 
 public class GameMapManager {
 
-    private Map<MapCoordinates, MapTileEntity> gameMap;
-    private Map<String, List<MapTileEntity>> playerMap;
+    private final Map<MapCoordinates, MapTileEntity> gameMap;
+    private final Map<String, List<MapTileEntity>> playerMap;
 
-    private GameSetupEntity gameSetup;
+    private final GameSetupEntity gameSetup;
 
-    private MapTileEntityGenerator mapTileEntityGenerator;
+    private final MapTileEntityGenerator mapTileEntityGenerator;
 
-    private List<MapTileEntity> updatedTiles;
+    private final List<MapTileEntity> updatedTiles;
 
     public GameMapManager(List<MapTileEntity> mapTileEntityList, GameSetupEntity game) {
         this.gameMap = new HashMap<>();
@@ -38,10 +38,6 @@ public class GameMapManager {
                 playerMap.computeIfAbsent(player.name(), k -> new ArrayList<>()).add(tile);
             }
         }
-    }
-
-    public List<MapTileEntity> getGameMap() {
-        return new ArrayList<>(gameMap.values());
     }
 
     public List<MapTileEntity> getTilesWithPlayer(Player player) {
@@ -86,18 +82,11 @@ public class GameMapManager {
 
     public boolean isTileOwnerAdjacentToPlayer(MapCoordinates mapCoordinates, Player player) {
 
-        System.out.println(player);
-
         List<MapCoordinates> adjacentTileCoordinates = getAdjacentTileCoordinates(mapCoordinates, 0);
-
-        System.out.println("Prime X:" + mapCoordinates.getX() + " Y:" + mapCoordinates.getY());
-        for (MapCoordinates t: adjacentTileCoordinates) {
-            System.out.println("X:" + t.getX() + " Y:" + t.getY());
-        }
 
         for (MapCoordinates coordinates: adjacentTileCoordinates) {
             MapTileEntity tile = getTileFromCoordinates(coordinates);
-            if (tile.getTileOwner().name() == player.name()) {
+            if (tile.getTileOwner().name().equals(player.name())) {
                 return true;
             }
         }

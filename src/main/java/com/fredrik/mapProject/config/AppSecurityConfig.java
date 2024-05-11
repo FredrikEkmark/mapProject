@@ -1,9 +1,6 @@
 package com.fredrik.mapProject.config;
 
 import com.fredrik.mapProject.service.user.UserEntityDetailsService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import java.io.IOException;
 import java.util.Date;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -102,14 +97,11 @@ public class AppSecurityConfig {
     }
 
     private AuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
-        return new AuthenticationSuccessHandler() {
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-                String token = generateJwtToken(userDetails.getUsername());
+        return (request, response, authentication) -> {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String token = generateJwtToken(userDetails.getUsername());
 
-                response.sendRedirect(MAP_APP_URL + "/login?token=" + token);
-            }
+            response.sendRedirect(MAP_APP_URL + "/login?token=" + token);
         };
     }
 

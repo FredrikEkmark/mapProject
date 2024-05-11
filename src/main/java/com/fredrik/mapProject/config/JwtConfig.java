@@ -13,5 +13,5 @@ public class JwtConfig {
     @Bean
     public SecretKey secretKey() {
         return Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    };
+    }
 }

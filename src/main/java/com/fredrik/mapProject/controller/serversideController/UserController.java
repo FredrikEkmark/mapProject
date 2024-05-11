@@ -6,8 +6,6 @@ import com.fredrik.mapProject.model.databaseEntity.UserEntity;
 import com.fredrik.mapProject.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String registerUserPage(UserEntity userEntity, Model model) {
+    public String registerUserPage(Model model) {
         model.addAttribute("roles", Roles.values());
 
         return "register";
@@ -63,9 +61,8 @@ public class UserController {
 
     @GetMapping("admin-page")
     @PreAuthorize("hasRole('ADMIN')")
-    public String showAllUsers(UserEntity userEntity, Model model) {
+    public String showAllUsers(Model model) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<UserEntity> users = userService.getAll();
 
         model.addAttribute("users", users);

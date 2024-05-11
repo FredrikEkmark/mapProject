@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ClaimTileEvent extends Event {
-
     private int manpowerCost;
 
     public ClaimTileEvent(UUID eventId,
@@ -66,9 +65,6 @@ public class ClaimTileEvent extends Event {
 
         boolean canClaimMoreTiles = ((mana.getPopulation() / 100) > playerTiles.size());
 
-        System.out.println(mana.getPopulation() / 100);
-        System.out.println(gameMap.getTilesWithPlayer(getPlayerNr()).size());
-
         if (!canClaimMoreTiles) {
             setEventLogEntry(String.format("Could not claim tile %d:%d because insufficient population;",
                     getPrimaryTileCoordinates().getX(),
@@ -118,7 +114,7 @@ public class ClaimTileEvent extends Event {
         gameMap.addTileToUpdatedTiles(mapTile);
         playerTiles.add(mapTile);
 
-        setEventLogEntry(String.format("Tile %d:%d claimed;",
+        setEventLogEntry(String.format("Tile %d:%d claimed by player %d;",
                 getPrimaryTileCoordinates().getX(),
                 getPrimaryTileCoordinates().getY(),
                 getPlayerNr().number()));

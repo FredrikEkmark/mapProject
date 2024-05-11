@@ -117,10 +117,6 @@ public class UserEntity implements UserDetails {
         return gameSetups;
     }
 
-    public void setGameSetups(List<GameSetupEntity> gameSetups) {
-        this.gameSetups = gameSetups;
-    }
-
     public void setAccountNonExpired(boolean accountNonExpired) {
         this.accountNonExpired = accountNonExpired;
     }

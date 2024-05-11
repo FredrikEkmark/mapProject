@@ -1,4 +1,4 @@
-package com.fredrik.mapProject.model.event;
+package com.fredrik.mapProject.model.mana;
 
 public class EventManaCost {
 

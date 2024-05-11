@@ -2,7 +2,6 @@ package com.fredrik.mapProject.model.event;
 
 import com.fredrik.mapProject.model.map.MapCoordinates;
 import com.fredrik.mapProject.model.player.Player;
-import com.fredrik.mapProject.model.event.EventType;
 
 import java.util.UUID;
 
@@ -25,13 +24,20 @@ public class NewEventDTO {
     public NewEventDTO() {
     }
 
-    public NewEventDTO(UUID gameId, Player playerNr, int turn, MapCoordinates primaryTileCoordinates, EventType eventType, String eventData) {
+    public NewEventDTO(UUID gameId,
+                       Player playerNr,
+                       int turn,
+                       MapCoordinates primaryTileCoordinates,
+                       EventType eventType,
+                       String eventData,
+                       String cost) {
         this.gameId = gameId;
         this.playerNr = playerNr;
         this.turn = turn;
         this.primaryTileCoordinates = primaryTileCoordinates;
         this.eventType = eventType;
         this.eventData = eventData;
+        this.cost = cost;
     }
 
     public UUID getGameId() {

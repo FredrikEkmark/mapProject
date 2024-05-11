@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.model.databaseEntity;
 
 import com.fredrik.mapProject.model.player.Player;
-import com.fredrik.mapProject.model.event.EventManaCost;
+import com.fredrik.mapProject.model.mana.EventManaCost;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -236,8 +236,6 @@ public class ManaEntity {
         int perishableFood = Math.max(food - protectedFood, 0);
         int spoiledFood = (int) (Math.floor(perishableFood * 0.2));
         food -= spoiledFood;
-        System.out.println("Spoiled Food: " + spoiledFood);
-        System.out.println("Food: " + food);
         return spoiledFood;
     }
 
@@ -286,14 +284,6 @@ public class ManaEntity {
     }
 
     public boolean payInFull(EventManaCost eventManaCost) {
-
-        System.out.println(eventManaCost.getManpower() > this.manpower);
-        System.out.println((eventManaCost.getFood() > this.food));
-        System.out.println((eventManaCost.getWood() > this.wood));
-        System.out.println((eventManaCost.getStone() > this.stone));
-        System.out.println((eventManaCost.getLeather() > this.leather));
-        System.out.println((eventManaCost.getFurniture() > this.furniture));
-        System.out.println((eventManaCost.getSimpleClothes() > this.simpleClothes));
 
         if (eventManaCost.getManpower() > this.manpower) {
             return false;
