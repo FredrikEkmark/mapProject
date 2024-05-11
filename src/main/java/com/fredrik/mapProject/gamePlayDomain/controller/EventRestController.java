@@ -12,6 +12,8 @@ import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.SecurityUtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-public class EventRestController { // toDO add security to this controller
+public class EventRestController {
 
     private final EventService eventService;
     private final GamePlayerService gamePlayerService;
@@ -36,24 +38,17 @@ public class EventRestController { // toDO add security to this controller
     }
 
     @PostMapping("/api/event")
-    public List<EventEntity> postNewEvent(@RequestBody NewEventDTO newEventDTO) {
+    public ResponseEntity<List<EventEntity>> postNewEvent(@RequestBody NewEventDTO newEventDTO) {
 
-        boolean isUpdating = gameSetupService.isUpdatingById(newEventDTO.getGameId());
+        GamePlayerEntity gamePlayer = getValidatedPlayerEntity(newEventDTO.getGameId());
 
-        if (isUpdating) { // toDo maybe change all of these to Response entity and structure data differently
-            return new ArrayList<>();
+        if (gamePlayer == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ArrayList<>());
         }
 
-        UserEntity user = securityUtilityService.getCurrentUser();
-
-        Optional<GamePlayerEntity> gamePlayer = gamePlayerService.getGamePlayer(new PlayerGameId(newEventDTO.getGameId(), user.getId()));
-
-
-        if (gamePlayer.isEmpty())
-            System.out.println("No gamePlayer");
-
-        if (gamePlayer.get().getPlayerNr() != newEventDTO.getPlayerNr())
-            System.out.println("Wrong player");
+        if (gameSetupService.isUpdatingById(newEventDTO.getGameId())) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
+        }
 
         EventEntity event = new EventEntity(
                 newEventDTO.getGameId(),
@@ -66,53 +61,69 @@ public class EventRestController { // toDO add security to this controller
         );
 
         eventService.save(event);
-        return eventService.findAllByGameIDAndPlayerNr(event.getGameId(), event.getPlayerNr());
+
+        List<EventEntity> eventList =  eventService.findAllByGameIDAndPlayerNr(event.getGameId(), event.getPlayerNr());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventList);
     }
 
     @GetMapping("/api/event/{gameId}/{player}")
-    public List<EventEntity> getAllEventByGameIdAndPlayerNr(@PathVariable("gameId") UUID gameId, @PathVariable("player") Player playerNr) {
+    public ResponseEntity<List<EventEntity>> getAllEventByGameIdAndPlayerNr(@PathVariable("gameId") UUID gameId, @PathVariable("player") Player playerNr) {
 
-        boolean isUpdating = gameSetupService.isUpdatingById(gameId);
+        GamePlayerEntity gamePlayer = getValidatedPlayerEntity(gameId);
 
-        if (isUpdating) {
-            return new ArrayList<>();
+        if (gamePlayer == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ArrayList<>());
         }
 
-        UserEntity user = securityUtilityService.getCurrentUser();
+        if (gameSetupService.isUpdatingById(gameId)) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
+        }
 
-        Optional<GamePlayerEntity> gamePlayer = gamePlayerService.getGamePlayer(new PlayerGameId(gameId, user.getId()));
+        List<EventEntity> eventList =  eventService.findAllByGameIDAndPlayerNr(gameId, gamePlayer.getPlayerNr());
 
-        if (gamePlayer.isEmpty())
-            return null;
-
-        if (gamePlayer.get().getPlayerNr() != playerNr)
-            return null;
-
-        return eventService.findAllByGameIDAndPlayerNr(gameId, playerNr);
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventList);
     }
 
     @DeleteMapping("/api/event/{gameId}/{eventId}")
-    public List<EventEntity> deleteEvent(@PathVariable("gameId") UUID gameId, @PathVariable("eventId") UUID eventId) {
+    public ResponseEntity<List<EventEntity>> deleteEvent(@PathVariable("gameId") UUID gameId, @PathVariable("eventId") UUID eventId) {
 
-        boolean isUpdating = gameSetupService.isUpdatingById(gameId);
+        GamePlayerEntity gamePlayer = getValidatedPlayerEntity(gameId);
 
-        if (isUpdating) {
-            return new ArrayList<>();
+        if (gamePlayer == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ArrayList<>());
         }
 
-        UserEntity user = securityUtilityService.getCurrentUser();
+        if (gameSetupService.isUpdatingById(gameId)) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
+        }
 
-        Optional<GamePlayerEntity> gamePlayer = gamePlayerService.getGamePlayer(new PlayerGameId(gameId, user.getId()));
         Optional<EventEntity> event = eventService.findByEventId(eventId);
 
-        if (gamePlayer.isEmpty() || event.isEmpty())
-            return null;
-
-        if (gamePlayer.get().getPlayerNr() != event.get().getPlayerNr())
-            return null;
-
         eventService.deleteByEventId(eventId);
-        return eventService.findAllByGameIDAndPlayerNr(gameId, event.get().getPlayerNr());
+
+        List<EventEntity> eventList =  eventService.findAllByGameIDAndPlayerNr(gameId, gamePlayer.getPlayerNr());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventList);
+    }
+
+    private GamePlayerEntity getValidatedPlayerEntity(UUID gameId) {
+
+        UserEntity user = securityUtilityService.getCurrentUser();
+        Optional<GamePlayerEntity> gamePlayer = gamePlayerService.getGamePlayer(
+                new PlayerGameId(gameId, user.getId()));
+
+        if (gamePlayer.isEmpty()) {
+            return null;
+        }
+
+        boolean userAndGamePlayerIDMatch = user.getId().equals(gamePlayer.get().getPlayerGameId().getUserId());
+
+        if (!userAndGamePlayerIDMatch) {
+            return null;
+        }
+
+        return gamePlayer.get();
     }
 }
 

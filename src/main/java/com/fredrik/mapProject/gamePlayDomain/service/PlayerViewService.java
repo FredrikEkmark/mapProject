@@ -12,6 +12,7 @@ import com.fredrik.mapProject.userDomain.model.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerViewService {
@@ -28,29 +29,27 @@ public class PlayerViewService {
         this.eventLogService = eventLogService;
     }
 
-    public PlayerView getPlayerView(GameSetupEntity gameSetup, UserEntity user) throws JsonProcessingException {
+    public Optional<PlayerView> getPlayerView(GameSetupEntity gameSetup, UserEntity user) throws JsonProcessingException {
 
         PlayerGameId playerGameId = new PlayerGameId(gameSetup.getId(), user.getId());
-        GamePlayerEntity gamePlayer = gamePlayerService.getGamePlayer(playerGameId).get();
-        Player playerNr = gamePlayer.getPlayerNr();
+        GamePlayerEntity gamePlayer;
+        Player playerNr;
+        List<MapTileEntity> mapTileEntities;
+        ManaEntity mana;
+        List<EventLogEntity> eventLog;
+        MapCoordinates startCoordinates;
 
-        if (gameSetup.isUpdating()) {
-            PlayerView playerView = new PlayerView(
-                    gameSetup,
-                    user.getId(),
-                    user.getUsername(),
-                    playerNr,
-                    user.getRole()
-            );
-
-            return playerView;
+        try {
+            gamePlayer = gamePlayerService.getGamePlayer(playerGameId).get();
+            playerNr = gamePlayer.getPlayerNr();
+            mapTileEntities = mapTileService.getPlayerGameMap(gameSetup.getId(), playerNr);
+            mana = manaService.findManaById(gamePlayer.getManaId()).get();
+            eventLog = eventLogService.findPlayerEventLog(gamePlayer.getPlayerNr(), gameSetup.getId());
+            startCoordinates = gamePlayer.getStartCoordinates();
+        } catch (Exception e) {
+            System.out.println(e);
+            return Optional.empty();
         }
-
-        List<MapTileEntity> mapTileEntities = mapTileService.getPlayerGameMap(gameSetup.getId(), playerNr);
-        ManaEntity mana = manaService.findManaById(gamePlayer.getManaId()).get();
-        List<EventLogEntity> eventLog = eventLogService.findPlayerEventLog(gamePlayer.getPlayerNr(), gameSetup.getId());
-
-        MapCoordinates startCoordinates = gamePlayer.getStartCoordinates();
 
         PlayerView playerView = new PlayerView(
                 gameSetup.getId(),
@@ -68,6 +67,6 @@ public class PlayerViewService {
                 gameSetup.isUpdating()
         );
 
-        return playerView;
+        return Optional.of(playerView);
     }
 }

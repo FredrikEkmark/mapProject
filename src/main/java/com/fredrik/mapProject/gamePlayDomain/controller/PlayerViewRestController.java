@@ -8,10 +8,13 @@ import com.fredrik.mapProject.gameSetupDomain.service.GameSetupService;
 import com.fredrik.mapProject.userDomain.model.UserEntity;
 import com.fredrik.mapProject.userDomain.service.SecurityUtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController()
@@ -29,14 +32,22 @@ public class PlayerViewRestController {
     }
 
     @GetMapping("/api/playerView/{gameId}")
-    public PlayerView getPlayerViewGame(@PathVariable("gameId") UUID gameId) throws JsonProcessingException {
+    public ResponseEntity<PlayerView> getPlayerViewGame(@PathVariable("gameId") UUID gameId) throws JsonProcessingException {
 
         UserEntity user = securityUtilityService.getCurrentUser();
 
         GameSetupEntity gameSetup = gameSetupService.findById(gameId);
 
-        PlayerView playerView = playerViewService.getPlayerView(gameSetup, user);
+        if (gameSetup.isUpdating()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
 
-        return playerView;
+        Optional<PlayerView> playerView = playerViewService.getPlayerView(gameSetup, user);
+
+        if (playerView.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(playerView.get());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(playerView.get());
     }
 }

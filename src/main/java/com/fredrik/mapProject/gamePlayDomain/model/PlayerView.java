@@ -27,28 +27,6 @@ public class PlayerView {
     private final boolean isUpdating;
     private final boolean isAdmin;
 
-    public PlayerView(
-            GameSetupEntity gameSetup,
-            UUID playerId,
-            String playerName,
-            Player playerNr,
-            Roles userRole
-    ) {
-        this.gameId = gameSetup.getId();
-        this.playerId = playerId;
-        this.playerName = playerName;
-        this.mapSize = gameSetup.getMapSize();
-        this.startCoordinates = new MapCoordinates(20, 20);
-        this.playerNr = playerNr;
-        this.turn = gameSetup.getTurn();
-        this.turnChange = "";
-        this.map = new ArrayList<>();
-        this.mana = new ManaEntity();
-        this.eventLog = new ArrayList<>();
-        this.isUpdating = gameSetup.isUpdating();
-        this.isAdmin = (userRole == Roles.ADMIN);
-    }
-
     public PlayerView(UUID gameId,
                       UUID playerId,
                       String playerName,
