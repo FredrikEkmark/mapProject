@@ -69,6 +69,8 @@ public class EventManaCost {
         return simpleClothes;
     }
 
+
+
     public int payFood() {
         int foodPay = food;
         food = 0;

@@ -37,8 +37,6 @@ public class TurnChange {
             return;
         }
 
-        System.out.println(GameConfig.getGameConfigStringify());
-
         // new list with only the persistent events
         List<EventEntity> updatedEventEntityList = new ArrayList<>(eventEntityList.size());
         // String list of the output from event processing
@@ -60,7 +58,7 @@ public class TurnChange {
         System.out.printf("""
                 GameId: %s
                 Turn has been updated
-                """, gameSetup.getId()); // toDo write full log for turn update, number of tiles changed, eventLogs remaining...
+                """, gameSetup.getId());
     }
 
     // Processing functions
@@ -84,7 +82,7 @@ public class TurnChange {
             boolean success = event.processEvent(mana, gameMap);
             // PROCESS EVENT
 
-            String eventLogEntry = event.getEventLogEntry(); // toDo write logic in this function
+            String eventLogEntry = event.getEventLogEntry();
             eventLogEntries.get(event.getPlayerNr().name()).add(eventLogEntry);
 
             if (!success) {

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ClaimTileEvent extends Event {
-    private int manpowerCost;
 
     public ClaimTileEvent(UUID eventId,
                           Player playerNr,
@@ -22,7 +21,7 @@ public class ClaimTileEvent extends Event {
                           EventType eventType,
                           String eventData,
                           String cost) {
-        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, false);
+        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, false, cost);
         parseFromEventData(eventData);
         parseFromCost(cost);
     }
@@ -31,28 +30,7 @@ public class ClaimTileEvent extends Event {
     public void parseFromEventData(String eventData) {}
 
     @Override
-    public void parseFromCost(String cost) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            JsonNode rootNode = objectMapper.readTree(cost);
-
-            JsonNode manpowerNode = rootNode.get("manpower");
-
-            if (manpowerNode != null && manpowerNode.isInt()) {
-                manpowerCost = manpowerNode.asInt();
-            }
-        } catch (RuntimeException | JsonProcessingException e) {
-            System.out.println(e);
-        }
-    }
-
-    @Override
     public String stringifyEventData() {return "{}";}
-
-    @Override
-    public String stringifyCost() {
-        return String.format("{\"manpower\":%s}", manpowerCost) ;
-    }
 
     @Override
     public boolean processEvent(ManaEntity mana, GameMapManager gameMap) {
@@ -100,7 +78,7 @@ public class ClaimTileEvent extends Event {
             return false;
         }
 
-        boolean manpowerPaid = mana.withdrawManpower(manpowerCost);
+        boolean manpowerPaid = mana.withdrawManpower(getEventManaCost().getManpower());
 
         if (!manpowerPaid) {
             setEventLogEntry(String.format("Not enough manpower to claim tile %d:%d;",

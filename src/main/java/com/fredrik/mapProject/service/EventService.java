@@ -95,7 +95,13 @@ public class EventService {
                         return true;
                     }
                 }
+                case DEMOLISH_EVENT -> {
+                    if (manpowerNode.asInt() == 0) {
+                        return true;
+                    }
+                }
                 default -> {
+                    System.out.println("ERROR NOT A VALID EVENT COST");
                     return false;
                 }
             }

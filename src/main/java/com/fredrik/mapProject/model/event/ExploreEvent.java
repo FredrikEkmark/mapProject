@@ -13,8 +13,6 @@ import java.util.UUID;
 
 public class ExploreEvent extends Event {
 
-    private int manpowerCost;
-
     public ExploreEvent(UUID eventId,
                         Player playerNr,
                         int turn,
@@ -22,7 +20,7 @@ public class ExploreEvent extends Event {
                         EventType eventType,
                         String eventData,
                         String cost) {
-        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, false);
+        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, false, cost);
         parseFromEventData(eventData);
         parseFromCost(cost);
     }
@@ -32,29 +30,8 @@ public class ExploreEvent extends Event {
     public String stringifyEventData() {return "{}";}
 
     @Override
-    public String stringifyCost() {
-        return String.format("{\"manpower\":%s}", manpowerCost) ;
-    }
-
-    @Override
     public void parseFromEventData(String eventData) {
 
-    }
-
-    @Override
-    public void parseFromCost(String cost) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            JsonNode rootNode = objectMapper.readTree(cost);
-
-            JsonNode manpowerNode = rootNode.get("manpower");
-
-            if (manpowerNode != null && manpowerNode.isInt()) {
-                manpowerCost = manpowerNode.asInt();
-            }
-        } catch (RuntimeException | JsonProcessingException e) {
-            System.out.println(e);
-        }
     }
 
     // Event processing functions
@@ -80,7 +57,7 @@ public class ExploreEvent extends Event {
             return false;
         }
 
-        boolean manpowerPaid = mana.withdrawManpower(manpowerCost);
+        boolean manpowerPaid = mana.withdrawManpower(getEventManaCost().getManpower());
 
         if (!manpowerPaid) {
             setEventLogEntry(String.format("Not enough manpower to explore tile %d:%d;",

@@ -59,7 +59,6 @@ public class GameConfig {
         }
         stringBuilder.append("},\"mapSize\":{");
         for (MapSizes mapSize: MapSizes.values()) {
-            System.out.println(mapSize);
             stringBuilder.append("\"width\":" + getMapSizeWidth(mapSize.toString()) + ",");
             stringBuilder.append("\"height\":" + getMapSizeHeight(mapSize.toString()) + ",");
             stringBuilder.append("\"maxPlayers\":" + getMapSizeMaxPlayers(mapSize.toString()) + ",");

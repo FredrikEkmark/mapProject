@@ -1,5 +1,9 @@
 package com.fredrik.mapProject.model.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fredrik.mapProject.model.mana.EventManaCost;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
 import com.fredrik.mapProject.model.map.MapCoordinates;
@@ -23,7 +27,15 @@ public abstract class Event {
 
     private String eventLogEntry;
 
-    public Event(UUID eventId, Player playerNr, int turn, MapCoordinates primaryTileCoordinates, EventType eventType, boolean persistent) {
+    private EventManaCost eventManaCost;
+
+    public Event(UUID eventId,
+                 Player playerNr,
+                 int turn,
+                 MapCoordinates primaryTileCoordinates,
+                 EventType eventType,
+                 boolean persistent,
+                 String cost) {
         this.eventId = eventId;
         this.playerNr = playerNr;
         this.turn = turn;
@@ -31,6 +43,7 @@ public abstract class Event {
         this.eventType = eventType;
         this.persistent = persistent;
         this.eventLogEntry = "";
+        parseFromCost(cost);
     }
 
     // Setup functions for child classes
@@ -39,9 +52,85 @@ public abstract class Event {
 
     public abstract void parseFromEventData(String eventData);
 
-    public abstract void parseFromCost(String cost);
+    public void parseFromCost(String cost) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        EventManaCost eventManaCost = new EventManaCost();
+        try {
+            JsonNode rootNode = objectMapper.readTree(cost);
 
-    public abstract String stringifyCost();
+            JsonNode manpowerNode = rootNode.get("manpower");
+            JsonNode woodNode = rootNode.get("wood");
+            JsonNode foodNode = rootNode.get("food");
+            JsonNode stoneNode = rootNode.get("stone");
+            JsonNode leatherNode = rootNode.get("leather");
+            JsonNode furnitureNode = rootNode.get("furniture");
+            JsonNode simpleClothesNode = rootNode.get("simpleClothes");
+
+            if (manpowerNode != null && manpowerNode.isInt()) {
+                eventManaCost.setManpower(manpowerNode.asInt());
+            }
+
+            if (woodNode != null && woodNode.isInt()) {
+                eventManaCost.setWood(woodNode.asInt());
+            }
+
+            if (foodNode != null && foodNode.isInt()) {
+                eventManaCost.setFood(foodNode.asInt());
+            }
+
+            if (stoneNode != null && stoneNode.isInt()) {
+                eventManaCost.setStone(stoneNode.asInt());
+            }
+
+            if (leatherNode != null && leatherNode.isInt()) {
+                eventManaCost.setLeather(leatherNode.asInt());
+            }
+
+            if (furnitureNode != null && furnitureNode.isInt()) {
+                eventManaCost.setFurniture(furnitureNode.asInt());
+            }
+
+            if (simpleClothesNode != null && simpleClothesNode.isInt()) {
+                eventManaCost.setSimpleClothes(simpleClothesNode.asInt());
+            }
+
+            this.eventManaCost = eventManaCost;
+        } catch (RuntimeException | JsonProcessingException e) {
+            System.out.println(e);
+        }
+    }
+
+    public String stringifyCost() {
+        StringBuilder stringBuilder = new StringBuilder("{");
+
+        if (eventManaCost.getManpower() > 0) {
+            stringBuilder.append("\"manpower\":").append(eventManaCost.getManpower()).append(",");
+        }
+
+        if (eventManaCost.getFood() > 0) {
+            stringBuilder.append("\"food\":").append(eventManaCost.getFood()).append(",");
+        }
+
+        if (eventManaCost.getWood() > 0) {
+            stringBuilder.append("\"wood\":").append(eventManaCost.getWood()).append(",");
+        }
+
+        if (eventManaCost.getLeather() > 0) {
+            stringBuilder.append("\"leather\":").append(eventManaCost.getLeather()).append(",");
+        }
+
+        if (eventManaCost.getStone() > 0) {
+            stringBuilder.append("\"stone\":").append(eventManaCost.getStone()).append(",");
+        }
+
+        if (stringBuilder.charAt(stringBuilder.length() - 1) == ',') {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
+
+        stringBuilder.append("}");
+
+        return stringBuilder.toString();
+    }
 
     // Event Processing functions
 
@@ -100,5 +189,13 @@ public abstract class Event {
 
     public void setEventLogEntry(String eventLogEntry) {
         this.eventLogEntry = eventLogEntry;
+    }
+
+    public EventManaCost getEventManaCost() {
+        return eventManaCost;
+    }
+
+    public void setEventManaCost(EventManaCost eventManaCost) {
+        this.eventManaCost = eventManaCost;
     }
 }

@@ -23,7 +23,7 @@ import java.util.UUID;
 @Controller
 public class GamePlayerController {
 
-    private final SecurityUtilityService securityUtilityService; // toDO do i need security check here?
+    private final SecurityUtilityService securityUtilityService;
     private final GamePlayerService gamePlayerService;
     private final GameSetupService gameSetupService;
 

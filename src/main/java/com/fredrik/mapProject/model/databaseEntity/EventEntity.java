@@ -1,12 +1,8 @@
 package com.fredrik.mapProject.model.databaseEntity;
 
+import com.fredrik.mapProject.model.event.*;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.map.MapCoordinates;
-import com.fredrik.mapProject.model.event.EventType;
-import com.fredrik.mapProject.model.event.BuildEvent;
-import com.fredrik.mapProject.model.event.ClaimTileEvent;
-import com.fredrik.mapProject.model.event.Event;
-import com.fredrik.mapProject.model.event.ExploreEvent;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -144,6 +140,15 @@ public class EventEntity implements Cloneable {
             }
             case CLAIM_TILE_EVENT -> {
                 return new ClaimTileEvent(this.eventId,
+                        this.playerNr,
+                        this.turn,
+                        this.primaryTileCoordinates,
+                        this.eventType,
+                        this.eventData,
+                        this.cost);
+            }
+            case DEMOLISH_EVENT -> {
+                return new DemolishEvent(this.eventId,
                         this.playerNr,
                         this.turn,
                         this.primaryTileCoordinates,

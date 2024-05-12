@@ -285,6 +285,22 @@ public class ManaEntity {
 
     public boolean payInFull(EventManaCost eventManaCost) {
 
+        if (!validateCanPayInFull(eventManaCost)) {
+            return false;
+        }
+
+        withdrawManpower(eventManaCost.getManpower());
+        withdrawWood(eventManaCost.payWood());
+        withdrawFood(eventManaCost.payFood());
+        withdrawLeather(eventManaCost.payLeather());
+        withdrawStone(eventManaCost.payStone());
+        withdrawFurniture(eventManaCost.payFurniture());
+        withdrawSimpleClothes(eventManaCost.paySimpleClothes());
+
+        return true;
+    }
+
+    public boolean validateCanPayInFull(EventManaCost eventManaCost) {
         if (eventManaCost.getManpower() > this.manpower) {
             return false;
         }
@@ -312,15 +328,6 @@ public class ManaEntity {
         if (eventManaCost.getSimpleClothes() > this.simpleClothes) {
             return false;
         }
-
-        withdrawManpower(eventManaCost.getManpower());
-        withdrawWood(eventManaCost.payWood());
-        withdrawFood(eventManaCost.payFood());
-        withdrawLeather(eventManaCost.payLeather());
-        withdrawStone(eventManaCost.payStone());
-        withdrawFurniture(eventManaCost.payFurniture());
-        withdrawSimpleClothes(eventManaCost.paySimpleClothes());
-
         return true;
     }
 }

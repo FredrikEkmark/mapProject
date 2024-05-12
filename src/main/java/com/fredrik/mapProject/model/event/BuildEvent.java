@@ -3,7 +3,6 @@ package com.fredrik.mapProject.model.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fredrik.mapProject.model.mana.EventManaCost;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
 import com.fredrik.mapProject.model.map.MapCoordinates;
@@ -15,8 +14,6 @@ import java.util.UUID;
 
 public class BuildEvent extends Event {
 
-    private EventManaCost eventManaCost;
-
     private BuildingType buildingType;
 
     public BuildEvent(UUID eventId,
@@ -26,7 +23,7 @@ public class BuildEvent extends Event {
                       EventType eventType,
                       String eventData,
                       String cost) {
-        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, true);
+        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, true, cost);
         parseFromEventData(eventData);
         parseFromCost(cost);
     }
@@ -34,39 +31,6 @@ public class BuildEvent extends Event {
     @Override
     public String stringifyEventData() {
         return String.format("{building: %s }", buildingType.name());
-    }
-
-    @Override
-    public String stringifyCost() {
-        StringBuilder stringBuilder = new StringBuilder("{");
-
-        if (eventManaCost.getManpower() > 0) {
-            stringBuilder.append("\"manpower\":").append(eventManaCost.getManpower()).append(",");
-        }
-
-        if (eventManaCost.getFood() > 0) {
-            stringBuilder.append("\"food\":").append(eventManaCost.getFood()).append(",");
-        }
-
-        if (eventManaCost.getWood() > 0) {
-            stringBuilder.append("\"wood\":").append(eventManaCost.getWood()).append(",");
-        }
-
-        if (eventManaCost.getLeather() > 0) {
-            stringBuilder.append("\"leather\":").append(eventManaCost.getLeather()).append(",");
-        }
-
-        if (eventManaCost.getStone() > 0) {
-            stringBuilder.append("\"stone\":").append(eventManaCost.getStone()).append(",");
-        }
-
-        if (stringBuilder.charAt(stringBuilder.length() - 1) == ',') {
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        }
-
-        stringBuilder.append("}");
-
-        return stringBuilder.toString();
     }
 
     @Override
@@ -87,45 +51,6 @@ public class BuildEvent extends Event {
             System.out.println(e);
         }
         buildingType = type;
-    }
-
-    @Override
-    public void parseFromCost(String cost) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        EventManaCost eventManaCost = new EventManaCost();
-        try {
-            JsonNode rootNode = objectMapper.readTree(cost);
-
-            JsonNode manpowerNode = rootNode.get("manpower");
-            JsonNode woodNode = rootNode.get("wood");
-            JsonNode foodNode = rootNode.get("food");
-            JsonNode stoneNode = rootNode.get("stone");
-            JsonNode leatherNode = rootNode.get("leather");
-
-            if (manpowerNode != null && manpowerNode.isInt()) {
-                eventManaCost.setManpower(manpowerNode.asInt());
-            }
-
-            if (woodNode != null && woodNode.isInt()) {
-                eventManaCost.setWood(woodNode.asInt());
-            }
-
-            if (foodNode != null && foodNode.isInt()) {
-                eventManaCost.setFood(foodNode.asInt());
-            }
-
-            if (stoneNode != null && stoneNode.isInt()) {
-                eventManaCost.setStone(stoneNode.asInt());
-            }
-
-            if (leatherNode != null && leatherNode.isInt()) {
-                eventManaCost.setLeather(leatherNode.asInt());
-            }
-
-            this.eventManaCost = eventManaCost;
-        } catch (RuntimeException | JsonProcessingException e) {
-            System.out.println(e);
-        }
     }
 
     @Override
@@ -168,7 +93,7 @@ public class BuildEvent extends Event {
             int progressToComplete =
                     alreadyExistingBuilding.getType().getCompleteAtProgress() - alreadyExistingBuilding.getProgress();
 
-            int manpowerPayableCost = Math.min(progressToComplete, eventManaCost.getManpower());
+            int manpowerPayableCost = Math.min(progressToComplete, getEventManaCost().getManpower());
             boolean manpowerPaid = mana.withdrawManpower(manpowerPayableCost);
 
             if (manpowerPaid) {
@@ -189,7 +114,7 @@ public class BuildEvent extends Event {
             }
         }
 
-        boolean eventManaCostPayed = mana.payInFull(eventManaCost);
+        boolean eventManaCostPayed = mana.payInFull(getEventManaCost());
 
         if (!eventManaCostPayed) {
             setEventLogEntry(String.format("Not enough resources to build on tile %d:%d;",
@@ -211,7 +136,7 @@ public class BuildEvent extends Event {
 
 
         setEventLogEntry(String.format("%d progress was added to %s on tile %d:%d, Progress is %d/%d;",
-                eventManaCost.getManpower(),
+                getEventManaCost().getManpower(),
                 mapTile.getBuilding().getType().getBuilding(),
                 getPrimaryTileCoordinates().getX(),
                 getPrimaryTileCoordinates().getY(),
@@ -226,17 +151,17 @@ public class BuildEvent extends Event {
         Building newBuilding;
 
         switch (buildingType) {
-           case FARM -> newBuilding = new Farm(buildingType, eventManaCost.getManpower());
-           case GRANARY -> newBuilding = new Granary(buildingType, eventManaCost.getManpower());
-           case QUARRY -> newBuilding = new Quarry(buildingType, eventManaCost.getManpower());
-           case LUMBER_CAMP -> newBuilding = new LumberCamp(buildingType, eventManaCost.getManpower());
-           case CARPENTRY -> newBuilding = new Carpentry(buildingType, eventManaCost.getManpower());
-           case RANCH -> newBuilding = new Ranch(buildingType, eventManaCost.getManpower());
-           case LEATHER_WORKER -> newBuilding = new LeatherWorker(buildingType, eventManaCost.getManpower());
-           case FISHERY -> newBuilding = new Fishery(buildingType, eventManaCost.getManpower());
-           case VILLAGE -> newBuilding = new Village(buildingType, eventManaCost.getManpower());
-           case TOWN -> newBuilding = new Town(buildingType, eventManaCost.getManpower());
-           case CITY -> newBuilding = new City(buildingType, eventManaCost.getManpower());
+           case FARM -> newBuilding = new Farm(buildingType, getEventManaCost().getManpower());
+           case GRANARY -> newBuilding = new Granary(buildingType, getEventManaCost().getManpower());
+           case QUARRY -> newBuilding = new Quarry(buildingType, getEventManaCost().getManpower());
+           case LUMBER_CAMP -> newBuilding = new LumberCamp(buildingType, getEventManaCost().getManpower());
+           case CARPENTRY -> newBuilding = new Carpentry(buildingType, getEventManaCost().getManpower());
+           case RANCH -> newBuilding = new Ranch(buildingType, getEventManaCost().getManpower());
+           case LEATHER_WORKER -> newBuilding = new LeatherWorker(buildingType, getEventManaCost().getManpower());
+           case FISHERY -> newBuilding = new Fishery(buildingType, getEventManaCost().getManpower());
+           case VILLAGE -> newBuilding = new Village(buildingType, getEventManaCost().getManpower());
+           case TOWN -> newBuilding = new Town(buildingType, getEventManaCost().getManpower());
+           case CITY -> newBuilding = new City(buildingType, getEventManaCost().getManpower());
            default -> newBuilding = new NoBuilding(BuildingType.NONE, 0);
        }
         return newBuilding;
