@@ -61,7 +61,7 @@ public class PlayerViewService {
                 playerNr,
                 user.getRole(),
                 gameSetup.getTurn(),
-                gameSetup.getTurnChange(),
+                gameSetup.getNextTurnChange(),
                 mana,
                 eventLog,
                 gameSetup.isUpdating()

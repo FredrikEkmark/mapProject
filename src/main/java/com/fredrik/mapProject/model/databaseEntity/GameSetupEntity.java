@@ -1,13 +1,14 @@
 package com.fredrik.mapProject.model.databaseEntity;
 
+import com.fredrik.mapProject.Utility;
 import com.fredrik.mapProject.model.turnChange.Hours;
 import com.fredrik.mapProject.model.map.MapSizes;
 import jakarta.persistence.*;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,6 +81,42 @@ public class GameSetupEntity {
 
     public String getTurnChange() {
         return turnChange;
+    }
+
+    public String getNextTurnChange() {
+        ZoneId zoneId = ZoneId.of("GMT");
+
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+        char[] hoursCharArray = turnChange.substring(0, Math.min(turnChange.length(), 24)).toCharArray();
+        String min = turnChange.substring(Math.max(0, turnChange.length() - 2));
+
+        ZonedDateTime nextTurn = now;
+
+        String isoDateString;
+
+        for (int i = now.getHour(); i < hoursCharArray.length + now.getHour(); i++) {
+            if (hoursCharArray[i % 23] == '1') {
+                ZonedDateTime baseDate = now;
+                if (i > 23) {
+                    baseDate = baseDate.plusDays(1);
+                }
+                 isoDateString = String.format("%s-%s-%sT%s:%s:05.000+00:00",
+                         baseDate.getYear(),
+                         Utility.padZero(baseDate.getMonthValue()),
+                         Utility.padZero(baseDate.getDayOfMonth()),
+                         Utility.padZero(i % 23),
+                         min);
+
+                nextTurn = ZonedDateTime.parse(isoDateString);
+
+                if (nextTurn.isAfter(now)) {
+                    return formatter.format(nextTurn);
+                }
+            }
+        }
+        return formatter.format(nextTurn);
     }
 
     public void setTurnChange(String turnChange) {
