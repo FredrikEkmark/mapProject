@@ -113,10 +113,14 @@ public class GameConfig {
                 "BUILDING_" + buildingType.toString() + "_BASE_BUILD_COST_WOOD", "0")));
         eventManaCost.setLeather(Integer.parseInt(properties.getProperty(
                 "BUILDING_" + buildingType.toString() + "_BASE_BUILD_COST_LEATHER", "0")));
+        eventManaCost.setIron(Integer.parseInt(properties.getProperty(
+                "BUILDING_" + buildingType.toString() + "_BASE_BUILD_COST_IRON", "0")));
         eventManaCost.setFurniture(Integer.parseInt(properties.getProperty(
                 "BUILDING_" + buildingType.toString() + "_BASE_BUILD_COST_FURNITURE", "0")));
         eventManaCost.setSimpleClothes(Integer.parseInt(properties.getProperty(
                 "BUILDING_" + buildingType.toString() + "_BASE_BUILD_COST_SIMPLE_CLOTHES", "0")));
+        eventManaCost.setHorses(Integer.parseInt(properties.getProperty(
+                "BUILDING_" + buildingType.toString() + "_BASE_BUILD_COST_HORSES", "0")));
 
         return eventManaCost;
     }
@@ -188,6 +192,26 @@ public class GameConfig {
 
         return Double.parseDouble(properties.getProperty(
                 "BUILDING_" + buildingType.toString() + "_PRECIPITATION_MODIFIER_" +  precipitation, "0"
+        ));
+    }
+
+    // UNIT FUNCTIONS
+
+    public static int getBaseMoral() {
+        return Integer.parseInt(properties.getProperty(
+                "UNIT_BASE_MORAL", "0"
+        ));
+    }
+
+    public static int getUnitBaseMovement(String unitType) {
+        return Integer.parseInt(properties.getProperty(
+                "UNIT_" + unitType + "_BASE_MOVEMENT", "0"
+        ));
+    }
+
+    public static int getUnitRegimentAmount(String unitType) {
+        return Integer.parseInt(properties.getProperty(
+                "UNIT_" + unitType + "_REGIMENT_AMOUNT", "0"
         ));
     }
 }

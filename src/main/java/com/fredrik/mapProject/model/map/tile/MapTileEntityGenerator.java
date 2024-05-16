@@ -31,7 +31,6 @@ public class MapTileEntityGenerator {
         tile.setTileOwner(Player.NONE);
         tile.setVisibility("00000000000000000000000000000000");
         tile.setBuildingJsonString("{\"type\": \"NONE\", \"progress\": 0}");
-        tile.setUnit("{}");
 
         int y = mapTileId.getCoordinates().getY();
         int x = mapTileId.getCoordinates().getX();

@@ -3,7 +3,7 @@ package com.fredrik.mapProject.service;
 import com.fredrik.mapProject.model.databaseEntity.*;
 import com.fredrik.mapProject.model.databaseEntity.UserEntity;
 import com.fredrik.mapProject.model.id.PlayerGameId;
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.player.PlayerView;
 import org.springframework.stereotype.Service;

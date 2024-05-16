@@ -1,6 +1,6 @@
 package com.fredrik.mapProject.model.databaseEntity;
 
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.id.PlayerGameId;
 import jakarta.persistence.*;

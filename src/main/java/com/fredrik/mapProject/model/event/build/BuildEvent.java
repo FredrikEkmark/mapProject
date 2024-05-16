@@ -1,36 +1,35 @@
-package com.fredrik.mapProject.model.event;
+package com.fredrik.mapProject.model.event.build;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fredrik.mapProject.model.player.Player;
+import com.fredrik.mapProject.model.event.Event;
+import com.fredrik.mapProject.model.event.dto.NewChildEventDataDTO;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
-import com.fredrik.mapProject.model.map.MapCoordinates;
 import com.fredrik.mapProject.model.map.GameMapManager;
 import com.fredrik.mapProject.model.building.*;
 import com.fredrik.mapProject.model.databaseEntity.MapTileEntity;
-
-import java.util.UUID;
 
 public class BuildEvent extends Event {
 
     private BuildingType buildingType;
 
-    public BuildEvent(UUID eventId,
-                      Player playerNr,
-                      int turn,
-                      MapCoordinates primaryTileCoordinates,
-                      EventType eventType,
-                      String eventData,
-                      String cost) {
-        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, true, cost);
-        parseFromEventData(eventData);
-        parseFromCost(cost);
+    public BuildEvent(NewChildEventDataDTO event) {
+        super(event.getEventId(),
+                event.getPlayerNr(),
+                event.getTurn(),
+                event.getPrimaryTileCoordinates(),
+                event.getEventType(),
+                true,
+                false,
+                event.getCost());
+        parseFromEventData(event.getEventData());
+        parseFromCost(event.getCost());
     }
 
     @Override
     public String stringifyEventData() {
-        return String.format("{building: %s }", buildingType.name());
+        return String.format("{\"building\": \"%s\" }", buildingType.name());
     }
 
     @Override
@@ -132,8 +131,6 @@ public class BuildEvent extends Event {
         }
 
         gameMap.addTileToUpdatedTiles(mapTile);
-
-
 
         setEventLogEntry(String.format("%d progress was added to %s on tile %d:%d, Progress is %d/%d;",
                 getEventManaCost().getManpower(),

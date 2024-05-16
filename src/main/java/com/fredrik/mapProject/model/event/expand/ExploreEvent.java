@@ -1,28 +1,24 @@
-package com.fredrik.mapProject.model.event;
+package com.fredrik.mapProject.model.event.expand;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fredrik.mapProject.model.player.Player;
+import com.fredrik.mapProject.model.event.Event;
+import com.fredrik.mapProject.model.event.dto.NewChildEventDataDTO;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
-import com.fredrik.mapProject.model.map.MapCoordinates;
 import com.fredrik.mapProject.model.map.GameMapManager;
 import com.fredrik.mapProject.model.databaseEntity.MapTileEntity;
 
-import java.util.UUID;
-
 public class ExploreEvent extends Event {
 
-    public ExploreEvent(UUID eventId,
-                        Player playerNr,
-                        int turn,
-                        MapCoordinates primaryTileCoordinates,
-                        EventType eventType,
-                        String eventData,
-                        String cost) {
-        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, false, cost);
-        parseFromEventData(eventData);
-        parseFromCost(cost);
+    public ExploreEvent(NewChildEventDataDTO event) {
+        super(event.getEventId(),
+                event.getPlayerNr(),
+                event.getTurn(),
+                event.getPrimaryTileCoordinates(),
+                event.getEventType(),
+                false,
+                false,
+                event.getCost());
+        parseFromEventData(event.getEventData());
+        parseFromCost(event.getCost());
     }
 
 

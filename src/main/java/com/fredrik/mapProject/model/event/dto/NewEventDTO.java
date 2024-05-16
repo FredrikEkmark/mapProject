@@ -1,6 +1,7 @@
-package com.fredrik.mapProject.model.event;
+package com.fredrik.mapProject.model.event.dto;
 
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.event.EventType;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.player.Player;
 
 import java.util.UUID;

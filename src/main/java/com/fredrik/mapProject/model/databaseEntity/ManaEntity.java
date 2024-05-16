@@ -38,10 +38,14 @@ public class ManaEntity {
     @Column(nullable = false)
     private int leather;
     @Column(nullable = false)
+    private int iron;
+    @Column(nullable = false)
     // Luxury:
     private int furniture;
     @Column(nullable = false)
     private int simpleClothes;
+    @Column(nullable = false)
+    private int horses;
 
     @Transient
     private int protectedFood;
@@ -194,6 +198,24 @@ public class ManaEntity {
         leather += deposit;
     }
 
+    public boolean withdrawIron(int withdrawal) {
+        if (this.iron < withdrawal) {
+            return false;
+        }
+        this.iron -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllIron() {
+        int withdrawal = iron;
+        iron  = 0;
+        return withdrawal;
+    }
+
+    public void depositIron(int deposit) {
+        iron += deposit;
+    }
+
     public boolean withdrawFurniture(int withdrawal) {
         if (this.furniture < withdrawal) {
             return false;
@@ -228,6 +250,24 @@ public class ManaEntity {
 
     public void depositSimpleClothes(int deposit) {
         simpleClothes += deposit;
+    }
+
+    public boolean withdrawHorses(int withdrawal) {
+        if (this.horses < withdrawal) {
+            return false;
+        }
+        this.horses -= withdrawal;
+        return true;
+    }
+
+    public int withdrawAllHorses() {
+        int withdrawal = horses;
+        horses  = 0;
+        return withdrawal;
+    }
+
+    public void depositHorses(int deposit) {
+        horses += deposit;
     }
 
     // Progression functions
@@ -269,6 +309,8 @@ public class ManaEntity {
         return leather;
     }
 
+    public int getIron() {return iron;}
+
     public int getFurniture() {
         return furniture;
     }
@@ -276,6 +318,8 @@ public class ManaEntity {
     public int getSimpleClothes() {
         return simpleClothes;
     }
+
+    public int getHorses() {return horses;}
 
     public int getProtectedFood() {return protectedFood;}
 
@@ -294,8 +338,10 @@ public class ManaEntity {
         withdrawFood(eventManaCost.payFood());
         withdrawLeather(eventManaCost.payLeather());
         withdrawStone(eventManaCost.payStone());
+        withdrawIron(eventManaCost.payIron());
         withdrawFurniture(eventManaCost.payFurniture());
         withdrawSimpleClothes(eventManaCost.paySimpleClothes());
+        withdrawHorses(eventManaCost.payHorses());
 
         return true;
     }
@@ -321,6 +367,10 @@ public class ManaEntity {
             return false;
         }
 
+        if (eventManaCost.getIron() > this.iron) {
+            return false;
+        }
+
         if (eventManaCost.getFurniture() > this.furniture) {
             return false;
         }
@@ -328,6 +378,11 @@ public class ManaEntity {
         if (eventManaCost.getSimpleClothes() > this.simpleClothes) {
             return false;
         }
+
+        if (eventManaCost.getHorses() > this.iron) {
+            return false;
+        }
+
         return true;
     }
 }

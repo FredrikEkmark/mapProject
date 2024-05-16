@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.model.building;
 
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.map.terrain.Terrain;
 
 public class NoBuilding extends Building {

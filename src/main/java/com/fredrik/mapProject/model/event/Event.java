@@ -3,10 +3,11 @@ package com.fredrik.mapProject.model.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fredrik.mapProject.model.eventLog.SecondaryEventLogEntry;
 import com.fredrik.mapProject.model.mana.EventManaCost;
 import com.fredrik.mapProject.model.player.Player;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.map.GameMapManager;
 
 import java.util.UUID;
@@ -25,7 +26,11 @@ public abstract class Event {
 
     private boolean persistent;
 
+    private boolean aggression;
+
     private String eventLogEntry;
+
+    private SecondaryEventLogEntry secondaryEventLogEntry;
 
     private EventManaCost eventManaCost;
 
@@ -35,6 +40,7 @@ public abstract class Event {
                  MapCoordinates primaryTileCoordinates,
                  EventType eventType,
                  boolean persistent,
+                 boolean aggression,
                  String cost) {
         this.eventId = eventId;
         this.playerNr = playerNr;
@@ -42,6 +48,7 @@ public abstract class Event {
         this.primaryTileCoordinates = primaryTileCoordinates;
         this.eventType = eventType;
         this.persistent = persistent;
+        this.aggression = aggression;
         this.eventLogEntry = "";
         parseFromCost(cost);
     }
@@ -63,8 +70,10 @@ public abstract class Event {
             JsonNode foodNode = rootNode.get("food");
             JsonNode stoneNode = rootNode.get("stone");
             JsonNode leatherNode = rootNode.get("leather");
+            JsonNode ironNode = rootNode.get("iron");
             JsonNode furnitureNode = rootNode.get("furniture");
             JsonNode simpleClothesNode = rootNode.get("simpleClothes");
+            JsonNode horseNode = rootNode.get("horse");
 
             if (manpowerNode != null && manpowerNode.isInt()) {
                 eventManaCost.setManpower(manpowerNode.asInt());
@@ -86,12 +95,20 @@ public abstract class Event {
                 eventManaCost.setLeather(leatherNode.asInt());
             }
 
+            if (ironNode != null && ironNode.isInt()) {
+                eventManaCost.setIron(ironNode.asInt());
+            }
+
             if (furnitureNode != null && furnitureNode.isInt()) {
                 eventManaCost.setFurniture(furnitureNode.asInt());
             }
 
             if (simpleClothesNode != null && simpleClothesNode.isInt()) {
                 eventManaCost.setSimpleClothes(simpleClothesNode.asInt());
+            }
+
+            if (horseNode != null && horseNode.isInt()) {
+                eventManaCost.setHorses(horseNode.asInt());
             }
 
             this.eventManaCost = eventManaCost;
@@ -121,6 +138,22 @@ public abstract class Event {
 
         if (eventManaCost.getStone() > 0) {
             stringBuilder.append("\"stone\":").append(eventManaCost.getStone()).append(",");
+        }
+
+        if (eventManaCost.getIron() > 0) {
+            stringBuilder.append("\"iron\":").append(eventManaCost.getIron()).append(",");
+        }
+
+        if (eventManaCost.getFurniture() > 0) {
+            stringBuilder.append("\"furniture\":").append(eventManaCost.getFurniture()).append(",");
+        }
+
+        if (eventManaCost.getSimpleClothes() > 0) {
+            stringBuilder.append("\"simpleClothes\":").append(eventManaCost.getSimpleClothes()).append(",");
+        }
+
+        if (eventManaCost.getHorses() > 0) {
+            stringBuilder.append("\"horses\":").append(eventManaCost.getHorses()).append(",");
         }
 
         if (stringBuilder.charAt(stringBuilder.length() - 1) == ',') {
@@ -183,12 +216,28 @@ public abstract class Event {
         this.persistent = persistent;
     }
 
+    public boolean isAggression() {
+        return aggression;
+    }
+
+    public void setAggression(boolean aggression) {
+        this.aggression = aggression;
+    }
+
     public String getEventLogEntry() {
         return eventLogEntry;
     }
 
     public void setEventLogEntry(String eventLogEntry) {
         this.eventLogEntry = eventLogEntry;
+    }
+
+    public SecondaryEventLogEntry getSecondaryEventLogEntry() {
+        return secondaryEventLogEntry;
+    }
+
+    public void setSecondaryEventLogEntry(SecondaryEventLogEntry secondaryEventLogEntry) {
+        this.secondaryEventLogEntry = secondaryEventLogEntry;
     }
 
     public EventManaCost getEventManaCost() {

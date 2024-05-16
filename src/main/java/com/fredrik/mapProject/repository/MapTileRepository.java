@@ -36,13 +36,12 @@ public interface MapTileRepository extends JpaRepository<MapTileEntity, MapTileI
 
     @Transactional
     @Modifying
-    @Query("UPDATE MapTileEntity m SET m.tileValue = :tileValue, m.tileOwner = :tileOwner, m.visibility = :visibility, m.building = :building, m.unit = :unit WHERE m.mapTileId = :mapTileId")
+    @Query("UPDATE MapTileEntity m SET m.tileValue = :tileValue, m.tileOwner = :tileOwner, m.visibility = :visibility, m.building = :building WHERE m.mapTileId = :mapTileId")
     void updateMapTileEntityByMapTileId(@Param("mapTileId") MapTileId mapTileId,
                                         @Param("tileValue") int tileValue,
                                         @Param("tileOwner") Player tileOwner,
                                         @Param("visibility") String visibility,
-                                        @Param("building") String building,
-                                        @Param("unit") String unit);
+                                        @Param("building") String building);
 
     @Transactional
     @Modifying

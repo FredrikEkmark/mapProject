@@ -28,10 +28,6 @@ public class MapTileEntity {
 
     @Column(nullable = false, length = 128)
     private String building;
-
-    @Column(nullable = false, length = 128)
-    private String unit;
-
     public MapTileEntity() {
     }
 
@@ -136,6 +132,10 @@ public class MapTileEntity {
             case RANCH -> new Ranch(type, progress);
             case LEATHER_WORKER -> new LeatherWorker(type, progress);
             case FISHERY -> new Fishery(type, progress);
+            case MINE -> new Mine(type, progress);
+            case BARRACK -> new Barrack(type, progress);
+            case ARCHERY_RANGE -> new ArcheryRange(type, progress);
+            case STABLE -> new Stable(type, progress);
             case VILLAGE -> new Village(type, progress);
             case TOWN -> new Town(type, progress);
             case CITY -> new City(type, progress);
@@ -158,14 +158,6 @@ public class MapTileEntity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
     }
 
     public Terrain getTerrain() {

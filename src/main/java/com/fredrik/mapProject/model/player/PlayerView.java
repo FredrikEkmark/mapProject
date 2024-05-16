@@ -1,14 +1,13 @@
 package com.fredrik.mapProject.model.player;
 
 import com.fredrik.mapProject.config.Roles;
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.map.MapSizes;
 import com.fredrik.mapProject.model.map.tile.MapTile;
 import com.fredrik.mapProject.model.databaseEntity.EventLogEntity;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
 import com.fredrik.mapProject.model.databaseEntity.MapTileEntity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

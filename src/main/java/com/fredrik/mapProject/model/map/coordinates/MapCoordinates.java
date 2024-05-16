@@ -1,4 +1,4 @@
-package com.fredrik.mapProject.model.map;
+package com.fredrik.mapProject.model.map.coordinates;
 
 import java.util.Objects;
 

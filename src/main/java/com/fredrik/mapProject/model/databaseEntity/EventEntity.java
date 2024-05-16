@@ -1,8 +1,14 @@
 package com.fredrik.mapProject.model.databaseEntity;
 
 import com.fredrik.mapProject.model.event.*;
+import com.fredrik.mapProject.model.event.build.BuildEvent;
+import com.fredrik.mapProject.model.event.build.DemolishEvent;
+import com.fredrik.mapProject.model.event.dto.NewChildEventDataDTO;
+import com.fredrik.mapProject.model.event.expand.ClaimTileEvent;
+import com.fredrik.mapProject.model.event.expand.ExploreEvent;
+import com.fredrik.mapProject.model.event.unit.*;
 import com.fredrik.mapProject.model.player.Player;
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -119,42 +125,49 @@ public class EventEntity implements Cloneable {
 
     public Event getEvent() {
 
+        NewChildEventDataDTO newChildEventData = new NewChildEventDataDTO(
+                this.eventId,
+                this.playerNr,
+                this.turn,
+                this.primaryTileCoordinates,
+                this.eventType,
+                this.eventData,
+                this.cost
+        );
+
         switch (this.eventType) {
             case EXPLORE_EVENT -> {
-                return new ExploreEvent(this.eventId,
-                        this.playerNr,
-                        this.turn,
-                        this.primaryTileCoordinates,
-                        this.eventType,
-                        this.eventData,
-                        this.cost);
+                return new ExploreEvent(newChildEventData);
             }
             case BUILD_EVENT -> {
-                return new BuildEvent(this.eventId,
-                        this.playerNr,
-                        this.turn,
-                        this.primaryTileCoordinates,
-                        this.eventType,
-                        this.eventData,
-                        this.cost);
+                return new BuildEvent(newChildEventData);
             }
             case CLAIM_TILE_EVENT -> {
-                return new ClaimTileEvent(this.eventId,
-                        this.playerNr,
-                        this.turn,
-                        this.primaryTileCoordinates,
-                        this.eventType,
-                        this.eventData,
-                        this.cost);
+                return new ClaimTileEvent(newChildEventData);
             }
             case DEMOLISH_EVENT -> {
-                return new DemolishEvent(this.eventId,
-                        this.playerNr,
-                        this.turn,
-                        this.primaryTileCoordinates,
-                        this.eventType,
-                        this.eventData,
-                        this.cost);
+                return new DemolishEvent(newChildEventData);
+            }
+            case CONQUER_EVENT -> {
+                return new ConquerEvent(newChildEventData);
+            }
+            case MOVE_EVENT -> {
+                return new MoveEvent(newChildEventData);
+            }
+            case SPLIT_ARMY_EVENT -> {
+                return new SplitArmyEvent(newChildEventData);
+            }
+            case FORTIFY_EVENT -> {
+                return new FortifyEvent(newChildEventData);
+            }
+            case DISMISS_EVENT ->  {
+                return new DismissEvent(newChildEventData);
+            }
+            case RECRUIT_EVENT -> {
+                return new RecruitEvent(newChildEventData);
+            }
+            case RAID_EVENT -> {
+                return new RaidEvent(newChildEventData);
             }
             default -> {
                 System.out.println("ERROR, NO EVENT TYPE FOUND");

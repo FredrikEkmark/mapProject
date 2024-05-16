@@ -1,6 +1,6 @@
 package com.fredrik.mapProject.model.map.tile;
 
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.player.Player;
 
 public class MapTile {

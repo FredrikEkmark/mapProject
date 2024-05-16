@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.service;
 
+import com.fredrik.mapProject.model.databaseEntity.ArmyEntity;
 import com.fredrik.mapProject.model.databaseEntity.GamePlayerEntity;
 import com.fredrik.mapProject.model.id.PlayerGameId;
 import com.fredrik.mapProject.model.player.PlayerStartPositionDTO;
@@ -31,7 +32,7 @@ public class GamePlayerService {
 
         List<MapTileEntity> gameMap = mapTileService.getGameMap(gameSetup.getId());
 
-        GameMapManager gameMapManager = new GameMapManager(gameMap, gameSetup);
+        GameMapManager gameMapManager = new GameMapManager(gameMap, gameSetup, new ArrayList<ArmyEntity>());
 
         PlayerStartPositionDTO playerStartPosition = gameMapManager.createNewStartPosition();
 

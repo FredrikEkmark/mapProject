@@ -1,31 +1,27 @@
-package com.fredrik.mapProject.model.event;
+package com.fredrik.mapProject.model.event.build;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fredrik.mapProject.model.building.Building;
 import com.fredrik.mapProject.model.building.BuildingType;
 import com.fredrik.mapProject.model.building.NoBuilding;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
 import com.fredrik.mapProject.model.databaseEntity.MapTileEntity;
+import com.fredrik.mapProject.model.event.Event;
+import com.fredrik.mapProject.model.event.dto.NewChildEventDataDTO;
 import com.fredrik.mapProject.model.map.GameMapManager;
-import com.fredrik.mapProject.model.map.MapCoordinates;
-import com.fredrik.mapProject.model.player.Player;
-
-import java.util.UUID;
 
 public class DemolishEvent extends Event {
 
-    public DemolishEvent(UUID eventId,
-                      Player playerNr,
-                      int turn,
-                      MapCoordinates primaryTileCoordinates,
-                      EventType eventType,
-                      String eventData,
-                      String cost) {
-        super(eventId, playerNr, turn, primaryTileCoordinates, eventType, false, cost);
-        parseFromEventData(eventData);
-        parseFromCost(cost);
+    public DemolishEvent(NewChildEventDataDTO event) {
+        super(event.getEventId(),
+                event.getPlayerNr(),
+                event.getTurn(),
+                event.getPrimaryTileCoordinates(),
+                event.getEventType(),
+                false,
+                false,
+                event.getCost());
+        parseFromEventData(event.getEventData());
+        parseFromCost(event.getCost());
     }
 
     @Override

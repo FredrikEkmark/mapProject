@@ -1,7 +1,7 @@
 package com.fredrik.mapProject.controller.restController;
 
 import com.fredrik.mapProject.model.databaseEntity.GamePlayerEntity;
-import com.fredrik.mapProject.model.event.NewEventDTO;
+import com.fredrik.mapProject.model.event.dto.NewEventDTO;
 import com.fredrik.mapProject.model.id.PlayerGameId;
 import com.fredrik.mapProject.service.GamePlayerService;
 import com.fredrik.mapProject.model.databaseEntity.EventEntity;

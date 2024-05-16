@@ -1,11 +1,16 @@
 package com.fredrik.mapProject.model.turnChange;
 
-import com.fredrik.mapProject.config.GameConfig;
+import com.fredrik.mapProject.model.battle.ArmyLocation;
+import com.fredrik.mapProject.model.battle.Battle;
+import com.fredrik.mapProject.model.eventLog.BattleLog;
+import com.fredrik.mapProject.model.battle.BattleManager;
+import com.fredrik.mapProject.model.eventLog.SecondaryEventLogEntry;
 import com.fredrik.mapProject.model.map.GameMapManager;
 import com.fredrik.mapProject.model.building.Building;
 import com.fredrik.mapProject.model.building.BuildingType;
 import com.fredrik.mapProject.model.databaseEntity.*;
 import com.fredrik.mapProject.model.event.Event;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 
 import java.util.*;
 
@@ -51,6 +56,9 @@ public class TurnChange {
         // PROCESSING MANA LIST
         processPlayers(eventLogEntries);
 
+        // PROCESS BATTLES
+        processArmies(eventLogEntries);
+
         eventEntityList = updatedEventEntityList;
         gameSetup.setTurn(gameSetup.getTurn() + 1); // ticks the turn up one
         updated = true;
@@ -87,6 +95,11 @@ public class TurnChange {
 
             if (!success) {
                 System.out.println("Event Not Processed");
+            }
+
+            if (event.isAggression()) {
+                SecondaryEventLogEntry secondaryEventLogEntry = event.getSecondaryEventLogEntry();
+                eventLogEntries.get(secondaryEventLogEntry.player().name()).add(secondaryEventLogEntry.eventLogEntry());
             }
 
             if (event.isPersistent()) {
@@ -237,6 +250,35 @@ public class TurnChange {
                     "Population decrease: %d;",
                     populationDecrease
             ));
+        }
+    }
+
+    private void processArmies(Map<String, List<String>> eventLogEntries) {
+
+        Map<MapCoordinates, ArmyLocation> armyLocationMap = gameMap.getArmyLocationList();
+        Queue<Battle> battleQueue = new LinkedList<>();
+
+        for (ArmyLocation armyLocation: armyLocationMap.values()) {
+            if (armyLocation.armies().size() > 1) {
+                battleQueue.add(
+                        new Battle(
+                                armyLocation.armies(),
+                                gameMap.getTileFromCoordinates(armyLocation.mapCoordinates())));
+            }
+        }
+
+        while (!battleQueue.isEmpty()) {
+
+            Battle battle = battleQueue.poll();
+
+            List<BattleLog> battleLogList = BattleManager.processBattle(battle, gameMap, armyLocationMap);
+
+            for (BattleLog battleLog: battleLogList) {
+
+                eventLogEntries
+                        .get(battleLog.player().name())
+                        .add(battleLog.logEntry());
+            }
         }
     }
 

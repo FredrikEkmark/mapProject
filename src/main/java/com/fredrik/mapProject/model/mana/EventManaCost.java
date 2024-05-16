@@ -6,9 +6,11 @@ public class EventManaCost {
     private int food = 0;
     private int stone = 0;
     private int wood = 0;
+    private int iron = 0;
     private int leather = 0;
     private int furniture = 0;
     private int simpleClothes = 0;
+    private int horses = 0;
 
     public EventManaCost() {
     }
@@ -33,6 +35,8 @@ public class EventManaCost {
         this.leather = leather;
     }
 
+    public void setIron(int iron) {this.iron = iron;}
+
     public void setFurniture(int furniture) {
         this.furniture = furniture;
     }
@@ -40,6 +44,8 @@ public class EventManaCost {
     public void setSimpleClothes(int simpleClothes) {
         this.simpleClothes = simpleClothes;
     }
+
+    public void setHorses(int horses) {this.horses = horses;}
 
     public int getManpower() {
         return manpower;
@@ -61,6 +67,8 @@ public class EventManaCost {
         return leather;
     }
 
+    public int getIron() {return iron;}
+
     public int getFurniture() {
         return furniture;
     }
@@ -69,7 +77,7 @@ public class EventManaCost {
         return simpleClothes;
     }
 
-
+    public int getHorses() {return horses;}
 
     public int payFood() {
         int foodPay = food;
@@ -95,6 +103,12 @@ public class EventManaCost {
         return leatherPay;
     }
 
+    public int payIron() {
+        int ironPay = iron;
+        iron = 0;
+        return ironPay;
+    }
+
     public int payFurniture() {
         int furniturePay = furniture;
         furniture = 0;
@@ -105,6 +119,12 @@ public class EventManaCost {
         int simpleClothesPay = simpleClothes;
         simpleClothes = 0;
         return simpleClothesPay;
+    }
+
+    public int payHorses() {
+        int horsesPay = horses;
+        horses = 0;
+        return horsesPay;
     }
 }
 

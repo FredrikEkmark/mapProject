@@ -1,6 +1,11 @@
 package com.fredrik.mapProject.model.map;
 
+import com.fredrik.mapProject.model.battle.ArmyLocation;
 import com.fredrik.mapProject.model.building.BuildingType;
+import com.fredrik.mapProject.model.databaseEntity.ArmyEntity;
+import com.fredrik.mapProject.model.map.coordinates.PathCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
+import com.fredrik.mapProject.model.map.terrain.Elevation;
 import com.fredrik.mapProject.model.map.tile.MapTileEntityGenerator;
 import com.fredrik.mapProject.model.player.PlayerStartPositionDTO;
 import com.fredrik.mapProject.model.databaseEntity.GameSetupEntity;
@@ -9,6 +14,7 @@ import com.fredrik.mapProject.model.id.MapTileId;
 import com.fredrik.mapProject.model.player.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameMapManager {
 
@@ -21,22 +27,42 @@ public class GameMapManager {
 
     private final List<MapTileEntity> updatedTiles;
 
-    public GameMapManager(List<MapTileEntity> mapTileEntityList, GameSetupEntity game) {
+    private final  Map<MapCoordinates, List<ArmyEntity>> armyMap;
+
+    private final List<ArmyEntity> removedArmies;
+
+    private final Map<String,List<ArmyEntity>> playerArmyMap;
+
+
+    public GameMapManager(List<MapTileEntity> mapTileEntityList, GameSetupEntity game, List<ArmyEntity> armyList) {
         this.gameMap = new HashMap<>();
         this.playerMap = new HashMap<>();
+        this.playerArmyMap = new HashMap<>();
+        this.armyMap = new HashMap<>();
+        this.removedArmies = new ArrayList<>();
         this.gameSetup = game;
         this.mapTileEntityGenerator = new MapTileEntityGenerator(game.getSeed(), game.getMapSize().getWidth(), game.getMapSize().getHeight());
         populateMap(mapTileEntityList);
+        distributeArmies(armyList);
         this.updatedTiles = new ArrayList<>(playerMap.size() * 100);
     }
 
-    private void populateMap(List<MapTileEntity> mapTileEntityList) {
-        for (MapTileEntity tile : mapTileEntityList) {
+    public UUID getGameId() {
+        return gameSetup.getId();
+    }
+
+    private void populateMap(List<MapTileEntity> armyList) {
+        for (MapTileEntity tile : armyList) {
             gameMap.put(tile.getMapTileId().getCoordinates(), tile);
-            Player player = tile.getTileOwner();
-            if (player != Player.NONE) {
-                playerMap.computeIfAbsent(player.name(), k -> new ArrayList<>()).add(tile);
+            if (tile.getTileOwner() != Player.NONE) {
+                playerMap.computeIfAbsent(tile.getTileOwner().name(), k -> new ArrayList<>()).add(tile);
             }
+        }
+    }
+
+    private void distributeArmies(List<ArmyEntity> armyList) {
+        for (ArmyEntity army : armyList) {
+           armyMap.computeIfAbsent(army.getArmyCoordinates(), k -> new ArrayList<>()).add(army);
         }
     }
 
@@ -52,6 +78,23 @@ public class GameMapManager {
         updatedTiles.add(tile);
     }
 
+    public List<ArmyEntity> getAllArmies() {
+        return armyMap.values().stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    public List<ArmyEntity> getRemovedArmies() {
+        return removedArmies;
+    }
+
+    public void removeArmy(ArmyEntity army) {
+        playerArmyMap.getOrDefault(army.getOwner().name(), Collections.emptyList()).remove(army);
+        List<ArmyEntity> armyList = armyMap.getOrDefault(army.getArmyCoordinates(), new ArrayList<>());
+        armyList.remove(army);
+        removedArmies.add(army);
+    }
+
     // Utility functions
 
     public MapTileEntity getTileFromCoordinates(MapCoordinates mapCoordinates) {
@@ -64,8 +107,135 @@ public class GameMapManager {
         return tile;
     }
 
+    public ArmyEntity getArmyFromCoordinatesAndId(MapCoordinates coordinates, UUID armyId) {
+        List<ArmyEntity> armyList = armyMap.getOrDefault(coordinates, new ArrayList<>());
+        for (ArmyEntity army: armyList) {
+            if (army.getArmyId().equals(armyId)) {
+                return army;
+            }
+        }
+        return null;
+    }
+
+    public List<ArmyEntity> getArmiesFromCoordinates(MapCoordinates coordinates) {
+        return armyMap.getOrDefault(coordinates, new ArrayList<>());
+    }
+
+     public Map<MapCoordinates, ArmyLocation> getArmyLocationList() {
+
+         Map<MapCoordinates, ArmyLocation> armyLocationMap = new HashMap<>();
+
+         for (Map.Entry<MapCoordinates, List<ArmyEntity>> entry : armyMap.entrySet()) {
+             MapCoordinates coordinates = entry.getKey();
+             List<ArmyEntity> armiesList = entry.getValue();
+
+             if (!armiesList.isEmpty()) {
+                 armyLocationMap.put(coordinates, new ArmyLocation(armiesList, coordinates));
+             }
+         }
+         return armyLocationMap;
+    }
+
+
+
+    // Army Movement
+
+
+    public boolean moveArmy(ArmyEntity army, MapCoordinates destinationCoordinates) {
+        int movement = army.getArmyMovement();
+        MapCoordinates startCoordinates = army.getArmyCoordinates();
+        boolean possibleMove = possibleArmyMove(true,
+                army.getOwner(),
+                movement,
+                startCoordinates,
+                destinationCoordinates);
+        if (!possibleMove) {
+            return false;
+        }
+
+        List<ArmyEntity> startPossitionList = armyMap.get(startCoordinates);
+        if (startPossitionList != null) {
+            startPossitionList.remove(army);
+            if (startPossitionList.isEmpty()) {
+                armyMap.remove(startCoordinates);
+            }
+        }
+
+        List<ArmyEntity> destinationPossitionList = armyMap.computeIfAbsent(destinationCoordinates, k -> new ArrayList<>());
+        destinationPossitionList.add(army);
+        army.setFortified(false);
+
+        return true;
+    }
+
+    private boolean possibleArmyMove(boolean isLandBased,
+                                           Player player,
+                                           int movement,
+                                           MapCoordinates startCoordinates,
+                                           MapCoordinates endCoordinates) {
+        List<Elevation> traversableElevations = getTraversableElevations(isLandBased);
+
+        Queue<PathCoordinates> queue = new LinkedList<>();
+        queue.add(new PathCoordinates(startCoordinates));
+
+        Set<MapCoordinates> visited = new HashSet<>();
+        visited.add(startCoordinates);
+
+        while (!queue.isEmpty()) {
+
+            PathCoordinates currentCoordinates = queue.poll();
+
+            if (currentCoordinates.getCoordinates().equals(endCoordinates)) {
+                return true;
+            }
+
+            if (currentCoordinates.getPathIteration() < movement) {
+
+                List<MapTileEntity> adjacentTiles = getAdjacentTraversableTilesFromCoordinates(
+                        currentCoordinates.getCoordinates(), traversableElevations, player);
+
+                for (MapTileEntity tile : adjacentTiles) {
+
+                    MapCoordinates adjacentCoordinates = tile.getMapTileId().getCoordinates();
+
+                    if (!visited.contains(adjacentCoordinates)) {
+
+                        queue.add(new PathCoordinates(adjacentCoordinates, currentCoordinates.getNextPathIteration()));
+                        visited.add(adjacentCoordinates);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<Elevation> getTraversableElevations(boolean isLandBased) {
+        List<Elevation> traversableElevations = new ArrayList<>();
+        if (isLandBased) {
+            traversableElevations.add(Elevation.LOWLANDS);
+            traversableElevations.add(Elevation.HIGHLANDS);
+        } else {
+            traversableElevations.add(Elevation.SHALLOW);
+            traversableElevations.add(Elevation.DEEP);
+        }
+        return traversableElevations;
+    }
+
 
     // Check Tile is Adjacent to functions
+
+    public List<MapTileEntity> getPossibleRetreatLocations(MapCoordinates battleCoordinates, boolean isLandBased) {
+        List<Elevation> traversableElevations = getTraversableElevations(isLandBased);
+        List<MapCoordinates> adjacentCoordinatesList = getAdjacentTileCoordinates(battleCoordinates, 0);
+        List<MapTileEntity> possibleRetreatLocations = new ArrayList<>();
+        for (MapCoordinates mapCoordinates: adjacentCoordinatesList) {
+            MapTileEntity tile = getTileFromCoordinates(mapCoordinates);
+            if (traversableElevations.contains(tile.getTerrain().getElevation())) {
+                possibleRetreatLocations.add(tile);
+            }
+        }
+        return possibleRetreatLocations;
+    }
 
     public boolean isTileVisibleAdjacentToPlayer(MapCoordinates mapCoordinates, Player player) {
 
@@ -91,6 +261,20 @@ public class GameMapManager {
             }
         }
         return false;
+    }
+
+    public List<MapTileEntity> getAdjacentTraversableTilesFromCoordinates(MapCoordinates startCoordinates, List<Elevation> traversableElevations, Player player) {
+
+        List<MapCoordinates> adjacentCoordinates = getAdjacentTileCoordinates(startCoordinates, 0);
+        List<MapTileEntity> adjacentTiles = new ArrayList<>(6);
+
+        for (MapCoordinates coordinates: adjacentCoordinates) {
+            MapTileEntity tile = getTileFromCoordinates(coordinates);
+            if (traversableElevations.contains(tile.getTerrain().getElevation()) && tile.isVisible(player.number())) {
+                adjacentTiles.add(tile);
+            }
+        }
+        return adjacentTiles;
     }
 
     protected List<MapCoordinates> getAdjacentTileCoordinates(MapCoordinates mapCoordinates, int tileDistance) {
@@ -209,12 +393,12 @@ public class GameMapManager {
 
         MapCoordinates startPosition = new MapCoordinates();
 
-        int[] xOffsets = {-1, -1, 0, 0, 1, 1};
-        int[] yOffsets = {0, 1, -1, 1, 0, 1};
-
         boolean notValidStart = true;
 
         MapTileEntity startTile;
+
+        int[] xOffsets = {-1, -1, 0, 0, 1, 1};
+        int[] yOffsets = {0, 1, -1, 1, 0, 1};
 
         while (notValidStart) {
             startPosition.setX(random.nextInt(6, xBounds - 7));
@@ -265,4 +449,16 @@ public class GameMapManager {
 
         return new PlayerStartPositionDTO(player , startPosition , startTiles);
     }
+
+    public int getPlayerNextArmyNumber(Player player) {
+        List<ArmyEntity> armyEntityList = playerArmyMap.get(player.name());
+
+        for (int i = 1; i < armyEntityList.size() + 2; i++) {
+            if (armyEntityList.get(i).getArmyNumber() != i) {
+                return i;
+            }
+        }
+        return -1; // Default value if no suitable number is found
+    }
+
 }

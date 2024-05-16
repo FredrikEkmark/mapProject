@@ -6,6 +6,8 @@ public enum StorableManaTypes {
     WOOD,
     STONE,
     LEATHER,
+    IRON,
     FURNITURE,
-    SIMPLE_CLOTHES;
+    SIMPLE_CLOTHES,
+    HORSES;
 }

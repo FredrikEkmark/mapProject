@@ -1,6 +1,6 @@
 package com.fredrik.mapProject.model.id;
 
-import com.fredrik.mapProject.model.map.MapCoordinates;
+import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 
