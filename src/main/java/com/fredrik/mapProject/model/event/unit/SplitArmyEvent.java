@@ -32,7 +32,7 @@ public class SplitArmyEvent extends Event {
                 event.getPrimaryTileCoordinates(),
                 event.getEventType(),
                 false,
-                true,
+                false,
                 event.getCost());
         parseFromEventData(event.getEventData());
         parseFromCost(event.getCost());
@@ -57,10 +57,10 @@ public class SplitArmyEvent extends Event {
 
         try {
             JsonNode rootNode = objectMapper.readTree(eventData);
-            JsonNode destinationNode = rootNode.get("destination");
+            JsonNode destinationNode = rootNode.get("destinationCoordinates");
             JsonNode xNode = destinationNode.get("x");
             JsonNode yNode = destinationNode.get("y");
-            JsonNode regimentsNode = rootNode.get("regiments");
+            JsonNode regimentsNode = rootNode.get("regimentIDs");
             JsonNode armyIdNode = rootNode.get("armyId");
 
             this.armyId = UnitEventUtility.parseArmyId(armyIdNode);
@@ -99,12 +99,10 @@ public class SplitArmyEvent extends Event {
             return false;
         }
 
-        Iterator<RegimentEntity> iterator = army.getRegiments().iterator();
         List<RegimentEntity> remainingRegiments = new ArrayList<>();
         List<RegimentEntity> splitRegiments = new ArrayList<>();
 
-        while (iterator.hasNext()) {
-            RegimentEntity regiment = iterator.next();
+        for (RegimentEntity regiment: army.getRegiments()) {
             if (regimentIDs.contains(regiment.getRegimentId())) {
                 splitRegiments.add(regiment);
             } else {
@@ -117,6 +115,8 @@ public class SplitArmyEvent extends Event {
                 gameMap.getPlayerNextArmyNumber(getPlayerNr()),
                 getPrimaryTileCoordinates());
 
+        splitArmy.setRegiments(splitRegiments);
+
         boolean armyMoved = gameMap.moveArmy(splitArmy, destinationCoordinates);
 
         if (!armyMoved) {
@@ -126,6 +126,10 @@ public class SplitArmyEvent extends Event {
                     destinationCoordinates.getX(),
                     destinationCoordinates.getY()));
             return false;
+        }
+
+        if (remainingRegiments.isEmpty()) {
+            gameMap.removeArmy(army);
         }
 
         army.setRegiments(remainingRegiments);

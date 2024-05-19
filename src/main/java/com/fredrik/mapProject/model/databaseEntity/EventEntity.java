@@ -3,6 +3,7 @@ package com.fredrik.mapProject.model.databaseEntity;
 import com.fredrik.mapProject.model.event.*;
 import com.fredrik.mapProject.model.event.build.BuildEvent;
 import com.fredrik.mapProject.model.event.build.DemolishEvent;
+import com.fredrik.mapProject.model.event.build.RecruitEvent;
 import com.fredrik.mapProject.model.event.dto.NewChildEventDataDTO;
 import com.fredrik.mapProject.model.event.expand.ClaimTileEvent;
 import com.fredrik.mapProject.model.event.expand.ExploreEvent;
@@ -39,7 +40,7 @@ public class EventEntity implements Cloneable {
     @Column(nullable = false, length = 24)
     private EventType eventType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3000)
     private String eventData;
 
     @Column(nullable = false)

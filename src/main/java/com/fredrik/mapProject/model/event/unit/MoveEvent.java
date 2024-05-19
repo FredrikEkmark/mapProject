@@ -24,8 +24,8 @@ public class MoveEvent extends Event {
                 event.getTurn(),
                 event.getPrimaryTileCoordinates(),
                 event.getEventType(),
-                true,
-                true,
+                false,
+                false,
                 event.getCost());
         parseFromEventData(event.getEventData());
         parseFromCost(event.getCost());
@@ -46,7 +46,7 @@ public class MoveEvent extends Event {
 
         try {
             JsonNode rootNode = objectMapper.readTree(eventData);
-            JsonNode destinationNode = rootNode.get("destination");
+            JsonNode destinationNode = rootNode.get("destinationCoordinates");
             JsonNode xNode = destinationNode.get("x");
             JsonNode yNode = destinationNode.get("y");
             JsonNode armyIdNode = rootNode.get("armyId");

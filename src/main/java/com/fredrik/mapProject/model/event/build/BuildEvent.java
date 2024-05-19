@@ -156,6 +156,10 @@ public class BuildEvent extends Event {
            case RANCH -> newBuilding = new Ranch(buildingType, getEventManaCost().getManpower());
            case LEATHER_WORKER -> newBuilding = new LeatherWorker(buildingType, getEventManaCost().getManpower());
            case FISHERY -> newBuilding = new Fishery(buildingType, getEventManaCost().getManpower());
+           case MINE -> newBuilding = new Mine(buildingType, getEventManaCost().getManpower());
+           case BARRACK -> newBuilding = new Barrack(buildingType, getEventManaCost().getManpower());
+           case ARCHERY_RANGE -> newBuilding = new ArcheryRange(buildingType, getEventManaCost().getManpower());
+           case STABLE -> newBuilding = new Stable(buildingType, getEventManaCost().getManpower());
            case VILLAGE -> newBuilding = new Village(buildingType, getEventManaCost().getManpower());
            case TOWN -> newBuilding = new Town(buildingType, getEventManaCost().getManpower());
            case CITY -> newBuilding = new City(buildingType, getEventManaCost().getManpower());

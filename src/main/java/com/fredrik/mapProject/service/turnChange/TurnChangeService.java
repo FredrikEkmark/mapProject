@@ -78,7 +78,9 @@ public class TurnChangeService {
 
         mapTileService.updateGameMap(turnChange.getGameMap().getUpdatedTiles());
         eventService.resetEventsAndSavePersistentEvents(turnChange.getEventEntityList(), game.getId());
-        armyService.updateActiveArmies(turnChange.getGameMap().getAllArmies(),turnChange.getGameMap().getRemovedArmies());
+        armyService.updateActiveArmies(turnChange.getGameMap().getAllArmies(),
+                turnChange.getGameMap().getRemovedArmies(),
+                turnChange.getGameMap().getRemovedRegiments());
         gameSetupService.updateGameSetup(turnChange.getGameSetup());
         manaService.updateAll(turnChange.getManaList());
         eventLogService.save(turnChange.getEventLog());

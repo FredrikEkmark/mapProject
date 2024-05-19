@@ -18,12 +18,14 @@ public class PlayerViewService {
     private final GamePlayerService gamePlayerService;
     private final ManaService manaService;
     private final EventLogService eventLogService;
+    private final ArmyService armyService;
 
-    public PlayerViewService(MapTileService mapTileService, GamePlayerService gamePlayerService, ManaService manaService, EventLogService eventLogService) {
+    public PlayerViewService(MapTileService mapTileService, GamePlayerService gamePlayerService, ManaService manaService, EventLogService eventLogService, ArmyService armyService) {
         this.mapTileService = mapTileService;
         this.gamePlayerService = gamePlayerService;
         this.manaService = manaService;
         this.eventLogService = eventLogService;
+        this.armyService = armyService;
     }
 
     public Optional<PlayerView> getPlayerView(GameSetupEntity gameSetup, UserEntity user) {
@@ -35,6 +37,7 @@ public class PlayerViewService {
         ManaEntity mana;
         List<EventLogEntity> eventLog;
         MapCoordinates startCoordinates;
+        List<ArmyEntity> armyList;
 
         try {
             Optional<GamePlayerEntity> optionalGamePlayerEntity = gamePlayerService.getGamePlayer(playerGameId);
@@ -47,6 +50,7 @@ public class PlayerViewService {
             mana = optionalManaEntity.get();
             eventLog = eventLogService.findPlayerEventLog(gamePlayer.getPlayerNr(), gameSetup.getId());
             startCoordinates = gamePlayer.getStartCoordinates();
+            armyList = armyService.findAllByGameID(gameSetup.getId());
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -57,6 +61,7 @@ public class PlayerViewService {
                 user.getUsername(),
                 gameSetup.getMapSize(),
                 mapTileEntities,
+                armyList,
                 startCoordinates,
                 playerNr,
                 user.getRole(),

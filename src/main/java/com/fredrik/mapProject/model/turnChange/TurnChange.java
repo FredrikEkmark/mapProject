@@ -53,11 +53,11 @@ public class TurnChange {
         // PROCESSING ALL THE EVENTS
         processEventsEntityList(updatedEventEntityList, eventLogEntries);
 
-        // PROCESSING MANA LIST
-        processPlayers(eventLogEntries);
-
         // PROCESS BATTLES
         processArmies(eventLogEntries);
+
+        // PROCESSING PLAYER LIST
+        processPlayers(eventLogEntries);
 
         eventEntityList = updatedEventEntityList;
         gameSetup.setTurn(gameSetup.getTurn() + 1); // ticks the turn up one
@@ -148,6 +148,7 @@ public class TurnChange {
     private void processPlayerMana(ManaEntity mana, List<String> playerEventLogEntries) {
 
         List<MapTileEntity> playerMap = gameMap.getTilesWithPlayer(mana.getPlayerNr());
+        List<ArmyEntity> playerArmies = gameMap.getPlayerArmies(mana.getPlayerNr());
 
         // use the unused manpower from last turn for food production
         int excessManpowerFromTurn = mana.withdrawAllManpower();
@@ -158,6 +159,19 @@ public class TurnChange {
         mana.setPopulationMax(0);
         mana.setProtectedFood(0);
         int tilePopulationMaxBonus = 100;
+
+        // Run all player armies for upkeep cost
+        List<RegimentEntity> removedRegiments = new ArrayList<>();
+        for (ArmyEntity army: playerArmies) {
+            for (RegimentEntity regiment: army.getRegiments()) {
+                boolean manpowerUpkeepPayed = mana.withdrawManpower(regiment.getUnitAmount());
+                if (!manpowerUpkeepPayed) {
+                    removedRegiments.add(regiment);
+
+                }
+            }
+        }
+        gameMap.removeRegiments(removedRegiments);
 
         // Run all the players tiles for building processProduction and modifiers
         for (MapTileEntity tile: playerMap) {

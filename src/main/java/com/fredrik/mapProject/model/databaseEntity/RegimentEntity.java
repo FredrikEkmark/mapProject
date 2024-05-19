@@ -13,12 +13,10 @@ import java.util.UUID;
 public class RegimentEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID regimentId;
 
-    @ManyToOne
-    @JoinColumn(name = "armyId", referencedColumnName = "armyId", nullable = false)
-    private ArmyEntity army;
+    @Column(nullable = false)
+    private UUID armyId;
 
     @Column(nullable = false, length = 24)
     @Enumerated(EnumType.STRING)
@@ -43,13 +41,15 @@ public class RegimentEntity {
     @Column(nullable = false)
     private int movement;
 
-    public RegimentEntity(ArmyEntity army,
+    public RegimentEntity(UUID armyId,
                           UnitType unitType,
+                          Player owner,
+                          int regimentNumber,
                           int equipmentModifier) {
+        this.armyId = armyId;
         this.regimentId = UUID.randomUUID();
-        this.army = army;
-        this.playerNr = army.getOwner();
-        this.regimentName = UnitNameGenerator.getGeneratedRegimentName(army.regimentsSize() + 1);
+        this.playerNr = owner;
+        this.regimentName = UnitNameGenerator.getGeneratedRegimentName(regimentNumber + 1, unitType);
         this.unitAmount = unitType.getRegimentAmount();
         this.unitType = unitType;
         this.moral = 1; // toDo gameConfig
@@ -64,12 +64,8 @@ public class RegimentEntity {
         return regimentId;
     }
 
-    public ArmyEntity getArmy() {
-        return army;
-    }
-
-    public void setArmy(ArmyEntity army) {
-        this.army = army;
+    public void setArmyId(UUID armyId) {
+        this.armyId = armyId;
     }
 
     public Player getPlayerNr() {
@@ -126,5 +122,9 @@ public class RegimentEntity {
 
     public void setMovement(int movement) {
         this.movement = movement;
+    }
+
+    public UUID getArmyId() {
+        return armyId;
     }
 }

@@ -1,16 +1,13 @@
 package com.fredrik.mapProject.model.player;
 
 import com.fredrik.mapProject.config.Roles;
+import com.fredrik.mapProject.model.databaseEntity.*;
 import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.map.MapSizes;
 import com.fredrik.mapProject.model.map.tile.MapTile;
-import com.fredrik.mapProject.model.databaseEntity.EventLogEntity;
-import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
-import com.fredrik.mapProject.model.databaseEntity.MapTileEntity;
+import com.fredrik.mapProject.model.unit.UnitType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerView {
 
@@ -33,6 +30,7 @@ public class PlayerView {
                       String playerName,
                       MapSizes mapSize,
                       List<MapTileEntity> tileList,
+                      List<ArmyEntity> armyEntityList,
                       MapCoordinates startCoordinates,
                       Player playerNr,
                       Roles userRole,
@@ -50,17 +48,25 @@ public class PlayerView {
         this.playerNr = playerNr;
         this.turn = turn;
         this.turnChange = turnChange;
-        this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
+        this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr, armyEntityList);
         this.mana = mana;
         this.eventLog = eventLog;
         this.isUpdating = isUpdating;
         this.isAdmin = (userRole == Roles.ADMIN);
     }
 
-    private List<MapTile> convertMapTileEntityListToMap(List<MapTileEntity> tileList, MapSizes mapSize, Player playerNr) {
+    private List<MapTile> convertMapTileEntityListToMap(List<MapTileEntity> tileList,
+                                                        MapSizes mapSize,
+                                                        Player playerNr,
+                                                        List<ArmyEntity> armyEntityList) {
 
         int initialCapacity = mapSize.getWidth() * mapSize.getHeight();
-        List<MapTile> map = new ArrayList<>(initialCapacity);
+        List<MapTile> worldMap = new ArrayList<>(initialCapacity);
+
+        Map<MapCoordinates, ArmyEntity> armyMap = new HashMap<>();
+        for (ArmyEntity armyEntity : armyEntityList) {
+            armyMap.put(armyEntity.getArmyCoordinates(), armyEntity);
+        }
 
         for (MapTileEntity tile : tileList) {
 
@@ -69,10 +75,12 @@ public class PlayerView {
                     tile.getTileOwner(),
                     tile.getTileValue(),
                     tile.isVisible(playerNr.number()),
-                    tile.getBuildingJsonString());
-            map.add(rePackagedTile);
+                    tile.getBuildingJsonString(),
+                    armyMap.getOrDefault(tile.getMapTileId().getCoordinates(), null));
+
+            worldMap.add(rePackagedTile);
         }
-            return map;
+            return worldMap;
 
     }
 
@@ -108,13 +116,8 @@ public class PlayerView {
         return playerNr;
     }
 
-
     public List<MapTile> getMap() {
         return map;
-    }
-
-    public void setMap(List<MapTileEntity> tileList) {
-        this.map = convertMapTileEntityListToMap(tileList , mapSize, playerNr);
     }
 
     public ManaEntity getMana() {
@@ -146,4 +149,6 @@ public class PlayerView {
     }
 
     public boolean isAdmin() {return isAdmin;}
+
+
 }

@@ -54,7 +54,7 @@ public class DismissEvent extends Event {
 
         try {
             JsonNode rootNode = objectMapper.readTree(eventData);
-            JsonNode regimentsNode = rootNode.get("regiments");
+            JsonNode regimentsNode = rootNode.get("regimentIDs");
             JsonNode armyIdNode = rootNode.get("armyId");
 
             this.armyId = UnitEventUtility.parseArmyId(armyIdNode);
@@ -98,12 +98,10 @@ public class DismissEvent extends Event {
             return false;
         }
 
-        Iterator<RegimentEntity> iterator = army.getRegiments().iterator();
         List<RegimentEntity> remainingRegiments = new ArrayList<>();
         List<RegimentEntity> dismissedRegiments = new ArrayList<>();
 
-        while (iterator.hasNext()) {
-            RegimentEntity regiment = iterator.next();
+        for (RegimentEntity regiment: army.getRegiments()) {
             if (regimentIDs.contains(regiment.getRegimentId())) {
                 dismissedRegiments.add(regiment);
             } else {
@@ -119,6 +117,7 @@ public class DismissEvent extends Event {
                     getPrimaryTileCoordinates().getY()));
         } else {
             army.setRegiments(remainingRegiments);
+            gameMap.removeRegiments(dismissedRegiments);
             setEventLogEntry(String.format("%d regiments on tile %d:%d dismissed;",
                     dismissedRegiments.size(),
                     getPrimaryTileCoordinates().getX(),

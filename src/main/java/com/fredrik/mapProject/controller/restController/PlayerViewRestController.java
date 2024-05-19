@@ -45,7 +45,7 @@ public class PlayerViewRestController {
         Optional<PlayerView> playerView = playerViewService.getPlayerView(gameSetup, user);
 
         return playerView.map(
-                view -> ResponseEntity.status(HttpStatus.OK).body(view))
+                        view -> ResponseEntity.status(HttpStatus.OK).body(view))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 }

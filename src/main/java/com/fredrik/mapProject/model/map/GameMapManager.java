@@ -3,6 +3,7 @@ package com.fredrik.mapProject.model.map;
 import com.fredrik.mapProject.model.battle.ArmyLocation;
 import com.fredrik.mapProject.model.building.BuildingType;
 import com.fredrik.mapProject.model.databaseEntity.ArmyEntity;
+import com.fredrik.mapProject.model.databaseEntity.RegimentEntity;
 import com.fredrik.mapProject.model.map.coordinates.PathCoordinates;
 import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.map.terrain.Elevation;
@@ -30,6 +31,7 @@ public class GameMapManager {
     private final  Map<MapCoordinates, List<ArmyEntity>> armyMap;
 
     private final List<ArmyEntity> removedArmies;
+    private final List<RegimentEntity> removedRegiments;
 
     private final Map<String,List<ArmyEntity>> playerArmyMap;
 
@@ -40,6 +42,7 @@ public class GameMapManager {
         this.playerArmyMap = new HashMap<>();
         this.armyMap = new HashMap<>();
         this.removedArmies = new ArrayList<>();
+        this.removedRegiments = new ArrayList<>();
         this.gameSetup = game;
         this.mapTileEntityGenerator = new MapTileEntityGenerator(game.getSeed(), game.getMapSize().getWidth(), game.getMapSize().getHeight());
         populateMap(mapTileEntityList);
@@ -63,6 +66,7 @@ public class GameMapManager {
     private void distributeArmies(List<ArmyEntity> armyList) {
         for (ArmyEntity army : armyList) {
            armyMap.computeIfAbsent(army.getArmyCoordinates(), k -> new ArrayList<>()).add(army);
+           playerArmyMap.computeIfAbsent(army.getOwner().name(), k -> new ArrayList<>()).add(army);
         }
     }
 
@@ -84,15 +88,33 @@ public class GameMapManager {
                 .collect(Collectors.toList());
     }
 
+    public List<ArmyEntity> getPlayerArmies(Player playerNr) {
+        return playerArmyMap.getOrDefault(playerNr.name(), Collections.emptyList());
+    }
+
     public List<ArmyEntity> getRemovedArmies() {
         return removedArmies;
     }
 
+
     public void removeArmy(ArmyEntity army) {
-        playerArmyMap.getOrDefault(army.getOwner().name(), Collections.emptyList()).remove(army);
-        List<ArmyEntity> armyList = armyMap.getOrDefault(army.getArmyCoordinates(), new ArrayList<>());
-        armyList.remove(army);
+        playerArmyMap.get(army.getOwner().name()).remove(army);
+        armyMap.remove(army.getArmyCoordinates());
         removedArmies.add(army);
+        removedRegiments.addAll(army.getRegiments());
+    }
+
+    public void addArmy(ArmyEntity army) {
+        playerArmyMap.computeIfAbsent(army.getOwner().name(), k -> new ArrayList<>()).add(army);
+        armyMap.computeIfAbsent(army.getArmyCoordinates(), k -> new ArrayList<>()).add(army);
+    }
+
+    public List<RegimentEntity> getRemovedRegiments() {
+        return removedRegiments;
+    }
+
+    public void removeRegiments(List<RegimentEntity> regiments) {
+        removedRegiments.addAll(regiments);
     }
 
     // Utility functions
@@ -108,7 +130,7 @@ public class GameMapManager {
     }
 
     public ArmyEntity getArmyFromCoordinatesAndId(MapCoordinates coordinates, UUID armyId) {
-        List<ArmyEntity> armyList = armyMap.getOrDefault(coordinates, new ArrayList<>());
+        List<ArmyEntity> armyList = armyMap.get(coordinates);
         for (ArmyEntity army: armyList) {
             if (army.getArmyId().equals(armyId)) {
                 return army;
@@ -161,9 +183,21 @@ public class GameMapManager {
             }
         }
 
-        List<ArmyEntity> destinationPossitionList = armyMap.computeIfAbsent(destinationCoordinates, k -> new ArrayList<>());
-        destinationPossitionList.add(army);
-        army.setFortified(false);
+        List<ArmyEntity> armiesOnLocation = armyMap.computeIfAbsent(destinationCoordinates, k -> new ArrayList<>());
+
+        for (ArmyEntity armyOnLocation : armiesOnLocation) {
+            if (armyOnLocation.getOwner().equals(army.getOwner())) {
+                armyOnLocation.addRegiments(army.getRegiments());
+                army.getRegiments().clear();
+                removeArmy(army);
+            }
+        }
+
+        if (!army.getRegiments().isEmpty()) {
+            armiesOnLocation.add(army);
+            army.setArmyCoordinates(destinationCoordinates);
+            army.setFortified(false);
+        }
 
         return true;
     }
@@ -453,12 +487,16 @@ public class GameMapManager {
     public int getPlayerNextArmyNumber(Player player) {
         List<ArmyEntity> armyEntityList = playerArmyMap.get(player.name());
 
-        for (int i = 1; i < armyEntityList.size() + 2; i++) {
-            if (armyEntityList.get(i).getArmyNumber() != i) {
-                return i;
+        if (armyEntityList == null) {
+            return 1;
+        }
+
+        for (int i = 0; i < armyEntityList.size(); i++) {
+            if (armyEntityList.get(i).getArmyNumber() != i + 1) {
+                return i + 1;
             }
         }
-        return -1; // Default value if no suitable number is found
-    }
 
+        return armyEntityList.size() + 1;
+    }
 }

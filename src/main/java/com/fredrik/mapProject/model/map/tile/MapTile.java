@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.model.map.tile;
 
+import com.fredrik.mapProject.model.databaseEntity.ArmyEntity;
 import com.fredrik.mapProject.model.map.coordinates.MapCoordinates;
 import com.fredrik.mapProject.model.player.Player;
 
@@ -12,12 +13,20 @@ public class MapTile {
 
     private String building;
 
-    public MapTile(MapCoordinates coordinates, Player tileOwner, int tileTerrainValue, boolean visible, String building) {
+    private ArmyEntity army;
+
+    public MapTile(MapCoordinates coordinates,
+                   Player tileOwner,
+                   int tileTerrainValue,
+                   boolean visible,
+                   String building,
+                   ArmyEntity army) {
         this.coordinates = coordinates;
         this.tileOwner = tileOwner;
         this.tileTerrainValue = tileTerrainValue;
         this.visible = visible;
         this.building = building;
+        this.army = army;
     }
 
     public MapCoordinates getCoordinates() {
@@ -58,5 +67,11 @@ public class MapTile {
 
     public void setBuilding(String building) {
         this.building = building;
+    }
+
+    public ArmyEntity getArmy() {return army;}
+
+    public void setArmy(ArmyEntity army) {
+        this.army = army;
     }
 }

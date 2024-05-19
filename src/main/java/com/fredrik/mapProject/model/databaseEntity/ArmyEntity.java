@@ -14,7 +14,6 @@ import java.util.UUID;
 public class ArmyEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID armyId;
 
     @Column(nullable = false)
@@ -30,15 +29,15 @@ public class ArmyEntity {
     @Column(nullable = false)
     private int armyNumber;
 
-    @OneToMany(mappedBy = "army", cascade = CascadeType.ALL)
-    private List<RegimentEntity> regiments;
-
     @Embedded
     @Column(nullable = false)
     private MapCoordinates armyCoordinates;
 
     @Column(nullable = false)
     private boolean fortified;
+
+    @Transient
+    private List<RegimentEntity> regiments = new ArrayList<>();
 
 
     public ArmyEntity(UUID gameId, Player owner, int armyNumber, MapCoordinates armyCoordinates) {
@@ -47,7 +46,6 @@ public class ArmyEntity {
         this.owner = owner;
         this.armyName = UnitNameGenerator.getGeneratedArmyName(armyNumber);
         this.armyNumber = armyNumber;
-        this.regiments = new ArrayList<>();
         this.armyCoordinates = armyCoordinates;
         this.fortified = false;
     }
@@ -96,7 +94,17 @@ public class ArmyEntity {
     }
 
     public void setRegiments(List<RegimentEntity> regiments) {
+        for (RegimentEntity regiment: regiments) {
+            regiment.setArmyId(armyId);
+        }
         this.regiments = regiments;
+    }
+
+    public void addRegiments(List<RegimentEntity> regiments) {
+        for (RegimentEntity regiment: regiments) {
+            regiment.setArmyId(armyId);
+        }
+        this.regiments.addAll(regiments);
     }
 
     public MapCoordinates getArmyCoordinates() {
@@ -123,5 +131,9 @@ public class ArmyEntity {
             }
         }
         return  movement;
+    }
+
+    public UUID getGameId() {
+        return gameId;
     }
 }

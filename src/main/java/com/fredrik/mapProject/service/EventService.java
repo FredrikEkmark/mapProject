@@ -85,7 +85,7 @@ public class EventService {
                         return true;
                     }
                 }
-                case CLAIM_TILE_EVENT -> {
+                case CLAIM_TILE_EVENT, RECRUIT_EVENT -> {
                     if (manpowerNode.asInt() == 100) {
                         return true;
                     }
@@ -95,7 +95,7 @@ public class EventService {
                         return true;
                     }
                 }
-                case DEMOLISH_EVENT -> {
+                case DEMOLISH_EVENT, RAID_EVENT, CONQUER_EVENT, MOVE_EVENT, DISMISS_EVENT, SPLIT_ARMY_EVENT, FORTIFY_EVENT -> {
                     if (manpowerNode.asInt() == 0) {
                         return true;
                     }

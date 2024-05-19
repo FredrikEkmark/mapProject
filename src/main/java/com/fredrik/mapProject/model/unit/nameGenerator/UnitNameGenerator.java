@@ -1,5 +1,7 @@
 package com.fredrik.mapProject.model.unit.nameGenerator;
 
+import com.fredrik.mapProject.model.unit.UnitType;
+
 import java.util.Random;
 
 public class UnitNameGenerator {
@@ -57,12 +59,12 @@ public class UnitNameGenerator {
         return String.format("%s Army", armyNumber);
     }
 
-    public static String getGeneratedRegimentName(int iteration) {
+    public static String getGeneratedRegimentName(int iteration, UnitType unitType) {
 
         String regimentNumber = intToRoman(iteration) + addOrdinal(iteration);
         String nameIdentifier = getNameIdentifier();
 
-        return String.format("%s Regiment %s", regimentNumber, nameIdentifier);
+        return String.format("%s %s %s", regimentNumber, unitType.getUnitName(), nameIdentifier);
     }
 
     private static String getNameIdentifier() {

@@ -1,4 +1,4 @@
-package com.fredrik.mapProject.model.event.unit;
+package com.fredrik.mapProject.model.event.build;
 
 import com.fredrik.mapProject.model.building.BuildingType;
 import com.fredrik.mapProject.model.databaseEntity.ArmyEntity;
@@ -20,7 +20,7 @@ public class RecruitEvent extends Event {
                 event.getTurn(),
                 event.getPrimaryTileCoordinates(),
                 event.getEventType(),
-                true,
+                false,
                 false,
                 event.getCost());
         parseFromEventData(event.getEventData());
@@ -49,9 +49,9 @@ public class RecruitEvent extends Event {
             return false;
         }
 
-        boolean recruitBuildingPresent =  mapTile.getBuilding().getType() == BuildingType.CARPENTRY ||
-                mapTile.getBuilding().getType() == BuildingType.CARPENTRY ||
-                mapTile.getBuilding().getType() == BuildingType.CARPENTRY; // todo add new Buildings
+        boolean recruitBuildingPresent =  mapTile.getBuilding().getType() == BuildingType.BARRACK ||
+                mapTile.getBuilding().getType() == BuildingType.ARCHERY_RANGE ||
+                mapTile.getBuilding().getType() == BuildingType.STABLE;
 
         if (!recruitBuildingPresent) {
             setEventLogEntry(String.format("Could not recruit on tile %d:%d because no recruitment building present;",
@@ -120,6 +120,7 @@ public class RecruitEvent extends Event {
                     getPlayerNr(),
                     gameMap.getPlayerNextArmyNumber(getPlayerNr()),
                     getPrimaryTileCoordinates());
+
             setEventLogEntry(String.format("Recruited 1 %s on tile %d:%d and formed %s ;",
                     unitType.getUnitName(),
                     getPrimaryTileCoordinates().getX(),
@@ -127,8 +128,9 @@ public class RecruitEvent extends Event {
                     army.getArmyName()));
         }
 
-        RegimentEntity regiment = new RegimentEntity(army, unitType, 0);// todo add equipment modifier
+        RegimentEntity regiment = new RegimentEntity(army.getArmyId(), unitType, army.getOwner(), army.regimentsSize(), 0);// todo add equipment modifier
         army.getRegiments().add(regiment);
+        gameMap.addArmy(army);
 
         return true;
     }
