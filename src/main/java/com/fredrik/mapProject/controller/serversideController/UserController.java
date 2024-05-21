@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String registerUserPage(Model model) {
+    public String registerUserPage(UserEntity userEntity, Model model) {
         model.addAttribute("roles", Roles.values());
 
         return "register";
