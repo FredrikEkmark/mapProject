@@ -191,9 +191,6 @@ public class TurnChange {
             }
         }
 
-        // calculate Luxury resources impact on populationMax
-        calculateLuxuryResourceEffect(mana, playerEventLogEntries);
-
         // calculate new Population
         calculatePopulationChange(mana, playerEventLogEntries);
 
@@ -205,33 +202,6 @@ public class TurnChange {
                 foodBeforeSpoilage,
                 mana.getProtectedFood(),
                 spoiledFood));
-    }
-
-    public void calculateLuxuryResourceEffect(ManaEntity mana, List<String> eventLogEntries) {
-
-        final int CONSUMPTION = mana.getPopulation()/100;
-
-        int furniturePopulationMaxBonus = 100;
-        boolean populationFurniturePayed = mana.withdrawFurniture(CONSUMPTION);
-
-        int furnitureBonusPopulationMaxIncrease;
-        if (populationFurniturePayed) {
-            furnitureBonusPopulationMaxIncrease = furniturePopulationMaxBonus * CONSUMPTION;
-        } else {
-            furnitureBonusPopulationMaxIncrease = furniturePopulationMaxBonus * mana.withdrawAllFurniture();
-        }
-        mana.raisePopulationMax(furnitureBonusPopulationMaxIncrease);
-
-        int simpleClothesPopulationMaxBonus = 100;
-        boolean populationSimpleClothesPayed = mana.withdrawSimpleClothes(CONSUMPTION);
-
-        int simpleClothesBonusPopulationMaxIncrease;
-        if (populationSimpleClothesPayed) {
-            simpleClothesBonusPopulationMaxIncrease = simpleClothesPopulationMaxBonus * CONSUMPTION;
-        } else {
-            simpleClothesBonusPopulationMaxIncrease = simpleClothesPopulationMaxBonus * mana.withdrawAllSimpleClothes();
-        }
-        mana.raisePopulationMax(simpleClothesBonusPopulationMaxIncrease);
     }
 
     public void calculatePopulationChange(ManaEntity mana, List<String> eventLogEntries) {
