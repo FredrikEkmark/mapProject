@@ -3,6 +3,7 @@ package com.fredrik.mapProject.model.event.unit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.databaseEntity.ArmyEntity;
 import com.fredrik.mapProject.model.databaseEntity.ManaEntity;
 import com.fredrik.mapProject.model.databaseEntity.MapTileEntity;
@@ -88,7 +89,7 @@ public class RaidEvent extends Event {
         Player oldOwner = mapTile.getTileOwner();
 
         mapTile.setTileOwner(Player.NONE);
-        mapTile.getBuilding().damage(50); // todo add gameConfig
+        mapTile.getBuilding().damage(GameConfig.raidEventBuildingDamage());
         gameMap.addTileToUpdatedTiles(mapTile);
 
         setEventLogEntry(String.format("%s raided tile %d:%d;",

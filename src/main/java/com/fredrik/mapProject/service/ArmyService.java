@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ArmyService {
@@ -32,10 +33,10 @@ public class ArmyService {
                                    List<ArmyEntity> removedArmies,
                                    List<RegimentEntity> removedRegiments) {
         regimentService.deleteAll(removedRegiments);
-        armyRepository.deleteAll(removedArmies);
         for (ArmyEntity armyEntity: updatedArmies) {
             regimentService.updateAll(armyEntity.getRegiments());
         }
         armyRepository.saveAll(updatedArmies);
+        armyRepository.deleteAll(removedArmies);
     }
 }

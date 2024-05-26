@@ -1,5 +1,6 @@
 package com.fredrik.mapProject.model.turnChange;
 
+import com.fredrik.mapProject.config.GameConfig;
 import com.fredrik.mapProject.model.battle.ArmyLocation;
 import com.fredrik.mapProject.model.battle.Battle;
 import com.fredrik.mapProject.model.eventLog.BattleLog;
@@ -77,7 +78,6 @@ public class TurnChange {
         eventEntityList.sort(Comparator.comparingInt(eventEntity -> eventEntity.getEvent().getEventType().ordinal()));
 
         for (EventEntity eventEntity: eventEntityList) {
-            System.out.printf("EventId: %s, EventType: %s, Cost: %s, EventData: %s, Turn: %s\n", eventEntity.getEventId(), eventEntity.getEventType(), eventEntity.getCost(), eventEntity.getEventData(), eventEntity.getTurn());
 
             Event event = eventEntity.getEvent();
 
@@ -167,7 +167,8 @@ public class TurnChange {
                 boolean manpowerUpkeepPayed = mana.withdrawManpower(regiment.getUnitAmount());
                 if (!manpowerUpkeepPayed) {
                     removedRegiments.add(regiment);
-
+                } else {
+                    regiment.recoverUnits();
                 }
             }
         }
@@ -183,7 +184,7 @@ public class TurnChange {
                 boolean buildingProcessed = building.processProduction(mana, tile.getTerrain(), tile.getMapTileId().getCoordinates());
 
                 if (!buildingProcessed) {
-                    int buildingDamage = 20;
+                    int buildingDamage = GameConfig.getBaseDisuseDamage();
                     building.damage(buildingDamage);
                 }
                 String buildingLogEntry = building.getEventLogEntry();
@@ -243,6 +244,7 @@ public class TurnChange {
         Queue<Battle> battleQueue = new LinkedList<>();
 
         for (ArmyLocation armyLocation: armyLocationMap.values()) {
+
             if (armyLocation.armies().size() > 1) {
                 battleQueue.add(
                         new Battle(
@@ -258,10 +260,11 @@ public class TurnChange {
             List<BattleLog> battleLogList = BattleManager.processBattle(battle, gameMap, armyLocationMap);
 
             for (BattleLog battleLog: battleLogList) {
-
                 eventLogEntries
                         .get(battleLog.player().name())
                         .add(battleLog.logEntry());
+
+                getPlayerMana(battleLog.player().name()).lowerPopulation(battleLog.loses());
             }
         }
     }
@@ -301,5 +304,15 @@ public class TurnChange {
             update();
         }
         return manaList;
+    }
+
+    private ManaEntity getPlayerMana(String player) {
+        for (ManaEntity mana: manaList) {
+            if (mana.getPlayerNr().name().equals(player)
+            ) {
+                return mana;
+            }
+        }
+        return null;
     }
 }

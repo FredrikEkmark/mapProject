@@ -107,6 +107,10 @@ public class ArmyEntity {
         this.regiments.addAll(regiments);
     }
 
+    public void removeRegiments(List<RegimentEntity> regiments) {
+        this.regiments.removeAll(regiments);
+    }
+
     public MapCoordinates getArmyCoordinates() {
         return armyCoordinates;
     }
@@ -124,6 +128,9 @@ public class ArmyEntity {
     }
 
     public int getArmyMovement() {
+        if (regiments.isEmpty()) {
+            return 0;
+        }
         int movement = regiments.get(0).getMovement();
         for (RegimentEntity regiment: regiments) {
             if (regiment.getMovement() < movement) {

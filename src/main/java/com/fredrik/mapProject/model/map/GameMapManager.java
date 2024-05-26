@@ -143,27 +143,28 @@ public class GameMapManager {
         return armyMap.getOrDefault(coordinates, new ArrayList<>());
     }
 
-     public Map<MapCoordinates, ArmyLocation> getArmyLocationList() {
+    public Map<MapCoordinates, ArmyLocation> getArmyLocationList() {
 
-         Map<MapCoordinates, ArmyLocation> armyLocationMap = new HashMap<>();
+        Map<MapCoordinates, ArmyLocation> armyLocationMap = new HashMap<>();
 
-         for (Map.Entry<MapCoordinates, List<ArmyEntity>> entry : armyMap.entrySet()) {
-             MapCoordinates coordinates = entry.getKey();
-             List<ArmyEntity> armiesList = entry.getValue();
+        for (Map.Entry<MapCoordinates, List<ArmyEntity>> entry : armyMap.entrySet()) {
 
-             if (!armiesList.isEmpty()) {
-                 armyLocationMap.put(coordinates, new ArmyLocation(armiesList, coordinates));
-             }
-         }
-         return armyLocationMap;
+            MapCoordinates coordinates = entry.getKey();
+            List<ArmyEntity> armiesList = entry.getValue();
+
+            if (!armiesList.isEmpty()) {
+
+                ArmyLocation armyLocation = new ArmyLocation(armiesList, coordinates);
+                armyLocationMap.put(coordinates, armyLocation);
+            }
+        }
+        return armyLocationMap;
     }
 
-
-
     // Army Movement
-
-
+    
     public boolean moveArmy(ArmyEntity army, MapCoordinates destinationCoordinates) {
+
         int movement = army.getArmyMovement();
         MapCoordinates startCoordinates = army.getArmyCoordinates();
         boolean possibleMove = possibleArmyMove(true,
@@ -436,7 +437,7 @@ public class GameMapManager {
 
         while (notValidStart) {
             startPosition.setX(random.nextInt(6, xBounds - 7));
-            startPosition.setY(random.nextInt(0, yBounds));
+            startPosition.setY(random.nextInt(1, yBounds - 1));
 
             if (startPosition.getX() % 2 == 0) {
                 yOffsets[1] = -1;

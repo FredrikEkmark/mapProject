@@ -126,11 +126,16 @@ public class RecruitEvent extends Event {
                     getPrimaryTileCoordinates().getX(),
                     getPrimaryTileCoordinates().getY(),
                     army.getArmyName()));
+            gameMap.addArmy(army);
         }
 
-        RegimentEntity regiment = new RegimentEntity(army.getArmyId(), unitType, army.getOwner(), army.regimentsSize(), 0);// todo add equipment modifier
+        RegimentEntity regiment = new RegimentEntity(
+                army.getArmyId(),
+                unitType, army.getOwner(),
+                army.regimentsSize(),
+                0);// todo add equipment modifier
+
         army.getRegiments().add(regiment);
-        gameMap.addArmy(army);
 
         return true;
     }

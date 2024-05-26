@@ -102,6 +102,12 @@ public class GameConfig {
 
     // BUILDING FUNCTIONS
 
+    public static int getBaseDisuseDamage() {
+        return Integer.parseInt(properties.getProperty(
+                "BUILDING_BASE_DISUSE_DAMAGE", "0"
+        ));
+    }
+
     public  static EventManaCost getBuildingNonManpowerCost(BuildingType buildingType) {
         EventManaCost eventManaCost = new EventManaCost();
 
@@ -203,6 +209,30 @@ public class GameConfig {
         ));
     }
 
+    public static int getMoralMaximum() {
+        return Integer.parseInt(properties.getProperty(
+                "UNIT_MORAL_MAXIMUM", "0"
+        ));
+    }
+
+    public static int getMoralMinimum() {
+        return Integer.parseInt(properties.getProperty(
+                "UNIT_MORAL_MINIMUM", "0"
+        ));
+    }
+
+    public static int getBaseMoralRecovery() {
+        return Integer.parseInt(properties.getProperty(
+                "UNIT_BASE_MORAL_RECOVERY", "0"
+        ));
+    }
+
+    public static int getBaseRecruitment() {
+        return Integer.parseInt(properties.getProperty(
+                "UNIT_BASE_RECRUITMENT_RATE", "0"
+        ));
+    }
+
     public static int getUnitBaseMovement(String unitType) {
         return Integer.parseInt(properties.getProperty(
                 "UNIT_" + unitType + "_BASE_MOVEMENT", "0"
@@ -212,6 +242,20 @@ public class GameConfig {
     public static int getUnitRegimentAmount(String unitType) {
         return Integer.parseInt(properties.getProperty(
                 "UNIT_" + unitType + "_REGIMENT_AMOUNT", "0"
+        ));
+    }
+
+    // EVENT FUNCTIONS
+
+    public static int conquerEventBuildingDamage() {
+        return Integer.parseInt(properties.getProperty(
+                "CONQUER_EVENT_BUILDING_DAMAGE", "0"
+        ));
+    }
+
+    public static int raidEventBuildingDamage() {
+        return Integer.parseInt(properties.getProperty(
+                "RAID_EVENT_BUILDING_DAMAGE", "0"
         ));
     }
 }

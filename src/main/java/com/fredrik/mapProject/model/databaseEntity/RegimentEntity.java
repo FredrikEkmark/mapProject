@@ -52,7 +52,7 @@ public class RegimentEntity {
         this.regimentName = UnitNameGenerator.getGeneratedRegimentName(regimentNumber + 1, unitType);
         this.unitAmount = unitType.getRegimentAmount();
         this.unitType = unitType;
-        this.moral = 1; // toDo gameConfig
+        this.moral = GameConfig.getBaseMoral();
         this.equipmentModifier = equipmentModifier;
         this.movement = unitType.getBaseMovement();
     }
@@ -92,6 +92,11 @@ public class RegimentEntity {
         this.unitAmount = unitAmount;
     }
 
+    public void recoverUnits() {
+        int value = this.unitAmount + GameConfig.getBaseRecruitment();
+        this.unitAmount = Math.min(GameConfig.getUnitRegimentAmount(unitType.name()), value);
+    }
+
     public UnitType getUnitType() {
         return unitType;
     }
@@ -126,5 +131,11 @@ public class RegimentEntity {
 
     public UUID getArmyId() {
         return armyId;
+    }
+
+    public void adjustMoral(int moralBonus) {
+        int MAX_MORAL = GameConfig.getMoralMaximum();
+        int MIN_MORAL = GameConfig.getMoralMinimum();
+        this.moral = Math.max(MIN_MORAL, Math.min(MAX_MORAL, this.moral + moralBonus));
     }
 }

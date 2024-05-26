@@ -46,10 +46,15 @@ public class GameSetupEntity {
     @OneToMany(mappedBy = "playerGameId.gameId", cascade = CascadeType.ALL)
     private List<GamePlayerEntity> gamePlayers;
 
-    public GameSetupEntity(UserEntity owner, String turnChange, MapSizes mapSize) {
+    public GameSetupEntity(UserEntity owner, String turnChange, MapSizes mapSize, int seed) {
+        this.id = UUID.randomUUID();
         this.owner = owner;
         this.turnChange = turnChange;
         this.mapSize = mapSize;
+        this.seed = seed;
+        this.turn = 1;
+        this.startTime = Instant.now();
+        this.isUpdating = false;
     }
 
     public GameSetupEntity() {
