@@ -109,7 +109,7 @@ public class DismissEvent extends Event {
             }
         }
 
-        if (remainingRegiments.size() == 0) {
+        if (remainingRegiments.isEmpty()) {
             gameMap.removeArmy(army);
             setEventLogEntry(String.format("%s on tile %d:%d dismissed;",
                     army.getArmyName(),
